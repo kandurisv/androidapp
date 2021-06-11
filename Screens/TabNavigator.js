@@ -9,7 +9,7 @@ import EditUserProfile from './EditUserProfile'
 import Feed from './Feed'
 import Home from './Home'
 import Login from './Login'
-import Notifications from './Notifications'
+import Pins from './Pins'
 import Signout from './Signout'
 import TermsAndConditions from './TermsAndConditions'
 import UserDetails from './UserDetails'
@@ -21,7 +21,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const totalWidth = Dimensions.get("window").width;
-const TAB_BAR_HEIGHT = 50
+const TAB_BAR_HEIGHT = 60
 const TAB_ICON_SIZE = 24
 const TAB_SLIDER_HEIGHT = 2
 const TAB_SLIDER_COLOR = "#C51E3A"
@@ -124,7 +124,7 @@ const HomeStack = ({navigation}) => {
           <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
           <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
           <Stack.Screen name="Feed" component={Feed} />  
-          <Stack.Screen name="Notifications" component={Notifications} />  
+          <Stack.Screen name="Pins" component={Pins} />  
           <Stack.Screen name="UserDetails" component ={UserDetails} />
           <Stack.Screen name="PostDetails" component ={PostDetails} />
           <Stack.Screen name="Validation" component ={Validation} />
@@ -142,7 +142,7 @@ const FeedStack = ({navigation}) => {
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
-        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
         <Stack.Screen name="Validation" component ={Validation} />
@@ -160,7 +160,7 @@ const AddPostStack = ({navigation}) => {
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
-        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
         <Stack.Screen name="Validation" component ={Validation} />
@@ -170,15 +170,15 @@ const AddPostStack = ({navigation}) => {
   );
 }
 
-const NotificationsStack = ({navigation}) => {
+const PinsStack = ({navigation}) => {
   return (
-      <Stack.Navigator initialRouteName="Notifications" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="Pins" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home}  /> 
         <Stack.Screen name="AddPost" component={AddPost} /> 
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
-        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
         <Stack.Screen name="Validation" component ={Validation} />
@@ -196,7 +196,7 @@ const UserDetailsStack = ({navigation}) => {
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
-        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
         <Stack.Screen name="Validation" component ={Validation} />
@@ -209,11 +209,14 @@ const UserDetailsStack = ({navigation}) => {
 
 const TabNavigator = () => {
     return (
-      <Tab.Navigator tabBarOptions = {tabBarOptions} tabBar={props => <TabBar {...props} />}>
+      <Tab.Navigator 
+        tabBarOptions = {tabBarOptions} 
+        options = {{unmountOnBlur : true}}
+        tabBar={props => <TabBar {...props} />}>
         <Tab.Screen name="Home" component={HomeStack} options = {tab1Options} />
         <Tab.Screen name="Feed" component={FeedStack} options = {tab2Options} />
         <Tab.Screen name="Post" component={AddPostStack} options = {tab3Options} />
-        <Tab.Screen name="Pins" component={NotificationsStack} options = {tab4Options} />
+        <Tab.Screen name="Pins" component={PinsStack} options = {tab4Options} />
         <Tab.Screen name="User" component={UserDetailsStack} options = {tab5Options} />
       </Tab.Navigator>
     )

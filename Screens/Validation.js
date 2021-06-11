@@ -7,7 +7,7 @@ import { Animated, Easing } from 'react-native';
 import AwesomeButton from "react-native-really-awesome-button";
 import LottieView from 'lottie-react-native';
 
-
+import { useNavigation , useRoute } from '@react-navigation/native';
 
 const Validation = () => {
 
@@ -16,9 +16,8 @@ const Validation = () => {
 
   const progress = React.useRef(new Animated.Value(0)).current
 
-  
-
-
+  const navigation = useNavigation()
+  const route = useRoute()
   
 
   useEffect(() => {
@@ -29,9 +28,7 @@ const Validation = () => {
       easing: Easing.linear,
       useNativeDriver : true
     },).start();
-    
- 
-    
+        
     const timerId = setInterval(() => {
       if (secs <= 0) {
         setSecs(-1)
@@ -42,8 +39,6 @@ const Validation = () => {
  
       clearInterval(timerId);}
   }, [secs])
-
- 
 
 
   const firstRef = React.useRef()

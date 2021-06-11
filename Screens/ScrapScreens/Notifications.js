@@ -2,8 +2,14 @@ import React from 'react'
 import { StyleSheet, Text, View, Animated, TouchableOpacity, Dimensions } from 'react-native'
 import faker from 'faker'
 import {Avatar} from 'react-native-paper'
+import { useNavigation , useRoute } from '@react-navigation/native';
+
+
+
 
 const Notifications = () => {
+  const navigation = useNavigation()
+  const route = useRoute()
 
 
   const data = [

@@ -10,11 +10,15 @@ import RadioGroup from 'react-native-custom-radio-group';
 //import {radioGroupList} from '../assets/Constants'
 
 import {Picker} from '@react-native-picker/picker';
-
+import { useNavigation , useRoute } from '@react-navigation/native';
 
 
 
 const EditUserProfile = () => {
+
+  const navigation = useNavigation()
+  const route = useRoute()
+
   const radioGroupList = [{
     label: 'Male',
     value: 'Male'

@@ -5,21 +5,9 @@ import TabNavigator from './Screens/TabNavigator'
 import axios from 'axios'
 import {URL, FetchData} from './Screens/exports'
 
-const ErrorPage = () => {
-    return (
-        <View>
-            <Text> Error </Text>
-        </View>
-    )
-}
 
-const TimeoutPage = () => {
-    return (
-        <View>
-            <Text> Timeout </Text>
-        </View>
-    )
-}
+
+
 
 const wait = (timeout) => {
     return new Promise(resolve => {

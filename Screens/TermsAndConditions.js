@@ -1,8 +1,13 @@
 import React from 'react'
 import { View, Text , StyleSheet , Linking} from 'react-native'
 
+import { useNavigation , useRoute } from '@react-navigation/native';
 
 const TermsAndConditions = () => {
+
+    const navigation = useNavigation()
+    const route = useRoute()
+
     return (
         <View>
           

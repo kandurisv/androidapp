@@ -5,10 +5,13 @@ import { Button, TextInput , TouchableOpacity,View,Text, StyleSheet, Keyboard } 
 import Icon from 'react-native-ico-flags';
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import LottieView from 'lottie-react-native';
+import { useNavigation , useRoute } from '@react-navigation/native';
+
 
 const Login = () => {
 
-  //  const navigation = useNavigation()
+  const navigation = useNavigation()
+  const route = useRoute()
   
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid,setValid] = React.useState(false)

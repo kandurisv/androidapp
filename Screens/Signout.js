@@ -1,7 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import { useNavigation , useRoute } from '@react-navigation/native';
+
+
 const Signout = () => {
+
+  const navigation = useNavigation()
+  const route = useRoute()
+
   const signoutToHome = () => {
     console.log("Signout and navigate to home")
   }

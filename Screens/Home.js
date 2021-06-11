@@ -1,64 +1,77 @@
 import React from 'react'
 import { StyleSheet, Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView} from 'react-native'
+import { useNavigation , useRoute } from '@react-navigation/native';
+import {ImageLoader} from 'react-native-image-fallback';
+import axios from 'axios';
+import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+
 const {width, height} = Dimensions.get("window")
 const CAROUSEL_ITEM_SQUARE_SIZE = 100
 const CAROUSEL_ITEM_SPACING = 5
 
 const GetProducts = [
-  {
-      productId : "dfasdfas",
-      productName : "Music" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/music.png"
-  },
-  {
-      productId : "dafdsfsewe",
-      productName : "Series" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/tvseries.png"
-  },
-  {
-      productId : "fwerwerf",
-      productName : "Speakers" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/speakers.png"
-  },
-  {
-      productId : "awretghf",
-      productName : "Accessories" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/smartphone_accessories.png"
-  },
-  {
-      productId : "gfdhgfgsdf",
-      productName : "Smartphone" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/smartphone.png"
-  },
-  {
-      productId : "xvsdgfddfas",
-      productName : "Laptop" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/laptop.png"
-  },
-  {
-      productId : "wtegtfsdfwd",
-      productName : "Headphone" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/headphones.png"
-  },
-  {
-      productId : "4wgefwefsw",
-      productName : "Camera" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/camera.png"
-  },
-  {
-      productId : "rwfsfsafsa",
-      productName : "Books" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/books.png"
-  },
-  {
-      productId : "dfassafsadf",
-      productName : "Beauty" ,
-      productImageURL : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/beauty.png"
-  }       
+    {
+        type: "category",
+        var: "category_id",
+        header: "Browse by category",
+        items :  [{
+            id : "dfasdfas",
+            name : "Music" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/music.png"
+        },
+        {
+            id : "dafdsfsewe",
+            name : "Series" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/tvseries.png"
+        },
+        {
+            id : "fwerwerf",
+            name : "Speakers" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/speakers.png"
+        },
+        {
+            id : "gfdhgfgsdf",
+            name : "Smartphone" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/smartphone.png"
+        },
+        {
+            id : "xvsdgfddfas",
+            name : "Laptop" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/laptop.png"
+        }]
+    },
+    {
+    type: "product",
+    var: "product_id",
+    header: "Get Recommended Products",
+      items : [
+        {
+            id : "wtegtfsdfwd",
+            name : "Headphone" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/headphones.png"
+        },
+        {
+            id : "4wgefwefsw",
+            name : "Camera" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/camera.png"
+        },
+        {
+            id : "rwfsfsafsa",
+            name : "Books" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/books.png"
+        },
+        {
+            id : "dfassafsadf",
+            name : "Beauty" ,
+            image : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/beauty.png"
+        }]
+    }
 ]
+        
 
 
-const Carousel = ({DATA , onClickItem}) => {
+
+const Carousel = ({DATA , onClickItem , varValue}) => {
     const [data,setData] = React.useState([...DATA])
 
     const scrollX = React.useRef(new Animated.Value(0)).current
@@ -70,8 +83,8 @@ const Carousel = ({DATA , onClickItem}) => {
     const renderItem = ({item , index}) => {
 
         const itemClick = (item) => {
-           // console.log(item.productId)
-            onClickItem(item.productId)
+           // console.log(item.id)
+            onClickItem(item.name , item.id, varValue)
         }
        
         const inputRange = [
@@ -103,11 +116,11 @@ const Carousel = ({DATA , onClickItem}) => {
                 <TouchableOpacity onPress = {() => {
                     itemClick(item)
                 }}>
-                    <ImageBackground source = {{uri : item.productImageURL}} 
+                    <ImageBackground source = {{uri : item.image}} 
                         style = {styles.image} blurRadius = {3}>
                     </ImageBackground>
                     <View style = {styles.textView}>
-                        <Text style={styles.text}>{item.productName}</Text>
+                        <Text style={styles.text}>{item.name}</Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -118,7 +131,7 @@ const Carousel = ({DATA , onClickItem}) => {
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.productId}
+            keyExtractor={item => item.id}
             horizontal = {true}
             contentContainerStyle = {styles.carouselStyle}
             onScroll = {Animated.event(
@@ -132,35 +145,74 @@ const Carousel = ({DATA , onClickItem}) => {
 }
 
 const Home = () => {
+
+    const navigation = useNavigation()
+    const route = useRoute()
+    const [response, setResponse] = React.useState([])
+    const [loading,setLoading] = React.useState(true)
+    const [timed,setTimed] = React.useState(false)
+    const [error,setError] = React.useState(false)
+    const [secs,setSecs] = React.useState(0)
+    const [refresh,setRefresh] = React.useState(false)
+    const [result,setResult] = React.useState(false)
   
-const goToProductFeed = (id) => {
-  console.log(id)
-}
+    const goToProductFeed = (name, idValue, value) => {
+        navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
+    }
 
 React.useEffect(() => {
+    const getData = () => {
+        axios.get(URL + "/home", {timeout : 5000})
+        .then(res => res.data).then(function(responseData) {
+            console.log("Reached to response")
+            setResponse(responseData)
+            setLoading(false)
+            setResult(true)
+            // console.log(responseData)
+        })
+        .catch(function(error) {
+            console.log("Reached to error")
+            console.log(error)
+            setLoading(false)
+            setResult(true)
+            setError(true)
+        });
+    }
     
-},[])
+      getData()
+    // console.log("DATA", response)
+
+},[result])
 
 return (
   <ScrollView 
     contentContainerStyle = {styles.contentContainer}
     style = {styles.container1}>
-      <View style = {styles.addReview}>
-      </View>
-      <View style = {styles.trendingProducts}>
-          <Text style = {styles.title}>Trending Products</Text>
-          <View style = {{marginLeft : 0}}>
-              <Carousel DATA = {GetProducts} onClickItem = {goToProductFeed}/>
-          </View>
-      </View>
-      <View style = {styles.productRecommendation}>    
-          <Text style = {styles.title}>Recommended Products for you</Text>
-          <View style = {{marginLeft : 0}}>
-              <Carousel DATA = {GetProducts} onClickItem = {goToProductFeed}/>
-          </View>
-      </View>
-      <View style = {styles.feed}>
-      </View>
+        <View style = {styles.addReview}>
+        <ImageLoader
+      source={"https://mish1-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/books.png"}
+      fallback={require('../assets/hero.png')}
+      style = {styles.imageCover}
+    />
+            {/* <ImageBackground source = {require('../assets/hero.png')} 
+                        style = {styles.imageCover} >
+            </ImageBackground> */}
+        </View>
+
+        {response.length > 0 && response.map((item,index) =>{
+            return (
+            <View key = {index} style = {styles.trendingProducts}>
+                <Text style = {styles.title}>{item.header}</Text>
+                <View style = {{marginLeft : 0}}>
+                    <Carousel DATA = {item.data} onClickItem = {goToProductFeed} varValue = {item.var}/>
+                </View>
+            </View> )
+
+        })}
+    
+        
+       
+     
   </ScrollView>
 )
 }
@@ -178,8 +230,8 @@ container1 : {
 addReview : {
   backgroundColor : 'pink',
   flex : 1,
-  width : width * 0.9,
-  height : width * 0.7,
+  width : width,
+  height : width * 0.8,
 },
 trendingProducts : {
   width,
@@ -198,7 +250,9 @@ feed : {
 },
 title : {
   fontWeight : 'bold',
+  fontSize : 20,
   marginLeft : 20,
+  margin : 10,
 },
 container: {
   flex: 1,
@@ -240,5 +294,9 @@ text: {
 carouselStyle : {
 
 },
+imageCover : {
+    width : width,
+    height : width * 0.8,
+  },
 
 })

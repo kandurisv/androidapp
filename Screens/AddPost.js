@@ -5,7 +5,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-
+import { useNavigation , useRoute } from '@react-navigation/native';
 
 const background = "white"
 const selectedQuestionBackground = "#d1a485"
@@ -132,6 +132,10 @@ const OptionsQuestions = ({questions}) => {
 
 
 const AddPost = () => {
+
+  const navigation = useNavigation()
+  const route = useRoute()
+
   const [sliderValue,setSliderValue] = React.useState(0)
   const [absValue,setAbsValue] = React.useState(0)
   const left = absValue * (Dimensions.get("screen").width-30)/50;

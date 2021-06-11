@@ -3,17 +3,18 @@ import React,{useEffect} from 'react'
 import { View , StyleSheet, ScrollView, TouchableOpacity, ToastAndroid} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
 import faker from 'faker'
-import { useNavigation } from '@react-navigation/native';
+
 
 import axios from 'axios';
 import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
 
-
+import { useNavigation , useRoute } from '@react-navigation/native';
 
 
 const UserDetails = () => {
 
-    const navigation = useNavigation() 
+    const navigation = useNavigation()
+    const route = useRoute()
     const [userDetails, setUserDetails] = React.useState({})
     const [loading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)

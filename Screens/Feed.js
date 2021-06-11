@@ -1,29 +1,10 @@
 import React, { useState , useEffect, useContext} from 'react'
 import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, ActivityIndicator, StyleSheet, Image , Dimensions} from 'react-native'
 
-// import Header from '../Components/Header/HeaderHamburger'
-// //import { add } from '../Components/Helpers/S3Upload';
-// import axios from 'axios';
-// import {AuthContext} from '../Components/Context/Auth'
-// import {mishfitURL} from '../assets/Constants'
-// import * as Colors from '../assets/Colors'
-
-
-const wait = (timeout) => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout);
-  });
-}
-
-const Loader = () => (
-  <View style={{ minHeight: 230, padding: 20 }}>
-    <ActivityIndicator
-      color="#000"
-      size="large"
-      style={{ alignSelf: "center" }}
-    />
-  </View>
-);
+import { useNavigation , useRoute } from '@react-navigation/native';
+import axios from 'axios'
+import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
 
 
 const {width} = Dimensions.get("window");
@@ -34,47 +15,64 @@ const images = [
     'https://images.pexels.com/photos/3514150/pexels-photo-3514150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
 ]
 
-const FeedItem = (props) => {
+
+
+const FeedItem = ({item}) => {
+  const navigation = useNavigation()
+  
+   // const review = item.content.toString();
+    var review = ""
+    item.content.map((reviewItem,index) => {
+      if(reviewItem.length > 0) {
+        review = review + "Day " + item.day_product_used_content[index] + ": " + reviewItem + "\n"
+      }
+      })
+    
+    var context = ""
+    item.category_ques.map((contextItem,index)=>{
+      context = context + item.category_ques[index] + " : " + item.category_ans[index] + "\n" + "\n"
+    })
+
+    const onItemClick = () => {
+      navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
+    }
+   
+
+
     return(
-        <View style = {styles.container}>
-            <Text style ={styles.username} >Username</Text>    
-            <ScrollView 
-        pagingEnabled
-        horizontal
-        showsHorizontalScrollIndicator = {false}
-        >
-            {images.map((image , index) => (
-                <Image
-                key = {index}
-                source = {{uri: image}}
-                style = {styles.image}
-            />
-            ))}
-            
-        </ScrollView>
-        <Text style ={styles.productTitle} >Product Name</Text>
-        <Text style ={styles.content} >I have been using this product for ...</Text>
-        
-            
-        </View>
+        <TouchableWithoutFeedback style = {styles.container} onPress = {onItemClick}>
+            <Text style ={styles.username} > {item.username}</Text>    
+            <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
+            {item.image_list.map((image , index) => (
+                <Image key = {index} style = {styles.image} source = {{uri: image}}
+            />))} 
+            </ScrollView>
+            <Text style ={styles.productTitle} >{item.product_name}</Text>
+            <Text style ={styles.content} > {review.substring(0,40)} ...</Text>
+        </TouchableWithoutFeedback>
     );
 };
 
 
 const Feed = (props) => {
+
+  const route = useRoute()
+
   const [refreshing, setRefreshing] = useState(false);
-  //const [accessToken,idToken,userId,eventId] = useContext(AuthContext);
-  //const [mishfitURL,setMishfitURL] = useState("https://xcn5s80hy6.execute-api.ap-south-1.amazonaws.com/Dev")
   const [itemsForFeed,setItemsForFeed] = useState([])
   const [error, setError] = useState(false);
   const [pageNumber,setPageNumber] = useState(1)
   const [loadingMore,setLoadingMore] = useState(false)
-
+  const [varValue,setVarValue] = useState(route ? route.params ? route.params.varValue ? route.params.varValue : "time" : "time" : "time")
+  const [requestValue,setRequestValue] = useState(route ? route.params ? route.params.value ? route.params.value : null :null : null)
+  const [requestId,setRequestId] = useState(route ? route.params ? route.params.id ? route.params.id : null :null : null)
+ // const [parameter, setParameter] = useState(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
+  
   // const fetchMoreItems = async() => {
-  //   axios.get(mishfitURL + "/itemsforfeed", {
+  //   axios.get(URL + "/post/feed", {
   //     params: {
-  //       user_id : userId,
-  //       page_number : pageNumber+1
+  //       var : varValue,
+  //       value : requestValue
   //     }
   //   })
   // .then(res => res.data)
@@ -119,43 +117,40 @@ const Feed = (props) => {
   // }, []);
 
   useEffect(() => {
-    // console.log("=============NEW REQUEST===========================")
-    // ToastAndroid.show("Welcome - Write & Read authentic reviews", ToastAndroid.SHORT);
-    // axios.get(mishfitURL + "/itemsforfeed", {
-    //     params: {
-    //       user_id : userId,
-    //       page_number : 1
-    //     }
-    //   })
-    // .then(res => res.data)
-    // .then(function (responseData) {
-    //     console.log("ARRAY LENGTH ++++++++++++++++++++++++++++++++++++++++++++++")
-    //   //console.log(responseData)
-    //     console.log(responseData.length)
-    //     setItemsForFeed(responseData)
-    //     })
-    // .catch(function (error) {
-    //   setError(true);      
-    // });
-  },[]);
+    console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
+    setVarValue(route ? route.params ? route.params.varValue ? route.params.varValue : "time" : "time" : "time")
+    setRequestValue(route ? route.params ? route.params.value ? route.params.value : null : null : null)
+    setRequestId(route ? route.params ? route.params.id ? route.params.id : null :null : null)
+  //  setParameter(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
+   
+
+  //  console.log("Parameter", parameter)
+
+    axios.get(URL + "/post/feed", {
+         params: {
+            var : varValue,
+            value : requestId
+          }
+      })
+    .then(res => res.data)
+    .then(function (responseData) {
+        console.log("ARRAY LENGTH ++++++++++++++++++++++++++++++++++++++++++++++")
+        // console.log(responseData)
+        // console.log(responseData.length)
+        setItemsForFeed(responseData)
+        })
+    .catch(function (error) {
+      setError(true);   
+      console.log("Error" , error)   
+    });
+  },[varValue, requestId , requestValue ]);
 
 
 
   const items = ({item}) => (
-        (item.item_cover_photo && item.user_name) ?
-        <View>     
-            <FeedItem 
-              // user_id = {item.user_id}
-              //         item_id = {item.item_id}
-              //         username = {item.user_name}
-              //         imageurl = {item.item_cover_photo}
-              //         title = {item.item_details}
-              //         numberLikes = {item.item_feed_likes}
-              //         numberBuy = {item.item_feed_wishbuys}
-              //         like = {item.likes}
-              //         buy = {item.wishbuys}
-              //         time = {item.event_ts}
-            /> 
+        (item.image_list && item.username) ?
+          <View>     
+            <FeedItem item = {item}/> 
           </View> : null
         )
  
@@ -173,7 +168,7 @@ const Feed = (props) => {
         renderItem = {items}
     //    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     //    ListFooterComponent={loadingMore && <Loader />}
-        onEndReachedThreshold={0.01}
+    //    onEndReachedThreshold={0.01}
     //    onEndReached={loadMoreItems}
         // ListEmptyComponent = {<View style = {{alignItems : 'center' , justifyContent : 'center'}}>
         //   <Text style = {{fontSize : 20, fontStyle : 'italic'}}> Loading ... Please wait !</Text>

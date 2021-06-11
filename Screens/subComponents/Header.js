@@ -2,6 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, View , TouchableOpacity} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import {Entypo,AntDesign} from '@expo/vector-icons'
+import { StatusBar } from 'expo-status-bar';
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 const Header = () => {
   return (
@@ -16,6 +18,15 @@ const Header = () => {
       <Text style = {styles.title}>MISH</Text>
     </View>
     <View style = {styles.headerRight}>
+    <View style = {{ flex : 1}}>
+        <Pressable 
+        style = {styles.searchButton}
+        onPress = {() => console.warn( 'Search Btn Clicked') }
+        >
+        <Fontisto name = "search" size = {25} color = {"#f15454"} />
+        <Text style = {styles.searchButtonText}> Where are you going ?</Text>
+        </Pressable>
+      </View>
         {/* <TouchableOpacity style = {styles.addItem} onPress = {()=>navigation.navigate("+")}>
             <Text style = {{color : 'white' , fontSize : 12}}>Add Item</Text>
         </TouchableOpacity>
@@ -42,13 +53,13 @@ const styles = StyleSheet.create({
   },
   headerLeft : {
       flexDirection : 'row', 
-      flex: 1,
+      
       width : 20,
       backgroundColor : 'pink'
   },
   headerMiddle : {
     flexDirection : 'row', 
-    flex: 1,
+    
     backgroundColor : 'orange'
   },
   headerRight : {
@@ -89,5 +100,26 @@ const styles = StyleSheet.create({
   userButton : {
       padding : 10
   },
+
+  searchButtonText :{
+    fontSize: 16 ,
+    fontWeight: 'bold'
+  },
+  
+    searchButton:{
+      backgroundColor: '#fff',
+      height: 60,
+      width: Dimensions.get('screen').width - 20,
+      borderRadius:30,
+      marginHorizontal: 10,
+      justifyContent:'center',
+      flexDirection:'row',
+      alignItems:'center',
+      position: 'absolute',
+      top: 20,
+      zIndex: 100,
+      borderColor:'black',
+      borderWidth: 1
+    }
 })
 
