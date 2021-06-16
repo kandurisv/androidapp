@@ -447,119 +447,143 @@ const AddPost = () => {
 
   }
 
+  const [searchLoading,setSearchLoading] = React.useState(false)
+  const [searchArray, setSearchArray] = React.useState([])
+  const [inputFocus,setInputFocus] = React.useState(false)
+  const [searchText,setSearchText] = React.useState("")
+
+  const search = (text) => {
+    setSearchText(text)
+    setSearchLoading(true)
+    
+    axios.get(URL + "/search/product", {params:{str2Match : text }} , {timeout : 2})
+      .then(res => res.data).then(function(responseData) {
+          console.log("SearchArray",searchArray)
+          setSearchLoading(false)
+          setSearchArray(responseData)
+          console.log("Reached Here response")
+    })
+    .catch(function(error) {
+          setSearchLoading(false)
+          console.log("Reached Here error")
+    });
+ 
+  }
+
+  const onClickSearchItem = (item) => {
+    setInputFocus(false)
+    setProductSelected(true)
+    setSearchText(item.product_id)
+  }
 
 
-  return(
+
+return(
+<View>
     <View>
-      <View>
-            <ModernHeader 
-                title="Add Review"
-                titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
-                backgroundColor= {background}
-                leftIconOnPress={() => navigation.goBack()}
-                />
-      </View>
-   
-   <ScrollView contentContainerStyle = {styles.FullPageContainer} style = {styles.FullPageContainer}>
-      <View style={styles.flex10}>
-        {isOpen ? (<ImageBrowserScreen onComplete={onComplete} />) : 
-        (
-          <View style={styles.flex10}>
-          {/* <Button title="Add Photos" onPress={() => setIsOpen(true)}/> */}
-          <View style = {styles.ProductContainer}>
-          <LookupModal
-              data={users}
-              value={user}
-              onSelect={item => setUser(item)}
-              displayKey={"name"}
-              selectText = "Search for Product"
-              placeholder = "Search for Product"
-              selectButtonStyle = {{backgroundColor : 'pink'}}
-              selectButtonTextStyle = {{color : 'red'}}
-              contentStyle = {{backgroundColor : 'orange'}}
-              itemStyle = {{backgroundColor : 'green'}}
-              itemTextStyle = {{fontWeight : 'bold'}}
-              children = {
-                <View style = {styles.ProductContainer1}>
-                  <Text>Search for Products</Text>
-                  <MaterialCommunityIcons name = "card-search-outline" size = {30} color = "black"/>
-                </View>
-              }
-              
-          />
-          </View>
-         
-            
-            {
-              existingReviewExists ? <ReviewSummary /> : null
-            }
-
-            <View style = {{flexDirection : 'row'}}>
-              <TouchableOpacity style = {styles.imagePickerButton} onPress={() => setIsOpen(true)}>
-                <MaterialCommunityIcons name = "image-plus" size = {100} color = "grey"/>
-                <Text style = {{ }}>Add Photos</Text>
-              </TouchableOpacity>
-            {!imageCount ? <View style = {{flex : 1, justifyContent : 'center' , alignItems : 'center', marginLeft : 30 , borderWidth : 1, borderColor : background}}><Text></Text></View> : 
-              <FlatGrid itemDimension={100} data={photos} renderItem={({item}, i) => ((
-                <Image
-                  style={{ height: 100, width: 100 }}
-                  source={{ uri: item.uri }}
-                  key={i}
-                />))}/>
-            }
-            </View>
-
-            {!existingReviewExists ? !categoryAnsExists ?
-            <View style = {styles.ContextContainer}>
-              {ContextOptions.slice(0,2).map((item,index) => {
-                return <OptionsQuestions key = {item.id} questions = {ContextOptions[index]} />
-              })}
-              </View>
-            : <CategoryAnsSummary /> : null}
-        {/* <View> <TextInput placeholder = "Days since purchase" keyboardType = 'numeric'
-            maxLength = {3} onChangeText={text => onChangeDay(text)} value={dayValue} /> </View> */}
-        
-        <View style = {styles.timeSlideContainer}>
-          <View style ={styles.question} >
-            <Text style = {styles.questionText}> #Days Used </Text>
-          </View>
-          <View style = {styles.sliderValueView}>
-            <Text style={[styles.sliderValueText, {left: left}] }>{sliderValue}</Text>
-          </View>
-          <Slider
-            style={{width: Dimensions.get("screen").width, height: 10}}
-            minimumValue={sliderMinValue}
-            maximumValue={60}
-            step = {5}
-            minimumTrackTintColor= {selectedQuestionBackground}
-            maximumTrackTintColor= "#999"
-            value = {absValue}
-            onValueChange = {value => sliderChange(value)}
-          />
-        </View>
-  
-
-        <View style = {styles.ReviewWritingContainer}>
-          <TextInput 
-            placeholder = "Add your review ( Atleast 100 words)"
-            style = {styles.reviewInput}  
-            multiline
-            autocomplete
-            scrollEnabled
-            />
-        </View>
-
-
-        <TouchableOpacity style = {styles.submitButton} onPress = {onSubmitReview}>
-          <Text style = {styles.submitText}>Submit</Text>
-        </TouchableOpacity>
-        </View>
-        )}
-      </View>
-    </ScrollView>
+        <ModernHeader title="Add Review" titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+          backgroundColor= {background} leftIconOnPress={() => navigation.goBack()}/>
     </View>
-  )
-}
+    <ScrollView contentContainerStyle = {styles.FullPageContainer} style = {styles.FullPageContainer}>
+        <View style={styles.flex10}>
+			{isOpen ? (
+			
+				<ImageBrowserScreen onComplete={onComplete} />) : (
+				
+				<View style={styles.flex10}>
+					<View style = {styles.ProductContainer}>
+						<TextInput 
+							placeholder = "Search for Product"
+							onChangeText = {(text) => search(text)}
+							onFocus = {()=>setInputFocus(true)}
+						/>
+					</View>
+				
+					{inputFocus ?
+						<View>
+            <FlatList data={searchArray} keyExtractor = {item => item.product_id.toString()} 
+              contentContainerStyle = {{flex : 1, margin : 10,}}
+              renderItem = {({item})=>{
+							return(<TouchableOpacity 
+                style = {{flex : 1, height : 30 , borderWidth : 1, borderColor : '#DDD',  marginTop : 10, padding : 10, justifyContent : 'center'}}
+                onPress = {()=>onClickSearchItem(item)} styles = {{borderColor : 'red'}}>
+                <Text style = {{fontSize :14}}>{item.product_name}</Text>
+							</TouchableOpacity>)
+						}}
+						/>
+            </View> : productSelected ? 
+            (
+						<View>
+							{existingReviewExists ? <ReviewSummary /> : null}
+							
+							<View style = {{flexDirection : 'row'}}>
+								<TouchableOpacity style = {styles.imagePickerButton} onPress={() => setIsOpen(true)}>
+									<MaterialCommunityIcons name = "image-plus" size = {100} color = "grey"/>
+									<Text style = {{ }}>Add Photos</Text>
+								</TouchableOpacity>
+								{!imageCount ? 
+									<View style = {{flex : 1, justifyContent : 'center' , alignItems : 'center', marginLeft : 30 , borderWidth : 1, borderColor : background}}>
+										<Text></Text>
+									</View> : 
+									<FlatGrid itemDimension={100} data={photos} renderItem={({item}, i) => ((
+										<Image
+										  style={{ height: 100, width: 100 }}
+										  source={{ uri: item.uri }}
+										  key={i}
+										/>))}/>}
+							</View>
+
+							{!existingReviewExists ? !categoryAnsExists ?
+								<View style = {styles.ContextContainer}>
+									{ContextOptions.slice(0,2).map((item,index) => {
+										return <OptionsQuestions key = {item.id} questions = {ContextOptions[index]} />
+									})}
+								</View> : 
+								<CategoryAnsSummary /> : null
+							}
+			
+							<View style = {styles.timeSlideContainer}>
+								<View style ={styles.question} >
+									<Text style = {styles.questionText}> #Days Used </Text>
+								</View>
+								<View style = {styles.sliderValueView}>
+									<Text style={[styles.sliderValueText, {left: left}] }>{sliderValue}</Text>
+								</View>
+								<Slider
+									style={{width: Dimensions.get("screen").width, height: 10}}
+									minimumValue={sliderMinValue}
+									maximumValue={60}
+									step = {5}
+									minimumTrackTintColor= {selectedQuestionBackground}
+									maximumTrackTintColor= "#999"
+									value = {absValue}
+									onValueChange = {value => sliderChange(value)}
+								/>
+							</View>
+	  
+							<View style = {styles.ReviewWritingContainer}>
+							  <TextInput 
+								placeholder = "Add your review ( Atleast 100 words)"
+								style = {styles.reviewInput}  
+								multiline
+								autocomplete
+								scrollEnabled
+								/>
+							</View>
+
+							<TouchableOpacity style = {styles.submitButton} onPress = {onSubmitReview}>
+							  <Text style = {styles.submitText}>Submit</Text>
+							</TouchableOpacity>
+						</View>) : null
+           
+					}
+				</View>)
+			}
+		</View>
+  </ScrollView>
+</View>
+
+)}
 
 const styles = StyleSheet.create({
   submitButton : {

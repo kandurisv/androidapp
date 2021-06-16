@@ -1,9 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
 import {View,Text , ActivityIndicator, TouchableOpacity} from 'react-native'
-import TabNavigator from './Screens/TabNavigator'
 import axios from 'axios'
 import {URL, FetchData} from './Screens/exports'
+import Navigator from './Screens/Navigator'
 
 
 
@@ -82,7 +82,7 @@ const App = () => {
 
     return (
        <NavigationContainer>
-           <TabNavigator />
+           <Navigator />
        </NavigationContainer>
     
     )

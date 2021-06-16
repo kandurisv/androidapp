@@ -209,16 +209,29 @@ const UserDetailsStack = ({navigation}) => {
   );
 }
 
+const AuthStack = ({navigation}) => {
+  return (
+      <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Home" component={Home}  /> 
+        <Stack.Screen name="Validation" component ={Validation} />
+        <Stack.Screen name="Login" component ={Login} />
+        <Stack.Screen name="Signout" component ={Signout} />
+      </Stack.Navigator>
+  );
+}
+
+
 
 const TabNavigator = () => {
+    
+
     return (
       <Tab.Navigator 
         tabBarOptions = {tabBarOptions} 
         options = {{unmountOnBlur : true}}
         tabBar={props => <TabBar {...props} />}
-        initialRouteName = "Post"  
+        initialRouteName = "Home"  
       >
-
         <Tab.Screen name="Home" component={HomeStack} options = {tab1Options} />
         <Tab.Screen name="Feed" component={FeedStack} options = {tab2Options} />
         <Tab.Screen name="Post" component={AddPostStack} options = {tab3Options} />
@@ -227,8 +240,23 @@ const TabNavigator = () => {
       </Tab.Navigator>
     )
   }
+
+  const Navigator = () => {
+    const [userAuth,setUserAuth] = React.useState(true)
+    return (
+      <Stack.Navigator 
+        initialRouteName = {userAuth ? "Auth" : "Tab"}
+        screenOptions={{headerShown: false}}
+      >
+        <Stack.Screen name="Auth" component={AuthStack} />
+        <Stack.Screen name="Tab" component={TabNavigator} />
+      </Stack.Navigator>
+    );
+  }
+
+
   
-export default TabNavigator;
+export default Navigator;
 
   const style = StyleSheet.create({
     tabContainer: {

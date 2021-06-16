@@ -43,6 +43,9 @@ const Login = () => {
   return (
     <View style = {{flex : 1, backgroundColor : 'white'}} >
         <View style = {{flex : 1, backgroundColor : 'pink'}} />
+        <View>
+          <Text> Login using Phone</Text>
+        </View>
         <View style = {styles.container}>
           <View style = {styles.country}>
             {/* <Icon name="india" style={styles.flag}/> */}
@@ -88,7 +91,9 @@ const styles = StyleSheet.create({
       flexDirection : 'row', 
       alignItems : 'center',
       justifyContent : 'space-evenly' , 
-      margin : 10
+      margin : 10,
+      
+
     },
     flag : { 
       alignSelf : 'center',
@@ -98,19 +103,19 @@ const styles = StyleSheet.create({
       margin : 4, 
       marginTop : 11,
       textAlign : 'center',
-      fontSize : 12,
+      fontSize : 16,
     },
     country : {
-        elevation : 5,
+        
         borderRadius : 5,
-        backgroundColor : '#EEE',
+        
         height : 40,
         
         flexDirection : 'row'
     },
     phoneNumberBox : { 
       height: 45 ,
-      borderRadius : 40,
+      borderRadius : 10,
       borderColor : "#bbb",
       borderWidth : 1,
       flex : 1,
