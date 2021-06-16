@@ -1,93 +1,181 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { SectionGrid } from 'react-native-super-grid';
+import { StyleSheet, View, Text , ImageBackground, Dimensions} from 'react-native';
+import { FlatGrid } from 'react-native-super-grid';
+import axios from 'axios'
+import {background, URL} from './exports'
+import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
+import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+
 
 export default function Pins() {
-  const [items, setItems] = React.useState([
-    { name: 'TURQUOISE', code: '#1abc9c' },
-    { name: 'EMERALD', code: '#2ecc71' },
-    { name: 'PETER RIVER', code: '#3498db' },
-    { name: 'AMETHYST', code: '#9b59b6' },
-    { name: 'WET ASPHALT', code: '#34495e' },
-    { name: 'GREEN SEA', code: '#16a085' },
-    { name: 'NEPHRITIS', code: '#27ae60' },
-    { name: 'BELIZE HOLE', code: '#2980b9' },
-    { name: 'WISTERIA', code: '#8e44ad' },
-    { name: 'MIDNIGHT BLUE', code: '#2c3e50' },
-    { name: 'SUN FLOWER', code: '#f1c40f' },
-    { name: 'CARROT', code: '#e67e22' },
-    { name: 'ALIZARIN', code: '#e74c3c' },
-    { name: 'CLOUDS', code: '#ecf0f1' },
-    { name: 'CONCRETE', code: '#95a5a6' },
-    { name: 'ORANGE', code: '#f39c12' },
-    { name: 'PUMPKIN', code: '#d35400' },
-    { name: 'POMEGRANATE', code: '#c0392b' },
-    { name: 'SILVER', code: '#bdc3c7' },
-    { name: 'ASBESTOS', code: '#7f8c8d' },
-  ]);
+
+  const [userId,setUserId] = React.useState(2)
+  const [pinsPost,setPinsPost] = React.useState([])
+  const [pinsPostEmpty,setPinsPostEmpty] = React.useState(true)
+  const [pinsProductEmpty,setPinsProductEmpty] = React.useState(true)
+  const [pinsProduct,setPinsProduct] = React.useState([])
+  const [postError,setPostError] = React.useState(false)
+  const [productError,setProductError] = React.useState(false)
+
+  const navigation = useNavigation()
+
+  const {width} = Dimensions.get('screen')
+
+  React.useEffect(()=>{
+    const fetchPinsPost = () => {
+      axios.get(URL + "/pins/post", {params:{user_id : userId }} , {timeout : 5})
+      .then(res => res.data).then(function(responseData) {
+          console.log("A", responseData)
+          if(responseData.length) {
+            setPinsPostEmpty(false)
+          }
+          setPinsPost(responseData)
+          
+      })
+      .catch(function(error) {
+          setPostError(true)
+      });
+  }
+    fetchPinsPost()
+
+
+    const fetchPinsProduct = () => {
+      axios.get(URL + "/pins/product", {params:{user_id : userId }} , {timeout : 5})
+      .then(res => res.data).then(function(responseData) {
+          console.log("b", responseData)
+          if(responseData.length) {
+            setPinsProductEmpty(false)
+          }
+          setPinsProduct(responseData)
+      })
+      .catch(function(error) {
+          setProductError(true)
+      });
+  }
+  fetchPinsProduct()
+
+  },[])
 
   return (
-    <SectionGrid
-      itemDimension={90}
-      // staticDimension={300}
-      // fixed
-      // spacing={20}
-      sections={[
-        {
-          title: 'Title1',
-          data: items.slice(0, 6),
-        },
-        {
-          title: 'Title2',
-          data: items.slice(6, 12),
-        },
-        {
-          title: 'Title3',
-          data: items.slice(12, 20),
-        },
-      ]}
-      style={styles.gridView}
-      renderItem={({ item, section, index }) => (
-        <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemCode}>{item.code}</Text>
-        </View>
-      )}
-      renderSectionHeader={({ section }) => (
-        <Text style={styles.sectionHeader}>{section.title}</Text>
-      )}
-    />
-  );
+    <View style = {{flex : 1}}>
+      <View>
+        <ModernHeader 
+          title="Pins"
+          titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+          backgroundColor= {background}
+          leftIconOnPress={() => navigation.goBack()} />
+      </View>
+      
+      <View>
+        <Text style={styles.header}>My Pinned Posts</Text>
+        {pinsPostEmpty ? 
+        <View>
+          <Text style = {{fontSize : 16}}>No Pinned Posts yet. Please engage on posts to save it here</Text>
+        </View> :
+        <FlatGrid itemDimension={200} data={pinsPost} renderItem={({item}, i) => (
+          <View style = {styles.contentContainer}>
+            <ImageBackground source = {{uri : item.image_list[0]}} style = {styles.image} blurRadius = {1}></ImageBackground>
+            <View style = {styles.textView}>
+              <Text style={styles.text}>{item.username}</Text>
+            </View>
+          </View>)}
+        />}
+      </View>
+      <View>
+        <Text style={styles.header}>My Pinned Product</Text>
+        {pinsProductEmpty ? 
+          <View>
+            <Text style = {{fontSize : 16}}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>
+          </View> :
+        <FlatGrid itemDimension={200} data={pinsProduct} renderItem={({item}, i) => (
+          <View style = {styles.contentContainer}>
+            <ImageBackground source = {{uri : item.image}} style = {styles.image} blurRadius = {2}></ImageBackground>
+            <View style = {styles.textView}>
+              <Text style={styles.text}>{item.product_name}</Text>
+            </View>
+          </View>)}
+        />}
+      </View>
+
+    </View>
+   
+    );
 }
 
 const styles = StyleSheet.create({
-  gridView: {
-    marginTop: 20,
+  contentContainer : {
+    justifyContent : 'center',
+    alignItems : 'center',
+    width : Dimensions.get('screen').width * 0.45,
+    height : Dimensions.get('screen').width * 0.45,
+  
+  },
+  container1 : {
+      marginBottom : 60,
+  },
+  addReview : {
+    backgroundColor : 'pink',
+    flex : 1,
+    width : Dimensions.get('screen').width,
+    height : Dimensions.get('screen').width * 0.8,
+  },
+  trendingProducts : {
+    width : Dimensions.get('screen').width,
+    margin : 10 , 
+    flex : 1,
+    
+  },
+  productRecommendation : {
+    width : Dimensions.get('screen').width,
+    margin : 10 ,
+    marginTop : 0, 
+    flex : 1,
+  },
+  feed : {
+  
+  },
+  header : {
+    fontWeight : 'bold',
+    fontSize : 20,
+    marginLeft : 20,
+    margin : 10,
+  },
+ 
+  image: {
     flex: 1,
+    width : Dimensions.get('screen').width * 0.45,
+    height : Dimensions.get('screen').width * 0.45,
+    borderColor : "black",
+    borderWidth : 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    borderRadius : 10,
+    opacity : 0.4,
+    backgroundColor : 'black',
+    // ...StyleSheet.absoluteFillObject,  
   },
-  itemContainer: {
-    justifyContent: 'flex-end',
-    borderRadius: 5,
-    padding: 10,
-    height: 150,
+  textView: {
+    ...StyleSheet.absoluteFillObject,
   },
-  itemName: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+  text: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop : Dimensions.get('screen').width * 0.2
+    // position : 'absolute',
+    // top : 40,
+    
   },
-  itemCode: {
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#fff',
+  carouselStyle : {
+  
   },
-  sectionHeader: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
-    alignItems: 'center',
-    backgroundColor: '#636e72',
-    color: 'white',
-    padding: 10,
-  },
-});
+  imageCover : {
+      width : Dimensions.get('screen').width,
+      height : Dimensions.get('screen').width * 0.8,
+    },
+  
+  })
+  

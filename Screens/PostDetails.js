@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList} from 'react-native';
+import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
 import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
+import {MaterialIcons} from '@expo/vector-icons';
+import {Avatar} from 'react-native-paper';
+
 
 const {width} = Dimensions.get("window");
 const height = width * 1.35
@@ -20,16 +23,24 @@ const Cover = (props) => {
     const progress = React.useRef(new Animated.Value(0)).current
     const [liked,setLiked] = React.useState(props.likeIndicator)
     const [likeCount,setLikeCount] = React.useState(props.upvotes)
+    const [commentCount,setCommentCount] = React.useState(props.comments)
     const navigation = useNavigation()
     const getFeedByUser = () => {
        // navigation.navigate("Feed", {varValue : "user_id" , id : props.userId, value : props.username })
         console.log("Go to Feed")
         }
 
-    const HeartColor = () => {
-           
-            
+    React.useEffect(()=>{
+        if(liked) {
+            Animated.timing(progress, {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.linear,
+                useNativeDriver : true
+              },).start();  
         }
+    },[])
+
 
     const likeClick = () => {
         setLiked(!liked)
@@ -52,22 +63,20 @@ const Cover = (props) => {
               },).start();
         }
             
-        const body = [
-            {
-                
-                    "review_id": props.details.summary_id,
-                    "user_id": props.details.user_id,
-                    "engagement_user_id": "dfasdfas",
-                    "product_id": props.details.product_id,
-                    "category_id": props.details.category_id,
-                    "engagement_user_name": "abcde",
-                    "upvote": liked,
-                    "downvote": null,
-                    "comment": null
-                  
-                }
-            ]
-            
+        const body = {
+            "engagement_id": 22,
+            "review_sum_id": "32",
+            "user_id": 3,
+            "engagement_user_id": 2,
+            "product_id": 2,
+            "category_id": 2,
+            "engagement_user_name": "abcde",
+            "upvote": 1,
+            "downvote": null,
+            "comment": null
+        }
+        
+            console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',
@@ -82,7 +91,7 @@ const Cover = (props) => {
     return(
         <ScrollView>
             <View style = {styles.container2}>
-                <StatusBar height = {0} translucent backgroundColor='transparent'/>
+                {/* <StatusBar height = {0} translucent backgroundColor='transparent'/> */}
                 <View style = {styles.usernameView}>
                 <TouchableOpacity  onPress = {getFeedByUser}>
                     <Text style ={styles.username2} >{props.username}</Text>
@@ -104,18 +113,18 @@ const Cover = (props) => {
                                 height: 50,
                                 backgroundColor: 'transparent',
                             }}
-                        source={require('../assets/animation/like-icon.json')}
+                        source={require('../assets/animation/like-icon5.json')}
                     />
                     </TouchableOpacity>
                 </View>
                 <View style = {styles.heartText2}>
-                    <Text style = {styles.likeNumber2}>{props.upvotes}</Text>
+                    <Text style = {styles.likeNumber2}>{likeCount}</Text>
                 </View>
                 <View style = {styles.comment2}>
-                    <Fontisto name = "comment" size = {25} color = {"#fff"} />
+                    <Fontisto name = "comment" size = {22} color = {"#ccc"} />
                 </View>
                 <View style = {styles.commentText2}>
-                    <Text style = {styles.commentNumber2}>{props.comments}</Text>
+                    <Text style = {styles.commentNumber2}>{commentCount}</Text>
                 </View>
             </View>
         </ScrollView>
@@ -153,7 +162,7 @@ const Data = [
     },
 ]
 
-const Tab = ({review,claim,context}) => {
+const Tab = ({reviewArray, dayArray, review,claim,context}) => {
 
     const [status, setStatus] = useState('Review');
     const [dataList , setDataList] = useState ([listTab[0]]);
@@ -164,15 +173,57 @@ const Tab = ({review,claim,context}) => {
     }
 
     const renderItem = ({item , index}) =>{
+        const ReviewItem = ({item,dayIndex}) => {
+            
+            return(
+               
+                    <View style = {{}} key = {dayIndex}>
+                        
+                            <Text style = {{fontWeight : 'bold' , marginTop : 10,}}>Day {dayArray[dayIndex]}</Text>
+                            <Text>{item}</Text>
+                        
+                    </View>  
+                   
+            )
+        }
+        const ClaimItem = () => {
+            return(
+                <View>
+                    <Text>{claim}</Text>
+                </View>
+            )
+        }
+        const ContextItem = () => {
+            return(
+                <View>
+                    <Text>{context}</Text>
+                </View>
+            )
+        }
+
         return(
             <View key ={index} style = {styles.itemContainer1} >
-                <Text style = {styles.textItem}>
+                {/* <Text style = {styles.textItem}>
                     {
                         item.status == "Review" ? review : 
                         item.status == "Claim" ? claim : context
-                    }
-                    
-                </Text>
+                    } 
+                </Text> */}
+              
+                    {
+                        item.status == "Review" ? 
+                        reviewArray.map((reviewItem,reviewIndex)=>{
+                        
+                        return (
+                        reviewItem ? 
+                        <ReviewItem key = {reviewIndex} dayIndex = {reviewIndex} item = {reviewItem}/> : null
+                        )  
+                        
+                    })
+                        : 
+                        item.status == "Claim" ? <ClaimItem /> : <ContextItem />
+                    } 
+               
             </View>
         )
     }
@@ -181,8 +232,9 @@ const Tab = ({review,claim,context}) => {
         <SafeAreaView style = {styles.container1}>
             <View style = {styles.listTab1}>
                 {
-                    listTab.map(e => (
+                    listTab.map((e,i) => (
                         <TouchableOpacity 
+                        key = {i}
                         style = {[styles.btnTab1 , status === e.status && styles.btnTabActive1]}
                         onPress = {() => setStatusFilter(e.status)}
                         >
@@ -199,7 +251,7 @@ const Tab = ({review,claim,context}) => {
 
             <FlatList 
                 data = {dataList}
-                keyExtractor = {(i,e) =>i.toString() }
+                keyExtractor = {(item,index) =>index.toString() }
                 renderItem = {renderItem}
             />
 
@@ -218,16 +270,15 @@ const PostDetails = (props) => {
     const [error,setError] = React.useState(false)
     const [result,setResult] = React.useState(false)
     const [likeIndicator,setLikeIndicator] = React.useState(false)
+    const [showComments,setShowComments] = React.useState(false)
+    
 
     React.useEffect(() => {
-        // console.log("ROUTE PARAMS", route.params)
-
-        // console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
-      
-        const getData = () => {
+     
+    const getData = () => {
         axios.get(URL + "/activity/user", {params:{user_id : route.params.details.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            // console.log("Reached to response")
+            console.log(responseData[0].upvote)
             setLikeIndicator(responseData[0].upvote)
             setLoading(false)
             setResult(true)
@@ -242,22 +293,76 @@ const PostDetails = (props) => {
         });
     }
 
-
-    
-      getData()
-
-
-
-
+    const fetchComments = () => {
+        axios.get(URL + "/post/comments", {params:{review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
+        .then(res => res.data).then(function(responseData) {
+            console.log(responseData)
+            setShowComments(true)
+            setComments(responseData)
+            setLoading(false)
+            setResult(true)
+        })
+        .catch(function(error) {
+            // console.log("Reached to error")
+            // console.log(error)
+            setLoading(false)
+            setResult(true)
+            setError(true)
+        });
+    }
+      
+        fetchComments()
+        getData()
 
     },[])
 
-    const getComments = () => {
 
+
+    const [message , setMessage] = useState('');
+    const [newAnswer,setNewAnswer] = useState(false)
+    
+    const onMicrophonePress = () =>{
+        ToastAndroid.show("Please add your comment", ToastAndroid.SHORT);
+    }
+
+    const onSendPress = async () =>{
+        const body = 
+            {
+                "review_sum_id": "32",
+                "user_id": 3,
+                "engagement_user_id": 2,
+                "product_id": 2,
+                "category_id": 2,
+                "engagement_user_name": "abcde",
+                "upvote": 3,
+                "downvote": 1,
+                "comment": message
+            }
+            
+            console.log(body)
+            axios({
+                method: 'post',
+                url: URL + '/activity',
+                data: body
+              })
+            .then(res => {
+                setMessage('')
+          }).catch((e) => console.log(e))
+    }
+
+    const onCommentsSend = () =>{
+        if(!message){
+            onMicrophonePress();
+        }
+        else {
+            onSendPress()
+            setMessage("")
+            ToastAndroid.show("Thanks for comment", ToastAndroid.SHORT);
+            
+        }
     }
 
   return (
-   
       <ScrollView contentContainerStyle={styles.container}>
         <View style = {styles.review}>
           <Cover 
@@ -274,15 +379,57 @@ const PostDetails = (props) => {
         </View>
         <View style = {styles.tab}>
           <Tab 
+            reviewArray = {route.params.details.content}
+            dayArray = {route.params.details.day_product_used_content}
             review = {route.params.reviewDetails}
             claim = {route.params.details.claim}
             context = {route.params.contextDetails}
           />
         </View>
         <View>
-            <TouchableOpacity onPress = {getComments}>
-                <Text> View Comments</Text>
-            </TouchableOpacity>
+            <View style ={styles.container5} > 
+                <KeyboardAvoidingView style ={styles.mainContainer5} >
+                    <TextInput 
+                    placeholder ={"Add a comment"}
+                    style ={styles.textInput5} 
+                    multiline
+                    value = {message}
+                    onChangeText = {setMessage}
+                    />
+                </KeyboardAvoidingView>
+
+                <View style ={styles.buttonContainer5} >
+                    <TouchableOpacity onPress = {onCommentsSend}>
+                        <MaterialIcons name = "send" size={24} color = '#0080FF' />
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style = {styles.commentsView}>
+                {comments.length > 0 && comments.map((item,index)=> {
+                   return(
+                    <View key = {index} style = {styles.commentContainer} >
+                        <View style = {styles.dp}>
+                        {item.engagement_user_name ? 
+                        <Avatar.Image 
+                            source={{
+                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ item.engagement_user_name + '&size=64'
+                            }} size={20}/> :
+                        <Avatar.Image 
+                            source={{
+                                uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=64'
+                             }} size={20}/>}
+                        <Text style = {styles.commentContainerName}>{item.engagement_user_name}</Text>
+                        </View>
+                        
+                        <Text style = {styles.commentContainerText}>{item.comment}</Text>
+                    </View>) 
+                })}
+                {comments.length == 0 && 
+                    <View style = {styles.commentContainer} >
+                        <Text style = {styles.commentContainerText}>No comments yet</Text>
+                    </View>}
+                
+            </View>
         </View>
       </ScrollView>
    
@@ -292,8 +439,31 @@ const PostDetails = (props) => {
 export default PostDetails
 
 const styles = StyleSheet.create({
+    dp : {
+        flexDirection : 'row',
+        alignItems : 'center',
+        
+    },
+    commentContainer : {
+        padding : 5 ,
+        marginTop : 10,
+        backgroundColor : 'white',
+        borderRadius : 5,
+
+    },
+    commentContainerText : {
+        marginTop : 10
+    },
+    commentContainerName : {
+        fontWeight : 'bold',
+        marginLeft : 10,
+    },
+    commentsView: {
+        margin : 10,
+
+    },
   container:{
-    paddingTop: 50,
+    
     paddingBottom : 60
    },
    tinyLogo: {
@@ -361,20 +531,20 @@ username2:{
 
 heart2:{
     position:'absolute',
-    bottom:0,
+    top:0,
     color : 'white',
-    marginBottom: 150,
-    marginLeft: width - 50,
+    marginTop: 100,
+    marginLeft: width - 60,
     fontSize:20,
     zIndex: 100
 },
 
 heartText2:{
     position:'absolute',
-    bottom:0,
+    top:0,
     // backgroundColor : 'white',
-    marginBottom: 120,
-    marginLeft: width - 48,
+    marginTop: 140,
+    marginLeft: width - 47,
     // fontSize:20,
 //     zIndex: 101
 },
@@ -386,20 +556,20 @@ likeNumber2:{
 
 comment2:{
     position:'absolute',
-    bottom:0,
-    color : 'white',
-    marginBottom: 60,
-    marginLeft: width - 50,
+    top:0,
+    color : '#AAA',
+    marginTop: 190,
+    marginLeft: width - 48,
     fontSize:20,
     zIndex: 100
 },
 
 commentText2:{
     position:'absolute',
-    bottom:0,
+    top:0,
     // backgroundColor : 'white',
-    marginBottom: 30,
-    marginLeft: width - 48,
+    marginTop: 212,
+    marginLeft: width - 42,
     // fontSize:20,
 //     zIndex: 101
 },
@@ -432,7 +602,7 @@ btnTab1:{
 },
 
 textTab1:{
-    fontSize: 16,
+    fontSize: 13,
     color:'black'
 },
 
@@ -450,10 +620,51 @@ itemContainer1:{
 },
 
 textItem:{
-    fontSize: 18,
+    fontSize: 16,
     
 
-}
+},
+container5:{
+    flexDirection :'row',
+    borderRadius : 5,
+    backgroundColor : '#FFFFFF',
+    borderWidth : 1,
+    borderColor : '#EEEEEE',
+    marginLeft : 10,
+    marginRight : 10,
+    marginTop : 20,
+},
 
+mainContainer5:{
+    flexDirection: 'row',
+    backgroundColor : '#FFFFFF',
+    borderRadius : 5,
+    alignContent : 'center',
+    flex : 1,
+    alignItems: 'center',
+    paddingLeft : 10,
+},
+
+textInput5 :{
+    flex: 1,
+    marginHorizontal: 10,
+    fontSize : 16,
+    color : 'black'
+},
+
+icon5:{
+    marginHorizontal: 5,
+},
+
+buttonContainer5:{
+    backgroundColor:"#FFF",
+    borderRadius:25,
+    width:50,
+    height : 50,
+    justifyContent:'center',
+    alignItems:'center',
+    alignSelf : 'center'
+    
+}
 
 });

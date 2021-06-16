@@ -3,10 +3,10 @@ import React,{useEffect} from 'react'
 import { View , StyleSheet, ScrollView, TouchableOpacity, ToastAndroid} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
 import faker from 'faker'
-
+import { ModernHeader } from "@freakycoder/react-native-header-view";
 
 import axios from 'axios';
-import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background} from './exports'
 
 import { useNavigation , useRoute } from '@react-navigation/native';
 
@@ -92,51 +92,61 @@ const UserDetails = () => {
 
 
     return (
+       
         error ? (<View style = {{flex : 1, justifyContent : 'center' , alignItems : 'center'}}><Text>Error</Text></View>) :
         loading ? (<View style = {{flex : 1, justifyContent : 'center' , alignItems : 'center'}}><Text>Loading</Text></View>) :
-        (<ScrollView style = {styles.container}>
-            {/* <HeaderBack title = "My Profile" color = "#E60023"/> */}
-            <View style = {styles.coverPhoto}>
-                <Text> Cover photo </Text>
-            </View>
-            <View style = {styles.dp}>
-            {userDetails.username ? 
-                    <Avatar.Image 
-                    source={{
-                    uri: 'https://ui-avatars.com/api/rounded=true&name='+ userDetails.username + '&size=512'
-                    }} size={80}/> :
-                    <Avatar.Image 
-                    source={{
-                    uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=512'
-                    }} size={80}/>}
-            </View>
-            <View style = {styles.mainContainer}>
-                <View style = {styles.username}>
-                    <Text style={styles.title} >{userDetails.username}</Text>
+        (
+            <View style = {{flex : 1}}>
+                <View>
+                    <ModernHeader 
+                        title="Details"
+                        titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+                        backgroundColor= {background}
+                        leftIconOnPress={() => navigation.goBack()}
+                        />
                 </View>
-                <View style = {styles.numContainer}>
-                <TouchableOpacity style = {styles.contentContainer} onPress = {onReviewsClick}>
-                    <Text style={styles.contentTop}>{userDetails.number_of_reviews}</Text>
-                    <Text style={styles.contentBottom}>Reviews</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.contentContainer} onPress = {onUpvotesClick}>
-                    <Text style={styles.contentTop}>{userDetails.number_of_upvotes}</Text>
-                    <Text style={styles.contentBottom}>UpVotes</Text>
-                </TouchableOpacity>   
-                <TouchableOpacity style = {styles.contentContainer} onPress = {onDownvotesClick}>
-                    <Text style={styles.contentTop}>{userDetails.number_of_downvotes}</Text>
-                    <Text style={styles.contentBottom}>Downvotes</Text>
-                </TouchableOpacity>
-                </View>   
-            </View>
-            <TouchableOpacity style = {styles.editButton} onPress={onEdit}>
-                <Text style = {styles.editText}> Edit Profile </Text>
-            </TouchableOpacity>
-        </ScrollView>)
-    
-    )
-  
         
+                <ScrollView style = {styles.container}>
+        
+                    <View style = {styles.coverPhoto}>
+                        <Text> Cover photo </Text>
+                    </View>
+                    <View style = {styles.dp}>
+                        {userDetails.username ? 
+                                <Avatar.Image 
+                                source={{
+                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ userDetails.username + '&size=512'
+                                }} size={80}/> :
+                                <Avatar.Image 
+                                source={{
+                                uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=512'
+                                }} size={80}/>}
+                    </View>
+                    <View style = {styles.mainContainer}>
+                        <View style = {styles.username}>
+                            <Text style={styles.title} >{userDetails.username}</Text>
+                        </View>
+                        <View style = {styles.numContainer}>
+                        <TouchableOpacity style = {styles.contentContainer} onPress = {onReviewsClick}>
+                            <Text style={styles.contentTop}>{userDetails.number_of_reviews}</Text>
+                            <Text style={styles.contentBottom}>Reviews</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {styles.contentContainer} onPress = {onUpvotesClick}>
+                            <Text style={styles.contentTop}>{userDetails.number_of_upvotes}</Text>
+                            <Text style={styles.contentBottom}>UpVotes</Text>
+                        </TouchableOpacity>   
+                        <TouchableOpacity style = {styles.contentContainer} onPress = {onDownvotesClick}>
+                            <Text style={styles.contentTop}>{userDetails.number_of_downvotes}</Text>
+                            <Text style={styles.contentBottom}>Downvotes</Text>
+                        </TouchableOpacity>
+                        </View>   
+                    </View>
+                    <TouchableOpacity style = {styles.editButton} onPress={onEdit}>
+                        <Text style = {styles.editText}> Edit Profile </Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View>)
+        )
 }
 
 

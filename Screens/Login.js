@@ -2,7 +2,7 @@ import React, { useState,useRef } from 'react';
 import { Button, TextInput , TouchableOpacity,View,Text, StyleSheet, Keyboard } from 'react-native';
 // import auth from '@react-native-firebase/auth';
 // import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-ico-flags';
+// import Icon from 'react-native-ico-flags';
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import LottieView from 'lottie-react-native';
 import { useNavigation , useRoute } from '@react-navigation/native';
@@ -45,7 +45,7 @@ const Login = () => {
         <View style = {{flex : 1, backgroundColor : 'pink'}} />
         <View style = {styles.container}>
           <View style = {styles.country}>
-            <Icon name="india" style={styles.flag}/>
+            {/* <Icon name="india" style={styles.flag}/> */}
             <Text style = {styles.countryCode}>+91</Text>
           </View>
           <TextInput

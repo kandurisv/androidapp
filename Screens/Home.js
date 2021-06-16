@@ -3,7 +3,9 @@ import { StyleSheet, Text, View , FlatList , Dimensions, ImageBackground, Toucha
 import { useNavigation , useRoute } from '@react-navigation/native';
 import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
-import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background} from './exports'
+import { ModernHeader } from "@freakycoder/react-native-header-view";
+
 
 const {width, height} = Dimensions.get("window")
 const CAROUSEL_ITEM_SQUARE_SIZE = 100
@@ -131,7 +133,7 @@ const Carousel = ({DATA , onClickItem , varValue}) => {
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             horizontal = {true}
             contentContainerStyle = {styles.carouselStyle}
             onScroll = {Animated.event(
@@ -160,7 +162,7 @@ const Home = () => {
         navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
     }
 
-React.useEffect(() => {
+    React.useEffect(() => {
     const getData = () => {
         axios.get(URL + "/home", {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
@@ -185,19 +187,25 @@ React.useEffect(() => {
 },[result])
 
 return (
-  <ScrollView 
-    contentContainerStyle = {styles.contentContainer}
-    style = {styles.container1}>
-        <View style = {styles.addReview}>
-        <ImageLoader
-      source={"https://mish1-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/books.png"}
-      fallback={require('../assets/hero.png')}
-      style = {styles.imageCover}
-    />
-            {/* <ImageBackground source = {require('../assets/hero.png')} 
-                        style = {styles.imageCover} >
-            </ImageBackground> */}
+    <View>
+        <View>
+            <ModernHeader 
+                title="Home"
+                titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+                backgroundColor= {background}
+                leftDisable
+                />
         </View>
+        <ScrollView 
+            contentContainerStyle = {styles.contentContainer}
+            style = {styles.container1}>
+                <View style = {styles.addReview}>
+                    <ImageLoader
+                        source={"https://mish1-fit-user-post-images.s3.ap-south-1.amazonaws.com/categoryPhotos/books.png"}
+                        fallback={require('../assets/hero.png')}
+                        style = {styles.imageCover}
+                    />
+                </View>
 
         {response.length > 0 && response.map((item,index) =>{
             return (
@@ -213,7 +221,8 @@ return (
         
        
      
-  </ScrollView>
+    </ScrollView>
+  </View>
 )
 }
 
@@ -222,10 +231,12 @@ export default Home
 const styles = StyleSheet.create({
 contentContainer : {
   justifyContent : 'center',
-  alignItems : 'center'
+  alignItems : 'center',
+  marginBottom : 60,
+
 },
 container1 : {
-
+    marginBottom : 130,
 },
 addReview : {
   backgroundColor : 'pink',

@@ -81,3 +81,6 @@ export const LoadingPage = () => {
         </View>
     )
 }
+
+
+export const background = "#EEE"

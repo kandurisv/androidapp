@@ -3,9 +3,9 @@ import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, Acti
 
 import { useNavigation , useRoute } from '@react-navigation/native';
 import axios from 'axios'
-import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background} from './exports'
 import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
-
+import { ModernHeader } from "@freakycoder/react-native-header-view";
 
 const {width} = Dimensions.get("window");
 const height = width * 1.2
@@ -40,7 +40,7 @@ const FeedItem = ({item}) => {
 
 
     return(
-        <TouchableWithoutFeedback style = {styles.container} onPress = {onItemClick}>
+        <TouchableWithoutFeedback style = {styles.container} onPress = {onItemClick} >
             <Text style ={styles.username} > {item.username}</Text>    
             <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
             {item.image_list.map((image , index) => (
@@ -57,6 +57,7 @@ const FeedItem = ({item}) => {
 const Feed = (props) => {
 
   const route = useRoute()
+  const navigation = useNavigation()
 
   const [refreshing, setRefreshing] = useState(false);
   const [itemsForFeed,setItemsForFeed] = useState([])
@@ -135,7 +136,7 @@ const Feed = (props) => {
     .then(res => res.data)
     .then(function (responseData) {
         console.log("ARRAY LENGTH ++++++++++++++++++++++++++++++++++++++++++++++")
-        // console.log(responseData)
+        console.log(responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
         })
@@ -147,23 +148,31 @@ const Feed = (props) => {
 
 
 
-  const items = ({item}) => (
+  const items = ({item,index}) => (
         (item.image_list && item.username) ?
-          <View>     
-            <FeedItem item = {item}/> 
+          <View key = {index}>     
+            <FeedItem key = {index} item = {item}/> 
           </View> : null
         )
  
 
   return (
     <View>
-      {/* <Header title = "Feed" color = "#E64852"/> */}
-      <View style = {{ marginBottom : 25}}>
+
+     <View>
+            <ModernHeader 
+                title="Feed"
+                titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+                backgroundColor= {background}
+                leftIconOnPress={() => navigation.goBack()}
+                />
+      </View>
+      <View style = {{ marginBottom : 0}}>
         {error ? 
         <View><Text>Error while loading data 😢</Text></View> : 
         <FlatList 
         keyExtractor={item => item.item_id} 
-        style = {{marginBottom:70}}
+        style = {{marginBottom:200}}
         data = {itemsForFeed}            
         renderItem = {items}
     //    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -185,7 +194,7 @@ const Feed = (props) => {
 const styles = StyleSheet.create({
     
     container:{
-        marginTop: 20,
+        marginBottom: 5,
         width,
         height,
         // backgroundColor:'black'
@@ -197,7 +206,7 @@ const styles = StyleSheet.create({
         // width:'100%',
         aspectRatio:2.5/3,
         resizeMode: 'cover',
-        borderRadius: 20,
+        borderRadius: 10,
         // margin: 10
     },
     productTitle:{

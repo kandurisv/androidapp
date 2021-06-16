@@ -17,6 +17,7 @@ import PostDetails from './PostDetails'
 import Validation from './Validation'
 
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ const totalWidth = Dimensions.get("window").width;
 const TAB_BAR_HEIGHT = 60
 const TAB_ICON_SIZE = 24
 const TAB_SLIDER_HEIGHT = 2
+// const TAB_SLIDER_COLOR = "#C51E3A"
 const TAB_SLIDER_COLOR = "#C51E3A"
 const TAB_ACTIVE_COLOR = "#0080FF"
 const TAB_INACTIVE_COLOR = "#888888"
@@ -184,6 +186,7 @@ const PinsStack = ({navigation}) => {
         <Stack.Screen name="Validation" component ={Validation} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
+       
       </Stack.Navigator>
   );
 }
@@ -212,7 +215,10 @@ const TabNavigator = () => {
       <Tab.Navigator 
         tabBarOptions = {tabBarOptions} 
         options = {{unmountOnBlur : true}}
-        tabBar={props => <TabBar {...props} />}>
+        tabBar={props => <TabBar {...props} />}
+        initialRouteName = "Post"  
+      >
+
         <Tab.Screen name="Home" component={HomeStack} options = {tab1Options} />
         <Tab.Screen name="Feed" component={FeedStack} options = {tab2Options} />
         <Tab.Screen name="Post" component={AddPostStack} options = {tab3Options} />
