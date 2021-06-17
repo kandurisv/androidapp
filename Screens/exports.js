@@ -4,11 +4,18 @@ const bucketname = "mish-fit-user-post-images"
 
 
 import axios from 'axios'
-import React,{useEffect} from 'react'
-import { View , Text, ScrollView, TouchableOpacity, ToastAndroid} from 'react-native'
+import React,{useEffect , createContext} from 'react'
+import { View , Text, ScrollView, TouchableOpacity, ToastAndroid , ActivityIndicator} from 'react-native'
 import {S3} from 'aws-sdk'
 import {decode} from 'base64-arraybuffer'
 import * as fs from 'expo-file-system';
+
+
+
+export const AuthContext = createContext()
+
+export const AuthProvider = AuthContext.Provider
+export const AuthConsumer = AuthContext.Consumer
         
 export const s3URL = "https://"+ bucketname+ ".s3.amazonaws.com/"
 export const s3BucketName = bucketname
@@ -76,11 +83,22 @@ export const TimeoutPage = () => {
 export const LoadingPage = () => {
 
     return (
-        <View>
-            <Text>Loading</Text>
+        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
+            <ActivityIndicator size="large" color="#888888" />
         </View>
     )
 }
 
 
 export const background = "#EEE"
+
+export const firebaseConfig = {
+    apiKey: 'AIzaSyCelzKVnbYY07aLtswA4EE9pF9mNeXJtRs',
+      authDomain: 'mishreview-346c2.firebaseapp.com',
+      databaseURL: 'https://mishreview-346c2.firebaseio.com',
+      projectId: 'mishreview-346c2',
+      storageBucket: 'mishreview-346c2.appspot.com',
+      messagingSenderId: '934890083228',
+      appId: '1:934890083228:android:d132693b4e14b139dbae59',
+  }
+

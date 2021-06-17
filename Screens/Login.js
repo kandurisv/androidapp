@@ -1,35 +1,45 @@
-import React, { useState,useRef } from 'react';
-import { Button, TextInput , TouchableOpacity,View,Text, StyleSheet, Keyboard } from 'react-native';
-// import auth from '@react-native-firebase/auth';
-// import {useNavigation} from '@react-navigation/native';
-// import Icon from 'react-native-ico-flags';
+import * as React from "react";
+import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity, Platform, ToastAndroid , Keyboard} from "react-native";
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import * as firebase from "firebase";
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
-import LottieView from 'lottie-react-native';
-import { useNavigation , useRoute } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/core";
+import { firebaseConfig } from "./exports";
 
 
-const Login = () => {
+try {
+  firebase.initializeApp(firebaseConfig);
+} catch (err) {
+  // ignore app already initialized error in snack
+}
+
+export default function Login() {
 
   const navigation = useNavigation()
-  const route = useRoute()
-  
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [valid,setValid] = React.useState(false)
-    const [length,setLength] = React.useState(0)
-   
-  // Handle the button press
-  
-    const signInWithPhoneNumber = async (phoneNumber) => {
-      console.log(phoneNumber)
-        // const confirmation = await auth().signInWithPhoneNumber(phoneNumber)
-        // navigation.navigate("Validation", {phoneNumber , confirmation})
-    }
-   
-    
-    const [number, setNumber] = React.useState("");
 
-    const onChangeNumber = ({text}) => {
+  const recaptchaVerifier = React.useRef(null);
+  const [phoneNumber, setPhoneNumber] = React.useState();
+  const [verificationId, setVerificationId] = React.useState();
+  const [verificationCode, setVerificationCode] = React.useState();
+  const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
+  const [message, showMessage] = React.useState((!firebaseConfig || Platform.OS === 'web')
+    ? { text: "To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device."}
+    : undefined);
+
+  const [loginClick,setLoginClick] = React.useState(false)
+  const [valid,setValid] = React.useState(false)
+  const [otpvalid,setOtpValid] = React.useState(false)
+  const [length,setLength] = React.useState(0)
+  const [number, setNumber] = React.useState("");
+  const [otplength,setotpLength] = React.useState(0)
+  const [otpnumber, setotpNumber] = React.useState("");
+  
+
+  const [screen,setScreen] = React.useState(false)
+
+  const onChangeNumber = (text) => {
       setNumber(text)
+      setPhoneNumber("+91" + text)
       setLength(text.length)
       console.log(text.length)
       if(text.length === 10) {
@@ -40,109 +50,100 @@ const Login = () => {
       }
     }
 
+
+  const onChangeOTP = (text) => {
+      setVerificationCode(text)
+      setotpLength(text.length)
+      console.log(text.length)
+      if(text.length === 6) {
+        setOtpValid(true)
+        Keyboard.dismiss(false)
+      } else {
+        setOtpValid(false)
+      }
+    }
+
+  const onPressLogin = async () => {
+    try {
+      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const verificationId = await phoneProvider.verifyPhoneNumber(phoneNumber,recaptchaVerifier.current);
+      setVerificationId(verificationId);
+      ToastAndroid.show("Verification code has been sent to your phone",ToastAndroid.SHORT)
+      setLoginClick(true)
+      setScreen(true)
+    } catch (err) {
+      ToastAndroid.show("We couldn't log you in due to network error",ToastAndroid.SHORT )
+      setLoginClick(true)
+    }
+  }
+
+  const onPressValidate = async () => {
+    try {
+      const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,verificationCode);
+      await firebase.auth().signInWithCredential(credential);
+      navigation.navigate("Home")
+    } catch (err) {
+      ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
+    }
+  }
+
+
+
+
   return (
-    <View style = {{flex : 1, backgroundColor : 'white'}} >
-        <View style = {{flex : 1, backgroundColor : 'pink'}} />
-        <View>
-          <Text> Login using Phone</Text>
-        </View>
-        <View style = {styles.container}>
-          <View style = {styles.country}>
-            {/* <Icon name="india" style={styles.flag}/> */}
-            <Text style = {styles.countryCode}>+91</Text>
-          </View>
-          <TextInput
-            style={length ? styles.phoneNumberBox : [styles.phoneNumberBox, {fontSize : 12, letterSpacing : 1 }]  }
-            placeholder="Enter your Phone Number"
-            keyboardType = 'numeric'
-            onChangeText={text => onChangeNumber({ text })}
-            value={number}
-            maxlength = {10}
-          />
-          <AwesomeButtonRick 
+    
+    <View style={{ padding: 20, marginTop: 50 }}>
+      {!screen ?  (
+      <View>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={firebaseConfig}
+      />
+      <Text style={{ marginTop: 20 }}>Enter phone number</Text>
+      <TextInput
+        style={{ marginVertical: 10, fontSize: 17 }}
+        placeholder="999 999 9999"
+        autoFocus
+        autoCompleteType="tel"
+        keyboardType="phone-pad"
+        textContentType="telephoneNumber"
+        onChangeText={(phoneNumber) => onChangeNumber(phoneNumber)}
+      />
+      <Button
+        title="Send Verification Code"
+        disabled={!phoneNumber}
+        onPress={onPressLogin}
+      />
+      <AwesomeButtonRick 
             progressLoadingTime = {1}
             width = {80}
             height = {40}
             progress 
-            onPress={(next) => {console.log("next", next)}}
+            onPress={onPressLogin}
             springRelease
             raiseLevel = {2}
             disabled = {!valid}
             >
-            Next
-          </AwesomeButtonRick>
-        </View>
-        <View style = {{backgroundColor : 'orange' , height : 10, width : '100%'}} />
+            Get OTP
+      </AwesomeButtonRick>
       </View>
-
-  );
-}
-
-export default Login;
-
-const styles = StyleSheet.create({
-    nextButton: {
-
-    },
-    nextText : {
-
-    },
-    container : {
-      flexDirection : 'row', 
-      alignItems : 'center',
-      justifyContent : 'space-evenly' , 
-      margin : 10,
+      ) : 
+      (<View>
+      <Text style={{ marginTop: 20 }}>Enter Verification code</Text>
+      <TextInput
+        style={{ marginVertical: 10, fontSize: 17 }}
+        editable={!!verificationId}
+        placeholder="123456"
+        onChangeText={(text)=>onChangeOTP(text)}
+      />
+      <Button
+        title="Confirm Verification Code"
+        disabled={!otpvalid}
+        onPress={onPressValidate}
+      />
+      </View>)}
       
 
-    },
-    flag : { 
-      alignSelf : 'center',
-      margin : 2,
-    },
-    countryCode : {
-      margin : 4, 
-      marginTop : 11,
-      textAlign : 'center',
-      fontSize : 16,
-    },
-    country : {
-        
-        borderRadius : 5,
-        
-        height : 40,
-        
-        flexDirection : 'row'
-    },
-    phoneNumberBox : { 
-      height: 45 ,
-      borderRadius : 10,
-      borderColor : "#bbb",
-      borderWidth : 1,
-      flex : 1,
-      margin : 5 ,
-      fontSize : 16, 
-      padding : 10 , 
-      textAlign : 'center',
-      letterSpacing : 5, 
-    },
-    root: {flex: 1, padding: 20},
-    title: {textAlign: 'center', fontSize: 20},
-    codeFieldRoot: {marginTop: 20},
-    cell: {
-      width: 20,
-      height: 40,
-      lineHeight: 38,
-      fontSize: 16,
-      borderWidth: 2,
-      borderColor: '#00000030',
-      textAlign: 'center',
-    },
-    focusCell: {
-      borderColor: 'red',
-    },
-    input: {
-      height: 40,
-      margin: 12,
-      borderWidth: 1,
-    },
-})
+    </View>
+  );
+}

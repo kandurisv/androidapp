@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useContext} from "react";
 import {View,TouchableOpacity,Dimensions,StyleSheet, Animated, Text} from 'react-native';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -15,6 +15,7 @@ import TermsAndConditions from './TermsAndConditions'
 import UserDetails from './UserDetails'
 import PostDetails from './PostDetails'
 import Validation from './Validation'
+import { AuthContext } from "./exports";
 
 
 
@@ -212,7 +213,7 @@ const UserDetailsStack = ({navigation}) => {
 const AuthStack = ({navigation}) => {
   return (
       <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Home" component={Home}  /> 
+        <Stack.Screen name="Home" component={TabNavigator}  /> 
         <Stack.Screen name="Validation" component ={Validation} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
@@ -243,9 +244,14 @@ const TabNavigator = () => {
 
   const Navigator = () => {
     const [userAuth,setUserAuth] = React.useState(true)
+    const userId = useContext(AuthContext)
+
+    React.useEffect(()=>{
+      console.log("navigator", userId)
+    },[])
     return (
       <Stack.Navigator 
-        initialRouteName = {userAuth ? "Auth" : "Tab"}
+        initialRouteName = {userId === "" ? "Tab" : "Auth"}
         screenOptions={{headerShown: false}}
       >
         <Stack.Screen name="Auth" component={AuthStack} />

@@ -1,6 +1,6 @@
 import React, { useState,useRef,useEffect } from 'react';
 import { Button, TextInput , TouchableOpacity,View,Text, StyleSheet, Keyboard, Dimensions , ScrollView, KeyboardAvoidingView} from 'react-native';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 // import {useNavigation} from '@react-navigation/native';
 import { Animated, Easing } from 'react-native';
 
@@ -97,6 +97,10 @@ const Validation = () => {
     }
   }
 
+  const onSubmit = () => {
+
+  }
+
   return(
     <ScrollView>
     <View style = {styles.container}>
@@ -150,7 +154,7 @@ const Validation = () => {
       <Text style = {{ margin : 10 }}> {attemptsRemaining} Attempts Remaining</Text>
      
       </View>
-       <TouchableOpacity style = {styles.submit}>
+       <TouchableOpacity style = {styles.submit} onPress = {onSubmit}>
         <Text style = {{color : '#FFF', textAlign : 'center', fontSize : 20}}>
           Submit
         </Text>
