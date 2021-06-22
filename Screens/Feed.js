@@ -3,24 +3,20 @@ import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, Acti
 
 import { useNavigation , useRoute } from '@react-navigation/native';
 import axios from 'axios'
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor} from './exports'
 import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 
-const {width} = Dimensions.get("window");
+import { Amplitude } from '@amplitude/react-native';
+const ampInstance = Amplitude.getInstance();
+ampInstance.init(af380775c59ead50c4c02536befef5e5);
+
+const {width} = Dimensions.get("screen");
 const height = width * 1.2
-const images = [
-    'https://images.pexels.com/photos/4016173/pexels-photo-4016173.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-    'https://images.pexels.com/photos/3514150/pexels-photo-3514150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-    'https://images.pexels.com/photos/3514150/pexels-photo-3514150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
-]
-
-
 
 const FeedItem = ({item}) => {
   const navigation = useNavigation()
   
-   // const review = item.content.toString();
     var review = ""
     item.content.map((reviewItem,index) => {
       if(reviewItem.length > 0) {
@@ -37,8 +33,6 @@ const FeedItem = ({item}) => {
       navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
     }
    
-
-
     return(
         <TouchableWithoutFeedback style = {styles.container} onPress = {onItemClick} >
             <Text style ={styles.username} > {item.username}</Text>    
@@ -52,7 +46,6 @@ const FeedItem = ({item}) => {
         </TouchableWithoutFeedback>
     );
 };
-
 
 const Feed = (props) => {
 
@@ -135,7 +128,7 @@ const Feed = (props) => {
       })
     .then(res => res.data)
     .then(function (responseData) {
-        console.log("ARRAY LENGTH ++++++++++++++++++++++++++++++++++++++++++++++")
+        ampInstance.logEvent('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
         console.log(responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
@@ -144,9 +137,7 @@ const Feed = (props) => {
       setError(true);   
       console.log("Error" , error)   
     });
-  },[varValue, requestId , requestValue ]);
-
-
+  },[varValue,requestId,requestValue]);
 
   const items = ({item,index}) => (
         (item.image_list && item.username) ?
@@ -155,16 +146,16 @@ const Feed = (props) => {
           </View> : null
         )
  
-
   return (
     <View>
-
      <View>
             <ModernHeader 
                 title="Feed"
-                titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+                titleStyle = {headerStyle.headerText}
                 backgroundColor= {background}
+                leftIconColor = {borderColor}
                 leftIconOnPress={() => navigation.goBack()}
+                rightDisable
                 />
       </View>
       <View style = {{ marginBottom : 0}}>
@@ -190,24 +181,18 @@ const Feed = (props) => {
   )
 }
 
-
 const styles = StyleSheet.create({
-    
     container:{
         marginBottom: 5,
         width,
         height,
-        // backgroundColor:'black'
     },
-
     image:{
         width,
         height,
-        // width:'100%',
         aspectRatio:2.5/3,
         resizeMode: 'cover',
         borderRadius: 10,
-        // margin: 10
     },
     productTitle:{
         position:'absolute',
@@ -227,7 +212,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize:15
     },
-
     username:{
         position:'absolute',
         top:0,
@@ -237,11 +221,6 @@ const styles = StyleSheet.create({
         fontSize:20,
         zIndex: 100
     }
-
 });
-
-
-
-
 
 export default Feed

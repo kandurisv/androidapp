@@ -14,8 +14,7 @@ import Signout from './Signout'
 import TermsAndConditions from './TermsAndConditions'
 import UserDetails from './UserDetails'
 import PostDetails from './PostDetails'
-import Validation from './Validation'
-import { AuthContext } from "./exports";
+import { AuthContext, background, theme } from "./exports";
 
 
 
@@ -28,7 +27,7 @@ const TAB_ICON_SIZE = 24
 const TAB_SLIDER_HEIGHT = 2
 // const TAB_SLIDER_COLOR = "#C51E3A"
 const TAB_SLIDER_COLOR = "#C51E3A"
-const TAB_ACTIVE_COLOR = "#0080FF"
+const TAB_ACTIVE_COLOR = theme
 const TAB_INACTIVE_COLOR = "#888888"
 
 const BottomMenu = ({ iconName, isCurrent , label}) => {
@@ -130,7 +129,7 @@ const HomeStack = ({navigation}) => {
           <Stack.Screen name="Pins" component={Pins} />  
           <Stack.Screen name="UserDetails" component ={UserDetails} />
           <Stack.Screen name="PostDetails" component ={PostDetails} />
-          <Stack.Screen name="Validation" component ={Validation} />
+          
           <Stack.Screen name="Login" component ={Login} />
           <Stack.Screen name="Signout" component ={Signout} />
         </Stack.Navigator>
@@ -148,7 +147,7 @@ const FeedStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        <Stack.Screen name="Validation" component ={Validation} />
+        
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
@@ -166,7 +165,7 @@ const AddPostStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        <Stack.Screen name="Validation" component ={Validation} />
+        
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
@@ -184,7 +183,7 @@ const PinsStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        <Stack.Screen name="Validation" component ={Validation} />
+        
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
        
@@ -203,7 +202,7 @@ const UserDetailsStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        <Stack.Screen name="Validation" component ={Validation} />
+        
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
@@ -214,9 +213,8 @@ const AuthStack = ({navigation}) => {
   return (
       <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={TabNavigator}  /> 
-        <Stack.Screen name="Validation" component ={Validation} />
         <Stack.Screen name="Login" component ={Login} />
-        <Stack.Screen name="Signout" component ={Signout} />
+        {/* <Stack.Screen name="Signout" component ={Signout} /> */}
       </Stack.Navigator>
   );
 }
@@ -251,11 +249,12 @@ const TabNavigator = () => {
     },[])
     return (
       <Stack.Navigator 
-        initialRouteName = {userId === "" ? "Tab" : "Auth"}
+        initialRouteName = {userId === "" ? "Auth" : "Tab"}
         screenOptions={{headerShown: false}}
       >
         <Stack.Screen name="Auth" component={AuthStack} />
         <Stack.Screen name="Tab" component={TabNavigator} />
+        <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
     );
   }
@@ -273,7 +272,7 @@ export default Navigator;
       },
       shadowOpacity: 0.2,
       shadowRadius: 2.0,
-      backgroundColor: "white",
+      backgroundColor: background,
       borderTopRightRadius: 5,
       borderTopLeftRadius: 5,
       elevation: 5,

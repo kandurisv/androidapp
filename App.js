@@ -6,6 +6,11 @@ import {URL, FetchData , AuthProvider , firebaseConfig, LoadingPage} from './Scr
 import Navigator from './Screens/Navigator'
 import * as firebase from "firebase";
 
+import { Amplitude  , Identify} from '@amplitude/react-native';
+const ampInstance = Amplitude.getInstance();
+
+ampInstance.init(af380775c59ead50c4c02536befef5e5);
+
 try {
   firebase.initializeApp(firebaseConfig);
 } catch (err) {
@@ -45,30 +50,22 @@ const App = () => {
     
 
     React.useEffect( () => {
-     
-       
         const getData = () => {
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
               setUserId(user.phoneNumber)
-              setLoading(false)
+              const identify = new Identify();
+              identify.set("phoneNumber", user.phoneNumber)
+              ampInstance.setUserId(user.phoneNumber)
+              ampInstance.trackingSessionEvents(true); 
+              ampInstance.identify(identify)
               console.log('App User!' , user.phoneNumber);
+
             }
           
-            // Do other things
+            setLoading(false)
           })
-            axios.get(URL + "/user/info", {params:{user_id : 1}} , {timeout:5000})
-            .then(res => res.data).then(function(responseData) {
-                setResponseData(responseData[0])
-                console.log("Came here")
-                
-                setRefresh(false)
-            })
-            .catch(function(error) {
-                console.log(error)
-                
-                setError(true)
-            });
+            
         }
        
         getData()

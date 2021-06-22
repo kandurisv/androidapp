@@ -5,7 +5,7 @@ const bucketname = "mish-fit-user-post-images"
 
 import axios from 'axios'
 import React,{useEffect , createContext} from 'react'
-import { View , Text, ScrollView, TouchableOpacity, ToastAndroid , ActivityIndicator} from 'react-native'
+import { View , Text, ScrollView, TouchableOpacity, ToastAndroid , ActivityIndicator, StyleSheet} from 'react-native'
 import {S3} from 'aws-sdk'
 import {decode} from 'base64-arraybuffer'
 import * as fs from 'expo-file-system';
@@ -65,8 +65,8 @@ export const uploadImageOnS3 = async (name,uri) => {
 export const ErrorPage = () => {
 
     return (
-        <View>
-            <Text>Error</Text>
+        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
+            <Text>Network Error </Text>
         </View>
     )
 }
@@ -74,8 +74,8 @@ export const ErrorPage = () => {
 export const TimeoutPage = () => {
 
     return (
-        <View>
-            <Text>Timeout</Text>
+        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
+            <Text>404 Not found </Text>
         </View>
     )
 }
@@ -90,7 +90,9 @@ export const LoadingPage = () => {
 }
 
 
-export const background = "#EEE"
+export const background = "#EEEEEE"
+export const theme = "#DE3C4B"
+export const borderColor = "#222222"
 
 export const firebaseConfig = {
     apiKey: 'AIzaSyCelzKVnbYY07aLtswA4EE9pF9mNeXJtRs',
@@ -101,4 +103,12 @@ export const firebaseConfig = {
       messagingSenderId: '934890083228',
       appId: '1:934890083228:android:d132693b4e14b139dbae59',
   }
+
+
+export const headerStyle = StyleSheet.create({
+    headerText : {
+        fontSize: 18 , color : theme
+    },
+    headerText1 :{fontWeight : 'bold',fontSize: 18 , color : borderColor}
+})
 

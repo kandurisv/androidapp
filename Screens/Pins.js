@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text , ImageBackground, Dimensions} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios'
-import {background, URL} from './exports'
+import {background, borderColor, headerStyle, URL} from './exports'
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-
+import { Amplitude } from '@amplitude/react-native';
+const ampInstance = Amplitude.getInstance();
+ampInstance.init(af380775c59ead50c4c02536befef5e5);
 
 export default function Pins() {
 
@@ -21,10 +23,12 @@ export default function Pins() {
 
   const navigation = useNavigation()
 
-  const {width} = Dimensions.get('screen')
+  const {width,height} = Dimensions.get('screen')
 
   React.useEffect(()=>{
+
     const fetchPinsPost = () => {
+      ampInstance.logEvent('PINS_PAGE_VISIT',{"userId" : userId })
       axios.get(URL + "/pins/post", {params:{user_id : userId }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
           console.log("A", responseData)
@@ -59,13 +63,16 @@ export default function Pins() {
   },[])
 
   return (
-    <View style = {{flex : 1}}>
+    <View style = {{flex : 1, backgroundColor: background}}>
       <View>
         <ModernHeader 
           title="Pins"
-          titleStyle = {{fontWeight : 'bold' , fontSize: 20}}
+          titleStyle = {headerStyle.headerText}
           backgroundColor= {background}
-          leftIconOnPress={() => navigation.goBack()} />
+          leftIconColor = {borderColor}
+          leftIconOnPress={() => navigation.goBack()} 
+          rightDisable
+          />
       </View>
       
       <View>
@@ -77,7 +84,7 @@ export default function Pins() {
         <FlatGrid itemDimension={200} data={pinsPost} renderItem={({item}, i) => (
           <View style = {styles.contentContainer}>
             <ImageBackground source = {{uri : item.image_list[0]}} style = {styles.image} blurRadius = {1}></ImageBackground>
-            <View style = {styles.textView}>
+            <View style = {[styles.textView, {marginTop : Dimensions.get('screen').width * 0.15}]}>
               <Text style={styles.text}>{item.username}</Text>
             </View>
           </View>)}
@@ -89,7 +96,7 @@ export default function Pins() {
           <View>
             <Text style = {{fontSize : 16}}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>
           </View> :
-        <FlatGrid itemDimension={200} data={pinsProduct} renderItem={({item}, i) => (
+        <FlatGrid itemDimension={Dimensions.get('screen').width*0.45} data={pinsProduct} renderItem={({item}, i) => (
           <View style = {styles.contentContainer}>
             <ImageBackground source = {{uri : item.image}} style = {styles.image} blurRadius = {2}></ImageBackground>
             <View style = {styles.textView}>
@@ -137,8 +144,8 @@ const styles = StyleSheet.create({
   
   },
   header : {
-    fontWeight : 'bold',
-    fontSize : 20,
+    fontWeight : '200',
+    fontSize : 18,
     marginLeft : 20,
     margin : 10,
   },
@@ -161,10 +168,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "200",
     textAlign: "center",
-    marginTop : Dimensions.get('screen').width * 0.2
+    marginTop : Dimensions.get('screen').width * 0.05
     // position : 'absolute',
     // top : 40,
     

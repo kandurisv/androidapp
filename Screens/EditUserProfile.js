@@ -11,6 +11,7 @@ import RadioGroup from 'react-native-custom-radio-group';
 
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
+import { background, theme, uploadImageOnS3 } from './exports';
 
 
 
@@ -26,8 +27,8 @@ const EditUserProfile = () => {
     label: 'Female',
     value: 'Female'
   }, {
-    label: 'Prefer not to say',
-    value: 'Prefer not to say'
+    label: 'Others',
+    value: 'Others'
   }];
 
   const [selectedItem, setSelectedItem ] = useState(0);
@@ -50,7 +51,8 @@ const EditUserProfile = () => {
     const [imageUrl,setImageUrl] = useState("")
     const [imageChange,setImageChange] = useState(false)
     const [age,setAge] = useState("")
-    
+    const [userName,setUserName] = React.useState("")
+    const [phoneNumber,setPhoneNumber] = React.useState("")
   
     
     useEffect(() => {
@@ -61,9 +63,27 @@ const EditUserProfile = () => {
 
 
     const submit = () => {
-    
-    }
+      const body = {
+        "user_id": 5,
+        "username": userName,
+        "gender": gender,
+        "dob": "1998-01-01",
+        "age" : age,
+        "email": "",
+        "phone_number": phoneNumber,
+        "location": ""
+      }
 
+    axios({
+      method: 'post',
+      url: URL + '/user/info',
+      data: body
+    })
+  .then(res => {
+      setMessage('')
+    }).catch((e) => console.log(e))
+
+    }
 
 
     const pickImage = async () => {
@@ -74,13 +94,32 @@ const EditUserProfile = () => {
           quality: 1,
         });
     
+      
+        if (!result.cancelled) {
+          console.log(result.uri)
+          setImage(result.uri);
+          setImageChange(true)
+          console.log("I am reaching here")
+          uploadImageOnS3("name",result.uri)
+        }
+      };   
+      
+      const pickCoverImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
         console.log(result);
     
         if (!result.cancelled) {
-          setImage(result.uri);
+          console.log(result.uri)
+          setCoverImage(result.uri);
           setImageChange(true)
         }
-      };      
+      }; 
 
      
 
@@ -91,55 +130,55 @@ const EditUserProfile = () => {
 
     const pickCoverPhoto = () => {
       console.log("image picker")
+      pickCoverImage()
     }
     const pickProfilePhoto = () => {
       console.log("image picker")
+      pickImage()
     }
 
     
-
     return (
         <View>
             <View>
               <TouchableOpacity onPress = {pickCoverPhoto}>
-                    <ImageBackground source = {require('../assets/defaultCover.png')} 
+                <ImageBackground source = {coverImage ? {uri : coverImage} :require('../assets/defaultCover.png')} 
                         style = {styles.imageCover} >
-                    </ImageBackground>
-                </TouchableOpacity>
-              </View>
-              <View style = {{flexDirection : 'row'}}>
-                  <TouchableOpacity style = {styles.imageProfileView} onPress = {pickProfilePhoto}>
-                    <ImageBackground source = {require('../assets/defaultProfile.png')} 
-                        style = {styles.imageProfile} >
-                    </ImageBackground>
-                  </TouchableOpacity>
-                  <View style = {{backgroundColor : 'pink', margin : 20,}}>
-                    <Picker
-                      selectedValue={selectedLanguage}
-                      onValueChange={(itemValue, itemIndex) =>
-                        setSelectedLanguage(itemValue)
-                      }>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
-                    </Picker>
-                  </View>
-              </View>
-            
-
-           
-
-
-            {/* <Text style = {styles.nonEditableFields} > Username : {userName}</Text>
-            <Text style = {styles.nonEditableFields} > Phone : {phone}</Text>
-            <Text style = {styles.nonEditableFields} > Email : {email}</Text>   */}
-            <View style = {styles.dateView}>
-           
+                </ImageBackground>
+              </TouchableOpacity>
             </View>
-            <View>
+            <View style = {{flexDirection : 'row'}}>
+              <TouchableOpacity style = {styles.imageProfileView} onPress = {pickProfilePhoto}>
+                <ImageBackground source = {image ? {uri : image} : require('../assets/defaultProfile.png')} 
+                        style = {styles.imageProfile} >
+                </ImageBackground>
+              </TouchableOpacity>
+            </View>
+            
+            <View style = {styles.userDetailsMasterContainer}>
+              <View style = {styles.userDetailsContainer}>
+                <Text style = {styles.userDetailsText}>UserName</Text>
+                <TextInput 
+                        placeholder = "arianagrande"
+                        style = {styles.userDetailsInput}
+                        onChangeText = {(text)=>setUserName(text)}
+                        value = {userName}
+                />
+              </View>
+              <View style = {styles.userDetailsContainer}>
+                <Text style = {styles.userDetailsText}>Age</Text>
+                <TextInput 
+                        style = {styles.userDetailsInput} 
+                        placeholder = "27"
+                        onChangeText = {(text)=>setAge(text)}
+                        value = {age}
+                />
+              </View>
+              <View>
                 <Text style = {{fontSize : 14, fontStyle : "italic" , color : 'black' , margin : 10}}> Gender : {gender}</Text>
                 <RadioGroup 
                     radioGroupList={radioGroupList} 
-                    onChange = {(value) => selectGender(value)}
+                    onChange = {(value) => setGender(value)}
                     initialValue = {gender}
                     containerStyle = {styles.radioContainerStyle}
                     buttonContainerStyle ={styles.radioButtonContainerStyle}
@@ -148,17 +187,16 @@ const EditUserProfile = () => {
                     buttonContainerInactiveStyle = {styles.radioButtonContainerInactiveStyle}
                     buttonTextActiveStyle = {styles.radioButtonTextActiveStyle}
                     buttonTextInactiveStyle = {styles.radioButtonTextInactiveStyle}/>
-                </View> 
-           
-            
-         
-            <TouchableOpacity onPress = {submit} style = {styles.saveButton} >
-                <Text style = {styles.saveButtonText}>SAVE</Text>
-            </TouchableOpacity>
-            
-
-      
-        </View>
+              </View> 
+              <View style = {{alignItems : 'flex-end'}}>
+                <TouchableOpacity 
+                        onPress = {submit}
+                        style = {styles.userDetailsSubmitButton}>
+                  <Text style = {styles.userDetailsSubmitText}>Submit</Text>
+                </TouchableOpacity>
+              </View>                  
+            </View>
+          </View>
     )
 }
 
@@ -177,7 +215,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'center', 
-        backgroundColor: 'white',
+        backgroundColor: background, 
         marginTop : 20
       },
       textInput: { 
@@ -322,7 +360,66 @@ const styles = StyleSheet.create({
       margin : 20,
       overflow: 'hidden'
 
-    }
+    },
+    userDetailsText : {
+      margin : 10,
+      flex : 1, 
+      textAlign : 'center',
+  },
+  userDetailsInput : {   
+      flex : 1, 
+      borderRadius : 5,
+      borderBottomWidth : 1,
+      borderColor : '#AAA',
+      textAlign : 'center',
+      width : Dimensions.get('screen').width*0.5
+  },
+  userDetailsContainer  : {
+      flexDirection : 'row',
+      borderRadius : 5,
+      borderWidth : 1,
+      borderColor : 'black',
+      padding : 5 , 
+      margin : 5
+  },
+  userDetailsMasterContainer  : {},
+  userDetailsSubmitButton : {
+      backgroundColor : theme,
+      width : Dimensions.get('screen').width*0.5,
+      marginTop : 20,
+      alignItems : 'center',
+      padding : 10,
+      borderRadius : 10,
+      marginRight : 10,
+  },
+  userDetailsSubmitText : {
+      color : background,
+      textAlign : 'center'
+  },
+  radioContainerStyle : {
+      justifyContent : 'center' , 
+      alignItems : 'center' , 
+      width : Dimensions.get("window").width,
+      alignItems : 'center'
+  },
+  radioButtonContainerStyle: {
+      borderWidth : 1, 
+      borderColor : '#AAA' ,
+      padding: 5 , 
+      borderRadius : 10 ,     
+      height : 30,
+      margin : 10,
+      marginTop : 0 ,
+      width : 100
+      
+      
+  },
+  radioButtonTextStyle: {fontSize : 12},
+  radioButtonContainerActiveStyle: {backgroundColor : theme},
+  radioButtonContainerInactiveStyle: {},
+  radioButtonTextActiveStyle: {},
+  radioButtonTextInactiveStyle: {},
+  
 
 })
 

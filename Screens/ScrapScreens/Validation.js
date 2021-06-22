@@ -45,7 +45,8 @@ const Validation = () => {
   const secondRef = React.useRef()
   const thirdRef = React.useRef()
   const fourthRef = React.useRef()
-
+  const fifthRef = React.useRef()
+  const sixthRef = React.useRef()
 
   const [otpArray,setOtpArray] = React.useState([])
   const [resendButtonDisabledTime, setResendButtonDisabledTime] =  React.useState(60);
@@ -71,6 +72,10 @@ const Validation = () => {
           thirdRef.current.focus();
         } else if (index === 2) {
           fourthRef.current.focus();
+        } else if (index === 3) {
+          fifthRef.current.focus();
+        } else if (index === 4) {
+          sixthRef.current.focus();
         }
       }
     };
@@ -85,6 +90,10 @@ const Validation = () => {
           secondRef.current.focus();
         } else if (index === 3) {
           thirdRef.current.focus();
+        } else if (index === 4) {
+          fourthRef.current.focus();
+        } else if (index === 5) {
+          fifthRef.current.focus();
         }
 
         if (isAndroid && index > 0) {
@@ -97,8 +106,14 @@ const Validation = () => {
     }
   }
 
-  const onSubmit = () => {
-
+  const onSubmit = async () => {
+    try {
+      const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,verificationCode);
+      await firebase.auth().signInWithCredential(credential);
+      navigation.navigate("Home")
+    } catch (err) {
+      ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
+    }
   }
 
   return(
@@ -113,7 +128,7 @@ const Validation = () => {
             height: 400,
             backgroundColor: '#eee',
           }}
-          source={require('../assets/animation/otp-validation.json')}
+          source={require('../../assets/animation/otp-validation.json')}
                  />
       </View>
       <View style = {styles.container2}>
@@ -154,7 +169,7 @@ const Validation = () => {
       <Text style = {{ margin : 10 }}> {attemptsRemaining} Attempts Remaining</Text>
      
       </View>
-       <TouchableOpacity style = {styles.submit} onPress = {onSubmit}>
+       <TouchableOpacity style = {styles.submit} onPress = {onSubmit} disabled = {!otpArray[5]}>
         <Text style = {{color : '#FFF', textAlign : 'center', fontSize : 20}}>
           Submit
         </Text>

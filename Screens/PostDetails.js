@@ -2,14 +2,18 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
-import {URL, LoadingPage, ErrorPage, TimeoutPage} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, borderColor, headerStyle} from './exports'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
 import {MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
+import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 
+import { Amplitude } from '@amplitude/react-native';
+const ampInstance = Amplitude.getInstance();
+ampInstance.init(af380775c59ead50c4c02536befef5e5);
 
 const {width} = Dimensions.get("window");
 const height = width * 1.35
@@ -121,7 +125,7 @@ const Cover = (props) => {
                     <Text style = {styles.likeNumber2}>{likeCount}</Text>
                 </View>
                 <View style = {styles.comment2}>
-                    <Fontisto name = "comment" size = {22} color = {"#ccc"} />
+                    <Fontisto name = "comment" size = {22} color = {background} />
                 </View>
                 <View style = {styles.commentText2}>
                     <Text style = {styles.commentNumber2}>{commentCount}</Text>
@@ -278,6 +282,7 @@ const PostDetails = (props) => {
     const getData = () => {
         axios.get(URL + "/activity/user", {params:{user_id : route.params.details.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
+            ampInstance.logEvent('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
             console.log(responseData[0].upvote)
             setLikeIndicator(responseData[0].upvote)
             setLoading(false)
@@ -364,6 +369,16 @@ const PostDetails = (props) => {
 
   return (
       <ScrollView contentContainerStyle={styles.container}>
+        <View>
+        <ModernHeader 
+          title="Pins"
+          titleStyle = {headerStyle.headerText}
+          backgroundColor= {background}
+          leftIconColor = {borderColor}
+          leftIconOnPress={() => navigation.goBack()} 
+          rightDisable
+          />
+        </View>
         <View style = {styles.review}>
           <Cover 
             imageList = {route.params.details.image_list}
@@ -463,7 +478,7 @@ const styles = StyleSheet.create({
 
     },
   container:{
-    
+    backgroundColor : background,
     paddingBottom : 60
    },
    tinyLogo: {
@@ -544,7 +559,7 @@ heartText2:{
     top:0,
     // backgroundColor : 'white',
     marginTop: 140,
-    marginLeft: width - 47,
+    marginLeft: width * 0.89,
     // fontSize:20,
 //     zIndex: 101
 },
@@ -576,7 +591,7 @@ commentText2:{
 commentNumber2:{
     fontSize:20,
     fontWeight:'bold',
-    color:'#fff',
+    color: background,
 },
 
 container1:{
@@ -595,28 +610,29 @@ btnTab1:{
     width: Dimensions.get('window').width /5,
     flexDirection: 'row',
     borderWidth: 0.5,
-    borderColor:'#EBEBEB',
+    borderColor: background,
     padding: 10,
     justifyContent: 'center',
-    backgroundColor:'#fff'
+    backgroundColor: background
 },
 
 textTab1:{
     fontSize: 13,
-    color:'black'
+    color: borderColor
 },
 
 btnTabActive1:{
-    backgroundColor:'#E68380'
+    backgroundColor: theme
 },
 
 textTabActive1 :{
-    color: '#fff'
+    color: background
 },
 
 itemContainer1:{
     width : '90%',
-    alignSelf:'center'
+    alignSelf:'center',
+    backgroundColor : background
 },
 
 textItem:{
