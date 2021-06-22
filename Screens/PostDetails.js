@@ -11,9 +11,8 @@ import {MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 
-import { Amplitude } from '@amplitude/react-native';
-const ampInstance = Amplitude.getInstance();
-ampInstance.init(af380775c59ead50c4c02536befef5e5);
+import * as Amplitude from 'expo-analytics-amplitude';
+Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("window");
 const height = width * 1.35
@@ -282,7 +281,7 @@ const PostDetails = (props) => {
     const getData = () => {
         axios.get(URL + "/activity/user", {params:{user_id : route.params.details.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            ampInstance.logEvent('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
+            Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
             console.log(responseData[0].upvote)
             setLikeIndicator(responseData[0].upvote)
             setLoading(false)

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text , ImageBackground, Dimensions} from 'react-native';
+import { View, Text , ImageBackground, Dimensions} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios'
-import {background, borderColor, headerStyle, URL} from './exports'
-import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
+import {background, borderColor,URL} from './exports'
+import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Amplitude } from '@amplitude/react-native';
-const ampInstance = Amplitude.getInstance();
-ampInstance.init(af380775c59ead50c4c02536befef5e5);
+
+import * as Amplitude from 'expo-analytics-amplitude';
+import { header, pins } from './styles';
+Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 export default function Pins() {
 
@@ -23,12 +23,11 @@ export default function Pins() {
 
   const navigation = useNavigation()
 
-  const {width,height} = Dimensions.get('screen')
+  const {width} = Dimensions.get('screen')
 
   React.useEffect(()=>{
-
     const fetchPinsPost = () => {
-      ampInstance.logEvent('PINS_PAGE_VISIT',{"userId" : userId })
+      Amplitude.logEventWithPropertiesAsync('PINS_PAGE_VISIT',{"userId" : userId })
       axios.get(URL + "/pins/post", {params:{user_id : userId }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
           console.log("A", responseData)
@@ -44,7 +43,6 @@ export default function Pins() {
   }
     fetchPinsPost()
 
-
     const fetchPinsProduct = () => {
       axios.get(URL + "/pins/product", {params:{user_id : userId }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
@@ -59,130 +57,51 @@ export default function Pins() {
       });
   }
   fetchPinsProduct()
-
   },[])
 
   return (
-    <View style = {{flex : 1, backgroundColor: background}}>
-      <View>
+    <View style = {pins.container}>
+      <View style = {header.headerView}>
         <ModernHeader 
           title="Pins"
-          titleStyle = {headerStyle.headerText}
+          titleStyle = {header.headerText}
           backgroundColor= {background}
           leftIconColor = {borderColor}
           leftIconOnPress={() => navigation.goBack()} 
           rightDisable
           />
       </View>
-      
-      <View>
-        <Text style={styles.header}>My Pinned Posts</Text>
+      <View style = {pins.mainViewItem}>
+        <Text style={pins.mainViewSubContainerHeader}>My Pinned Posts</Text>
         {pinsPostEmpty ? 
-        <View>
-          <Text style = {{fontSize : 16}}>No Pinned Posts yet. Please engage on posts to save it here</Text>
+        <View style={pins.mainViewSubContainerEmptyView}>
+          <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts to save it here</Text>
         </View> :
         <FlatGrid itemDimension={200} data={pinsPost} renderItem={({item}, i) => (
-          <View style = {styles.contentContainer}>
-            <ImageBackground source = {{uri : item.image_list[0]}} style = {styles.image} blurRadius = {1}></ImageBackground>
-            <View style = {[styles.textView, {marginTop : Dimensions.get('screen').width * 0.15}]}>
-              <Text style={styles.text}>{item.username}</Text>
+          <View style = {pins.mainViewSubContainerItemContainer}>
+            <ImageBackground source = {{uri : item.image_list[0]}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {1}></ImageBackground>
+            <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.15}]}>
+              <Text style={pins.mainViewSubContainerItemText}>{item.username}</Text>
             </View>
           </View>)}
         />}
       </View>
-      <View>
-        <Text style={styles.header}>My Pinned Product</Text>
+      <View style = {pins.mainViewItem}>
+        <Text style={pins.mainViewSubContainerHeader}>My Pinned Product</Text>
         {pinsProductEmpty ? 
-          <View>
-            <Text style = {{fontSize : 16}}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>
+          <View style={pins.mainViewSubContainerEmptyView}>
+            <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>
           </View> :
-        <FlatGrid itemDimension={Dimensions.get('screen').width*0.45} data={pinsProduct} renderItem={({item}, i) => (
-          <View style = {styles.contentContainer}>
-            <ImageBackground source = {{uri : item.image}} style = {styles.image} blurRadius = {2}></ImageBackground>
-            <View style = {styles.textView}>
-              <Text style={styles.text}>{item.product_name}</Text>
+        <FlatGrid itemDimension={width*0.45} data={pinsProduct} renderItem={({item}, i) => (
+          <View style = {pins.mainViewSubContainerItemContainer}>
+            <ImageBackground source = {{uri : item.image}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {2}></ImageBackground>
+            <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.05}]}>
+              <Text style={pins.mainViewSubContainerItemText}>{item.product_name}</Text>
             </View>
           </View>)}
         />}
       </View>
-
     </View>
-   
-    );
+  );
 }
 
-const styles = StyleSheet.create({
-  contentContainer : {
-    justifyContent : 'center',
-    alignItems : 'center',
-    width : Dimensions.get('screen').width * 0.45,
-    height : Dimensions.get('screen').width * 0.45,
-  
-  },
-  container1 : {
-      marginBottom : 60,
-  },
-  addReview : {
-    backgroundColor : 'pink',
-    flex : 1,
-    width : Dimensions.get('screen').width,
-    height : Dimensions.get('screen').width * 0.8,
-  },
-  trendingProducts : {
-    width : Dimensions.get('screen').width,
-    margin : 10 , 
-    flex : 1,
-    
-  },
-  productRecommendation : {
-    width : Dimensions.get('screen').width,
-    margin : 10 ,
-    marginTop : 0, 
-    flex : 1,
-  },
-  feed : {
-  
-  },
-  header : {
-    fontWeight : '200',
-    fontSize : 18,
-    marginLeft : 20,
-    margin : 10,
-  },
- 
-  image: {
-    flex: 1,
-    width : Dimensions.get('screen').width * 0.45,
-    height : Dimensions.get('screen').width * 0.45,
-    borderColor : "black",
-    borderWidth : 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-    borderRadius : 10,
-    opacity : 0.4,
-    backgroundColor : 'black',
-    // ...StyleSheet.absoluteFillObject,  
-  },
-  textView: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  text: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "200",
-    textAlign: "center",
-    marginTop : Dimensions.get('screen').width * 0.05
-    // position : 'absolute',
-    // top : 40,
-    
-  },
-  carouselStyle : {
-  
-  },
-  imageCover : {
-      width : Dimensions.get('screen').width,
-      height : Dimensions.get('screen').width * 0.8,
-    },
-  
-  })
-  

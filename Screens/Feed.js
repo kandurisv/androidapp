@@ -7,9 +7,8 @@ import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borde
 import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 
-import { Amplitude } from '@amplitude/react-native';
-const ampInstance = Amplitude.getInstance();
-ampInstance.init(af380775c59ead50c4c02536befef5e5);
+import * as Amplitude from 'expo-analytics-amplitude';
+Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("screen");
 const height = width * 1.2
@@ -128,7 +127,7 @@ const Feed = (props) => {
       })
     .then(res => res.data)
     .then(function (responseData) {
-        ampInstance.logEvent('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
+        Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
         console.log(responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)

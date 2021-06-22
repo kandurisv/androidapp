@@ -1,12 +1,12 @@
 import React, {useState,useEffect} from "react";
-import { Animated,Easing, Text, View, TextInput, Button, StyleSheet, TouchableOpacity, Platform, ToastAndroid , Keyboard , ImageBackground, Dimensions , ScrollView, Image} from "react-native";
+import { Animated,Easing, Text, View, TextInput, Button, TouchableOpacity, Platform, ToastAndroid , Keyboard , ImageBackground, Dimensions , ScrollView, Image} from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import { useNavigation } from "@react-navigation/core";
 import { background, firebaseConfig, theme } from "./exports";
-import LottieView from 'lottie-react-native';
-import { concat } from "react-native-reanimated";
+import { login } from "./styles";
+import axios from 'axios'
 
 
 try {
@@ -175,8 +175,6 @@ export default function Login() {
           fifthRef.current.focus();
         }
 
-        
-
         if (isAndroid && index > 0) {
            const otpArrayCopy = otpArray.concat();
            otpArrayCopy[index-1] = ""
@@ -211,31 +209,25 @@ export default function Login() {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,stringData);
       await firebase.auth().signInWithCredential(credential);
       
-
-
-
       navigation.navigate("Home")
     } catch (err) {
       ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
     }
   }
 
-
-
-
   return (
     
     <ScrollView 
-      contentContainerStyle={{backgroundColor : background}}
-      style={{}}>
+      contentContainerStyle={login.contentContainer}
+      style={login.container}>
       {!screen ?  (
-      <View style = {{flex : 1}}> 
+      <View style = {login.loginViewContainer}> 
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
       />
-      <View style = {styles.lottie}>
-      <LottieView
+      <View style = {login.loginViewCoverContainer}>
+      {/* <LottieView
           ref={animation => animation}
           progress = {progress}
           style={{
@@ -244,17 +236,17 @@ export default function Login() {
             backgroundColor: background,
           }}
           source={require('../assets/animation/otp-validation.json')}
-                 />
+                 /> */}
       </View>
-      <View style={{ marginTop: Dimensions.get('screen').height* 0.025 , marginLeft : 10  }}>
-        <Text style={{fontSize : 16 , color : theme, fontWeight : 'bold'}}>Enter phone number</Text>
+      <View style={login.loginViewPhoneNumberHeaderContainer}>
+        <Text style={login.loginViewPhoneNumberHeaderText}>Enter phone number</Text>
       </View>
-      <View style = {{flexDirection : 'row', marginBottom : 10 , justifyContent:'center', alignItems:'center' , height : Dimensions.get('screen').height* 0.115}}>
-      <View style = {styles.country}>
-            <Text style = {styles.countryCode}>+91</Text>
+      <View style = {login.loginViewPhoneNumberInputContainer}>
+      <View style = {login.loginViewPhoneNumberInputCountryContainer}>
+            <Text style = {login.loginViewPhoneNumberInputCountryText}>+91</Text>
       </View>
       <TextInput
-        style={length ? styles.phoneNumberBox : [styles.phoneNumberBox, {fontSize : 12, letterSpacing : 1 }]  }
+        style={length ? login.loginViewPhoneNumberInputNumberInput : [login.loginViewPhoneNumberInputNumberInput, {fontSize : 12, letterSpacing : 1 }]  }
         placeholder="10 Digit mobile number"
         autoFocus
         autoCompleteType="tel"
@@ -278,12 +270,12 @@ export default function Login() {
       </AwesomeButtonRick>
       
       </View>
-      <View style = {{backgroundColor : theme , height : 5, width : '100%', position : 'absolute' , bottom : 0}} />
+      <View style = {login.loginViewFooterContainer} />
       </View>
       ) : (
-      <View style = {styles.container1}>
-      <View style = {styles.lottie1}>
-      <LottieView
+      <View style = {login.validationViewContainer}>
+      <View style = {login.validationViewCoverContainer}>
+      {/* <LottieView
           ref={animation => animation}
           progress = {progress}
           style={{
@@ -292,12 +284,12 @@ export default function Login() {
             backgroundColor: '#eee',
           }}
           source={require('../assets/animation/otp-validation.json')}
-                 />
+                 /> */}
       </View>
-      <View style = {styles.container2}>
-      <Text> Enter OTP </Text>
+      <View style = {login.validationViewOTPContainer}>
+        <Text style = {login.validationViewOTPHeader}> Enter OTP </Text>
      
-      <View style = {{flexDirection : 'row'}}>
+      <View style = {login.validationViewOTPBoxesContainer}>
       {
         [firstRef,secondRef,thirdRef,fourthRef,fifthRef,sixthRef].map((ref,index)=> (
           <TextInput 
@@ -306,7 +298,7 @@ export default function Login() {
             maxLength = {1}
             value = {otpArray[index]}
             autoFocus = {index === 0 ? true : undefined}
-            style = {styles.textBox}
+            style = {login.validationViewOTPBoxesInput}
             onChangeText = {onOtpChange(index)}
             ref = {ref}
             onKeyPress={onOtpKeyPress(index)}
@@ -318,158 +310,27 @@ export default function Login() {
       
       {
         secs > 0 ?
-        <Text>Resend OTP in 0{mins}:{secs < 10 ? "0"+secs : secs}</Text> :
+        <Text style = {login.validationViewResendOTPInactiveText}>Resend OTP in 0{mins}:{secs < 10 ? "0"+secs : secs}</Text> :
         <TouchableOpacity 
-          style = {{margin : 10}}
+          style = {login.validationViewResendOTPButton}
           onPress={()=>{
-            console.log("Press")
+            setScreen(false)
             setAttemptsRemaining(attemptsRemaining-1)
             setSecs(60)
 
           }}>
-            <Text style = {{fontWeight : '500', color : 'blue'}}> Resend OTP </Text>
+            <Text style = {login.validationViewResendOTPActiveText}> Resend OTP </Text>
         </TouchableOpacity>
       }
-      <Text style = {{ margin : 10 }}> {attemptsRemaining} Attempts Remaining</Text>
-     
+      <Text style = {login.validationViewResentOTPAttemptsText}> {attemptsRemaining} Attempts Remaining</Text>
       </View>
-       <TouchableOpacity style = {styles.submit} onPress = {onSubmit} disabled = {!otpArray[5]}>
-        <Text style = {{color : '#FFF', textAlign : 'center', fontSize : 20}}>
+       <TouchableOpacity style = {login.validationViewSubmitButton} onPress = {onSubmit} disabled = {!otpArray[5]}>
+        <Text style = {login.validationViewSubmitText}>
           Submit
         </Text>
       </TouchableOpacity>
-            
-         
-      
     </View>
       )}
-      
-
     </ScrollView>
   );
 }
-
-
-const styles = StyleSheet.create({
-  lottie : {
-    flex : 1,
-    justifyContent : 'center',
-    alignItems :'center',
-    backgroundColor : background,
-    height : Dimensions.get('screen').height* 0.75,
-  },
-  lottie1 : {
-    flex : 1,
-    justifyContent : 'center',
-    alignItems :'center',
-    backgroundColor : background,
-    height : Dimensions.get('screen').height* 0.6,
-  },
-  nextButton: {
-
-  },
-  nextText : {
-
-  },
-  container : {
-    flexDirection : 'row', 
-    alignItems : 'center',
-    justifyContent : 'space-evenly' , 
-    margin : 10,
-    
-
-  },
-  container1 : {
-    width : '100%',
-    alignItems : 'center',
-    justifyContent : 'center' , 
-    flex : 1,
-    
-    backgroundColor : background
-  },
-  container2 : {
-    width : '100%',
-    alignItems : 'center',
-    justifyContent : 'center' , 
-    flex : 1,
-    margin : 10,
-    backgroundColor : background
-  },
-  flag : { 
-    alignSelf : 'center',
-    margin : 2,
-  },
-  countryCode : {
-    margin : 4, 
-    marginTop : 11,
-    textAlign : 'center',
-    fontSize : 16,
-  },
-  country : {
-      
-      borderRadius : 5,
-      
-      height : 40,
-      
-      flexDirection : 'row'
-  },
-  phoneNumberBox : { 
-    height: 45 ,
-    borderRadius : 10,
-    borderColor : "#bbb",
-    borderWidth : 1,
-    flex : 1,
-    margin : 5 ,
-    fontSize : 16, 
-    padding : 10 , 
-    textAlign : 'center',
-    letterSpacing : 5, 
-  },
-  root: {flex: 1, padding: 20},
-  title: {textAlign: 'center', fontSize: 20},
-  codeFieldRoot: {marginTop: 20},
-  cell: {
-    width: 20,
-    height: 40,
-    lineHeight: 38,
-    fontSize: 16,
-    borderWidth: 2,
-    borderColor: '#00000030',
-    textAlign: 'center',
-  },
-  focusCell: {
-    borderColor: 'red',
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-  },
-  textBox : {
-    borderWidth : 1,
-    borderColor : 'black',
-    textAlign : 'center',
-    fontSize : 20,
-    margin : 10,
-    borderRadius : 5,
-    padding : 5,
-    color : theme
-  
-
-  },
-  submit : {
-    backgroundColor : theme,
-    width : '98%',
-    marginLeft : 20,
-    marginRight : 20,
-    marginBottom : 5,
-    borderRadius : 10,
-    padding : 5,
-    borderRadius : 10,
-    borderWidth : 1,
-    borderColor : 'white',
-    elevation : 1, 
-    height : 40,
-
-  },
-})

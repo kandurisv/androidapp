@@ -11,9 +11,8 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import Modal from 'react-native-modal';
 
-import { Amplitude } from '@amplitude/react-native';
-const ampInstance = Amplitude.getInstance();
-ampInstance.init(af380775c59ead50c4c02536befef5e5);
+import * as Amplitude from 'expo-analytics-amplitude';
+Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width,height} = Dimensions.get("screen")
 
@@ -177,7 +176,7 @@ const AddPost = () => {
 
   
   React.useEffect(()=>{
-    ampInstance.logEvent('ADD_POST_VISIT',{"userId" : userId , "productId" : productId })
+    Amplitude.logEventWithPropertiesAsync('ADD_POST_VISIT',{"userId" : userId , "productId" : productId })
     const defaultSearch = () => {
       setSearchLoading(true)
       
@@ -312,7 +311,7 @@ const AddPost = () => {
       ToastAndroid.show("Please answer the contextual questions !! " , ToastAndroid.SHORT)
     }
     else {
-    ampInstance.logEvent('POST_SUBMIT',{"userId" : userId , "productId" : productId })
+    Amplitude.logEventWithPropertiesAsync('POST_SUBMIT',{"userId" : userId , "productId" : productId })
     console.log("Review Submit")
     const array = []
     

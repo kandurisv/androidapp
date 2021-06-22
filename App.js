@@ -6,10 +6,8 @@ import {URL, FetchData , AuthProvider , firebaseConfig, LoadingPage} from './Scr
 import Navigator from './Screens/Navigator'
 import * as firebase from "firebase";
 
-import { Amplitude  , Identify} from '@amplitude/react-native';
-const ampInstance = Amplitude.getInstance();
-
-ampInstance.init(af380775c59ead50c4c02536befef5e5);
+import * as Amplitude from 'expo-analytics-amplitude';
+Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 try {
   firebase.initializeApp(firebaseConfig);
@@ -54,11 +52,8 @@ const App = () => {
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
               setUserId(user.phoneNumber)
-              const identify = new Identify();
-              identify.set("phoneNumber", user.phoneNumber)
-              ampInstance.setUserId(user.phoneNumber)
-              ampInstance.trackingSessionEvents(true); 
-              ampInstance.identify(identify)
+              Amplitude.setUserIdAsync(user.phoneNumber)
+              Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
               console.log('App User!' , user.phoneNumber);
 
             }

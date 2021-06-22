@@ -5,6 +5,7 @@ import { useNavigation , useRoute } from '@react-navigation/native';
 import { background, firebaseConfig, theme } from './exports';
 import * as firebase from "firebase";
 import { ModernHeader } from "@freakycoder/react-native-header-view";
+import { header, pins, signout } from './styles';
 
 try {
   firebase.initializeApp(firebaseConfig);
@@ -47,32 +48,32 @@ const Signout = () => {
 
   const goToAuth = () => {
     console.log("reached to go to auth")
+    
     navigation.navigate("Auth")
   }
   const noToHome = () => {
     navigation.navigate("Home")
   }
   return (
-    <View style = {styles.container}>
-      <View>
+    <View style = {signout.container}>
+      <View style = {header.headerView}>
             <ModernHeader 
                 title="Signout?"
-                titleStyle = {{fontSize: 18 , color : theme}}
+                titleStyle = {header.headerText}
                 backgroundColor= {background}
                 leftDisable
-                rightIconComponent = {
-                    <AntDesign name = "logout" size = {20} color = "black" />
-                }
-                rightIconOnPress = {signout}
+                rightDisable
                 />
       </View>
-      <Text style = {styles.question}>Do you want to signout ? </Text>
-      <TouchableOpacity style = {styles.button} onPress = {signoutToHome}>
-        <Text style = {styles.text}>Sign Out</Text>
+      <View style = {signout.signOutContainer} >
+      <Text style = {signout.signOutQuestion}>Do you want to signout ? </Text>
+      <TouchableOpacity style = {signout.yesButton} onPress = {signoutToHome}>
+        <Text style = {signout.yesText}>Sign Out</Text>
       </TouchableOpacity>
-      <TouchableOpacity style = {styles.button1} onPress = {noToHome}>
-        <Text style = {styles.text1}>No</Text>
+      <TouchableOpacity style = {signout.noButton} onPress = {noToHome}>
+        <Text style = {signout.noText}>No</Text>
       </TouchableOpacity>
+      </View>
     </View>
   )
 }

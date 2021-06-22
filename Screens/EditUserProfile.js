@@ -1,7 +1,7 @@
 import React , {useState,useEffect , useContext} from 'react'
-import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput, StyleSheet , Dimensions , Button} from 'react-native'
+import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button} from 'react-native'
 
-
+import { ModernHeader } from "@freakycoder/react-native-header-view";
 import moment from 'moment';
 import * as ImagePicker from 'expo-image-picker';
 import { Checkbox } from 'react-native-paper';
@@ -11,7 +11,9 @@ import RadioGroup from 'react-native-custom-radio-group';
 
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
-import { background, theme, uploadImageOnS3 } from './exports';
+import { background, borderColor, theme, uploadImageOnS3 } from './exports';
+import { editUserDetails, home, user ,header } from './styles';
+import { AntDesign } from '@expo/vector-icons';
 
 
 
@@ -36,11 +38,11 @@ const EditUserProfile = () => {
 
   const [selectedLanguage, setSelectedLanguage] = useState();
 
-  onItemSelected = selectedItem => {
+  const onItemSelected = selectedItem => {
     setSelectedItem(selectedItem)
   };
 
-  onPress = () => {
+  const onPress = () => {
     setSelectedItem(3)
   };
 
@@ -139,288 +141,80 @@ const EditUserProfile = () => {
 
     
     return (
-        <View>
-            <View>
+        <View style = {user.container}>
+          <View style = {header.headerView}>
+                    <ModernHeader 
+                        title="Details"
+                        titleStyle = {header.headerText}
+                        backgroundColor= {background}
+                        leftIconColor = {borderColor}
+                        leftIconOnPress={() => navigation.goBack()}
+                        rightIconComponent = {<AntDesign name = "logout" size = {20} color = "black"/>}
+                        rightIconOnPress = {()=> {
+                            Amplitude.logEventAsync('SIGNOUT_FROM_USER')
+                            navigation.navigate("Signout")
+                            }
+                        }
+                        />
+                </View>
+            <View style = {user.mainViewCoverContainer}>
               <TouchableOpacity onPress = {pickCoverPhoto}>
                 <ImageBackground source = {coverImage ? {uri : coverImage} :require('../assets/defaultCover.png')} 
-                        style = {styles.imageCover} >
+                        style = {user.mainViewCoverImage} >
                 </ImageBackground>
               </TouchableOpacity>
             </View>
-            <View style = {{flexDirection : 'row'}}>
-              <TouchableOpacity style = {styles.imageProfileView} onPress = {pickProfilePhoto}>
+            <View style = {user.editUserDetailsDisplayContainer}>
+              <TouchableOpacity style = {user.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
                 <ImageBackground source = {image ? {uri : image} : require('../assets/defaultProfile.png')} 
-                        style = {styles.imageProfile} >
+                        style = {user.editUserDetailsDisplayImage} >
                 </ImageBackground>
               </TouchableOpacity>
             </View>
             
-            <View style = {styles.userDetailsMasterContainer}>
-              <View style = {styles.userDetailsContainer}>
-                <Text style = {styles.userDetailsText}>UserName</Text>
+            <View style = {user.editUserDetailsInputContainer}>
+              <View style = {home.userDetailsElementContainer}>
+                <Text style = {home.userDetailsElementText}>UserName</Text>
                 <TextInput 
                         placeholder = "arianagrande"
-                        style = {styles.userDetailsInput}
+                        style = {home.userDetailsElementTextInput}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
                 />
               </View>
-              <View style = {styles.userDetailsContainer}>
-                <Text style = {styles.userDetailsText}>Age</Text>
+              <View style = {home.userDetailsElementContainer}>
+                <Text style = {home.userDetailsElementText}>Age</Text>
                 <TextInput 
-                        style = {styles.userDetailsInput} 
+                        style = {home.userDetailsElementTextInput} 
                         placeholder = "27"
                         onChangeText = {(text)=>setAge(text)}
                         value = {age}
                 />
               </View>
               <View>
-                <Text style = {{fontSize : 14, fontStyle : "italic" , color : 'black' , margin : 10}}> Gender : {gender}</Text>
+                <Text style = {home.userDetailsGenderHeading}> Gender : {gender}</Text>
                 <RadioGroup 
                     radioGroupList={radioGroupList} 
                     onChange = {(value) => setGender(value)}
                     initialValue = {gender}
-                    containerStyle = {styles.radioContainerStyle}
-                    buttonContainerStyle ={styles.radioButtonContainerStyle}
-                    buttonTextStyle = {styles.radioButtonTextStyle}
-                    buttonContainerActiveStyle = {styles.radioButtonContainerActiveStyle}
-                    buttonContainerInactiveStyle = {styles.radioButtonContainerInactiveStyle}
-                    buttonTextActiveStyle = {styles.radioButtonTextActiveStyle}
-                    buttonTextInactiveStyle = {styles.radioButtonTextInactiveStyle}/>
+                    containerStyle = {home.userDetailsGenderRadioContainerStyle}
+                    buttonContainerStyle ={home.userDetailsGenderRadioButtonContainerStyle}
+                    buttonTextStyle = {home.userDetailsGenderRadioButtonTextStyle}
+                    buttonContainerActiveStyle = {home.userDetailsGenderRadioButtonContainerActiveStyle}
+                    buttonContainerInactiveStyle = {home.userDetailsGenderRadioButtonContainerInactiveStyle}
+                    buttonTextActiveStyle = {home.userDetailsGenderRadioButtonTextActiveStyle}
+                    buttonTextInactiveStyle = {home.userDetailsGenderRadioButtonTextInactiveStyle}/>
               </View> 
-              <View style = {{alignItems : 'flex-end'}}>
+              <View style = {home.userDetailsSubmitContainer}>
                 <TouchableOpacity 
                         onPress = {submit}
-                        style = {styles.userDetailsSubmitButton}>
-                  <Text style = {styles.userDetailsSubmitText}>Submit</Text>
+                        style = {home.userDetailsSubmitButton}>
+                  <Text style = {home.userDetailsSubmitText}>Submit</Text>
                 </TouchableOpacity>
               </View>                  
             </View>
           </View>
     )
 }
-
-const styles = StyleSheet.create({
-    nonEditableFields : {
-        borderColor : 'transparent',
-        borderBottomColor : 'black',
-        width : 0.95 * Dimensions.get('window').width,
-        alignSelf : 'center',
-        borderWidth : 1,
-        marginBottom : 10,
-    },
-    editableFields : {
-
-    },
-    container: {
-        flex: 1, 
-        justifyContent: 'center', 
-        backgroundColor: background, 
-        marginTop : 20
-      },
-      textInput: { 
-        height: 40, 
-        borderColor: 'gray', 
-        borderWidth: 1 },
-      formComponent : {
-        
-        
-      },
-      formText : {
-        color : "#E64852",
-        paddingLeft : 10,
-        fontWeight : 'bold',
-        fontStyle : 'italic',
-        flex : 1
-      },
-      formInput : {
-        borderColor : 'transparent',
-        borderBottomColor : 'black',
-        width : 0.95 * Dimensions.get('window').width,
-        alignSelf : 'center',
-        borderWidth : 1,
-        marginBottom : 10,
-        
-      },
-      coverImageView : {
-        elevation : 1,
-        width : 0.2 * Dimensions.get("window").width,
-        alignSelf : 'center',
-        marginBottom : 5
-      },
-      coverImage : {
-        width : Dimensions.get("window").width * 0.2,
-        height : Dimensions.get("window").width * 0.2,
-        borderColor : "#E64852",
-        borderRadius : 50,
-        justifyContent : 'center',
-        alignSelf : 'center',
-        borderColor : 'black',
-        borderWidth : 2
-      },
-      imagePickerButton : {
-        backgroundColor : "transparent",
-        
-        alignSelf : 'center',
-        width : 150,
-        justifyContent : 'center',
-        margin : 10 
-      },
-      coverPickerButton : {
-        backgroundColor : "transparent",
-        alignSelf : 'center',
-        width : '100%',
-        height : 150,
-        justifyContent : 'center',
-        margin : 10 ,
-
-      },
-      coverPickerText : {
-        color : '#E64852',
-        alignSelf : 'center',
-        fontWeight : 'bold'
-      },
-      imagePickerText : {
-        alignSelf : 'center',
-        color : '#E64852',
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-        textShadowRadius : 2,
-  
-      },
-    radioContainerStyle : {
-        justifyContent : 'center' , 
-        alignItems : 'center' , 
-        width : Dimensions.get("window").width,
-        alignItems : 'center'
-},
-    radioButtonContainerStyle: {
-        borderWidth : 1, 
-        borderColor : 'black' ,
-        padding: 5 , 
-        borderRadius : 10 , 
-        height : 30,
-        margin : 10,
-        marginTop : 0 ,
-        width : 100
-        
-        
-    },
-    radioButtonTextStyle: {fontSize : 12},
-    radioButtonContainerActiveStyle: {backgroundColor : "#E64852"},
-    radioButtonContainerInactiveStyle: {},
-    radioButtonTextActiveStyle: {},
-    radioButtonTextInactiveStyle: {},
-    datepicker : {
-        width : 100,
-        height : 30,
-        backgroundColor : "white" , 
-        borderColor : "#E64852",
-        borderWidth : 3,
-        borderRadius : 50,
-        justifyContent : 'center',
-        alignSelf : 'center',
-        alignItems: 'center',
-        marginLeft : 20
-    },
-    dateView : {flexDirection : 'row', alignItems : 'center', margin : 5, marginLeft : 10},
-    changePasswordButton : {
-        backgroundColor : '#346666', width : 175, padding : 10,
-        borderRadius : 25 , margin : 50,  marginBottom : 30 , marginRight : 20, 
-        alignSelf : 'flex-end' , alignItems : 'center',
-        justifyContent : 'center' ,
-    },
-    changePasswordText : {color : 'white' , alignSelf : 'center' },
-    saveButton : { width : 100,
-        height : 30,
-        backgroundColor : "#E64852" , 
-        marginTop : 20,
-        borderWidth : 3,
-        borderRadius : 50,
-        justifyContent : 'center',
-        alignSelf : 'center',
-        alignItems: 'center'},
-    saveButtonText : { color : 'white'},
-    imageCover : {
-      width : '100%',
-      height : 150,
-
-    },
-    imageProfile : {
-      width : 100,
-      height : 100,
-      borderRadius : 100,
-      
-    },
-    imageProfileView : {
-      width : 100,
-      height : 100,
-      borderRadius : 50,
-      
-      margin : 20,
-      overflow: 'hidden'
-
-    },
-    userDetailsText : {
-      margin : 10,
-      flex : 1, 
-      textAlign : 'center',
-  },
-  userDetailsInput : {   
-      flex : 1, 
-      borderRadius : 5,
-      borderBottomWidth : 1,
-      borderColor : '#AAA',
-      textAlign : 'center',
-      width : Dimensions.get('screen').width*0.5
-  },
-  userDetailsContainer  : {
-      flexDirection : 'row',
-      borderRadius : 5,
-      borderWidth : 1,
-      borderColor : 'black',
-      padding : 5 , 
-      margin : 5
-  },
-  userDetailsMasterContainer  : {},
-  userDetailsSubmitButton : {
-      backgroundColor : theme,
-      width : Dimensions.get('screen').width*0.5,
-      marginTop : 20,
-      alignItems : 'center',
-      padding : 10,
-      borderRadius : 10,
-      marginRight : 10,
-  },
-  userDetailsSubmitText : {
-      color : background,
-      textAlign : 'center'
-  },
-  radioContainerStyle : {
-      justifyContent : 'center' , 
-      alignItems : 'center' , 
-      width : Dimensions.get("window").width,
-      alignItems : 'center'
-  },
-  radioButtonContainerStyle: {
-      borderWidth : 1, 
-      borderColor : '#AAA' ,
-      padding: 5 , 
-      borderRadius : 10 ,     
-      height : 30,
-      margin : 10,
-      marginTop : 0 ,
-      width : 100
-      
-      
-  },
-  radioButtonTextStyle: {fontSize : 12},
-  radioButtonContainerActiveStyle: {backgroundColor : theme},
-  radioButtonContainerInactiveStyle: {},
-  radioButtonTextActiveStyle: {},
-  radioButtonTextInactiveStyle: {},
-  
-
-})
 
 export default EditUserProfile
