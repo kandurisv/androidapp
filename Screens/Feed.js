@@ -8,6 +8,7 @@ import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-h
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 
 import * as Amplitude from 'expo-analytics-amplitude';
+import { feed, header } from './styles';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("screen");
@@ -33,15 +34,15 @@ const FeedItem = ({item}) => {
     }
    
     return(
-        <TouchableWithoutFeedback style = {styles.container} onPress = {onItemClick} >
-            <Text style ={styles.username} > {item.username}</Text>    
+        <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
+            <Text style ={feed.scrollableFeedItemUserName} > {item.username}</Text>    
             <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
             {item.image_list.map((image , index) => (
-                <Image key = {index} style = {styles.image} source = {{uri: image}}
+                <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image}}
             />))} 
             </ScrollView>
-            <Text style ={styles.productTitle} >{item.product_name}</Text>
-            <Text style ={styles.content} > {review.substring(0,40)} ...</Text>
+            <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
+            <Text style ={feed.scrollableFeedItemProductReview} > {review.substring(0,40)} ...</Text>
         </TouchableWithoutFeedback>
     );
 };
@@ -146,23 +147,23 @@ const Feed = (props) => {
         )
  
   return (
-    <View>
-     <View>
+    <View style = {feed.container}>
+     <View style = {header.headerView}>
             <ModernHeader 
                 title="Feed"
-                titleStyle = {headerStyle.headerText}
+                titleStyle = {header.headerText}
                 backgroundColor= {background}
                 leftIconColor = {borderColor}
                 leftIconOnPress={() => navigation.goBack()}
                 rightDisable
                 />
       </View>
-      <View style = {{ marginBottom : 0}}>
+      <View style = {feed.mainContainer}>
         {error ? 
         <View><Text>Error while loading data 😢</Text></View> : 
         <FlatList 
         keyExtractor={item => item.item_id} 
-        style = {{marginBottom:200}}
+        style = {feed.scrollableFeedContainer}
         data = {itemsForFeed}            
         renderItem = {items}
     //    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -179,47 +180,5 @@ const Feed = (props) => {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-    container:{
-        marginBottom: 5,
-        width,
-        height,
-    },
-    image:{
-        width,
-        height,
-        aspectRatio:2.5/3,
-        resizeMode: 'cover',
-        borderRadius: 10,
-    },
-    productTitle:{
-        position:'absolute',
-        bottom:0,
-        color : 'white',
-        marginBottom: 35,
-        marginLeft: 10,
-        fontSize:30,
-        fontWeight:'bold'
-        
-    },
-    content:{
-        position:'absolute',
-        bottom:0,
-        color : 'white',
-        marginBottom: 15,
-        marginLeft: 10,
-        fontSize:15
-    },
-    username:{
-        position:'absolute',
-        top:0,
-        color : 'white',
-        marginTop: 15,
-        marginLeft: 15,
-        fontSize:20,
-        zIndex: 100
-    }
-});
 
 export default Feed

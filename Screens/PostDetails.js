@@ -12,6 +12,7 @@ import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 
 import * as Amplitude from 'expo-analytics-amplitude';
+import { header, postDetails } from './styles';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("window");
@@ -93,41 +94,37 @@ const Cover = (props) => {
     
     return(
         <ScrollView>
-            <View style = {styles.container2}>
+            <View style = {postDetails.reviewImageContainerScrollableContainer}>
                 {/* <StatusBar height = {0} translucent backgroundColor='transparent'/> */}
-                <View style = {styles.usernameView}>
-                <TouchableOpacity  onPress = {getFeedByUser}>
-                    <Text style ={styles.username2} >{props.username}</Text>
+                <View style = {postDetails.reviewImageContainerUserNameView}>
+                <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
+                    <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text>
                 </TouchableOpacity>
                 </View>
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
                     {props.imageList.map((image , index) => (
-                        <Image key = {index} source = {{uri: image}} style = {styles.image2}/>
+                        <Image key = {index} source = {{uri: image}} style = {postDetails.reviewImageContainerScrollableImage}/>
                     ))}
                 </ScrollView>
-                <Text style ={styles.productTitle2} >{props.productname}</Text>
-                <View style = {styles.heart2}>
-                    <TouchableOpacity onPress = {likeClick} >
+                <Text style ={postDetails.reviewImageContainerProductNameText} >{props.productname}</Text>
+                <View style = {postDetails.reviewImageContainerHeartContainer}>
+                    <TouchableOpacity style = {postDetails.reviewImageContainerHeartImageButton} onPress = {likeClick} >
                     <LottieView
                         ref={animation => animation}
                         progress = {progress}
-                        style={{
-                                width: 50,
-                                height: 50,
-                                backgroundColor: 'transparent',
-                            }}
+                        style={postDetails.reviewImageContainerHeartImage}
                         source={require('../assets/animation/like-icon5.json')}
                     />
                     </TouchableOpacity>
                 </View>
-                <View style = {styles.heartText2}>
-                    <Text style = {styles.likeNumber2}>{likeCount}</Text>
+                <View style = {postDetails.reviewImageContainerHeartTextView}>
+                    <Text style = {postDetails.reviewImageContainerHeartTextValue}>{likeCount}</Text>
                 </View>
-                <View style = {styles.comment2}>
+                <View style = {postDetails.reviewImageContainerCommentContainer}>
                     <Fontisto name = "comment" size = {22} color = {background} />
                 </View>
-                <View style = {styles.commentText2}>
-                    <Text style = {styles.commentNumber2}>{commentCount}</Text>
+                <View style = {postDetails.reviewImageContainerCommentTextView}>
+                    <Text style = {postDetails.reviewImageContainerCommentTextValue}>{commentCount}</Text>
                 </View>
             </View>
         </ScrollView>
@@ -135,41 +132,26 @@ const Cover = (props) => {
 };
 
 const listTab = [
-    {
-        status: 'Review'
-    },
-
-    {
-        status: 'Claim'
-    },
-
-    {
-        status: 'Context'
-    }
+    {status: 'Review'},
+    {status: 'Claim'},
+    {status: 'Context'}
 ]
 
-const Data = [
-    {
+const Data = [{
         status: 'Review',
-        content : ' Review , Import your header.js file in the entry of your app, the App.js file, and include the following styles. For styling purposes, our app container has a background color of #eef'
-    },
-
-    {
+        content : 'Review'
+    }, {
         status: 'Claim',
-        content : 'Claim , Import your header.js file in the entry of your app, the App.js file, and include the following styles. For styling purposes, our app container has a background color of #eef'
-    },
-
-    {
+        content : 'Claim'
+    }, {
         status: 'Context',
-        content : 'Context , Import your header.js file in the entry of your app, the App.js file, and include the following styles. For styling purposes, our app container has a background color of #eef'
+        content : 'Context'
     },
 ]
 
 const Tab = ({reviewArray, dayArray, review,claim,context}) => {
-
     const [status, setStatus] = useState('Review');
     const [dataList , setDataList] = useState ([listTab[0]]);
-
     const setStatusFilter = status => {
         setDataList([...Data.filter(e => e.status === status)]);
         setStatus(status);
@@ -177,14 +159,10 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
 
     const renderItem = ({item , index}) =>{
         const ReviewItem = ({item,dayIndex}) => {
-            
             return(
-               
                     <View style = {{}} key = {dayIndex}>
-                        
-                            <Text style = {{fontWeight : 'bold' , marginTop : 10,}}>Day {dayArray[dayIndex]}</Text>
-                            <Text>{item}</Text>
-                        
+                        <Text style = {{fontWeight : 'bold' , marginTop : 10,}}>Day {dayArray[dayIndex]}</Text>
+                        <Text>{item}</Text>
                     </View>  
                    
             )
@@ -205,51 +183,27 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
         }
 
         return(
-            <View key ={index} style = {styles.itemContainer1} >
-                {/* <Text style = {styles.textItem}>
-                    {
-                        item.status == "Review" ? review : 
-                        item.status == "Claim" ? claim : context
-                    } 
-                </Text> */}
-              
-                    {
-                        item.status == "Review" ? 
-                        reviewArray.map((reviewItem,reviewIndex)=>{
-                        
-                        return (
-                        reviewItem ? 
-                        <ReviewItem key = {reviewIndex} dayIndex = {reviewIndex} item = {reviewItem}/> : null
-                        )  
-                        
-                    })
-                        : 
-                        item.status == "Claim" ? <ClaimItem /> : <ContextItem />
-                    } 
-               
+            <View key ={index} style = {postDetails.reviewTabItemContainer}>
+            {item.status == "Review" ? 
+                reviewArray.map((reviewItem,reviewIndex)=>{
+                    return ( reviewItem ? <ReviewItem key = {reviewIndex} dayIndex = {reviewIndex} item = {reviewItem}/> : null)  
+                }) : item.status == "Claim" ? <ClaimItem /> : <ContextItem />
+            }   
             </View>
         )
     }
 
     return(
-        <SafeAreaView style = {styles.container1}>
-            <View style = {styles.listTab1}>
-                {
-                    listTab.map((e,i) => (
-                        <TouchableOpacity 
-                        key = {i}
-                        style = {[styles.btnTab1 , status === e.status && styles.btnTabActive1]}
-                        onPress = {() => setStatusFilter(e.status)}
-                        >
-                            <Text 
-                            style = {[styles.textTab1 , status === e.status && styles.textTabActive1]}>
-                                {e.status}
-                                </Text>
-                        </TouchableOpacity>
-                    )
-                    )
-                }
-                
+        <SafeAreaView style = {postDetails.reviewTabItemContainer}>
+            <View style = {postDetails.reviewTabBar}>
+            {listTab.map((e,i) => (
+                <TouchableOpacity key = {i} onPress = {() => setStatusFilter(e.status)}
+                    style = {[postDetails.reviewTabBarButton , status === e.status && postDetails.reviewTabBarSelectedButton]}>
+                    <Text style = {[postDetails.reviewTabBarText , status === e.status && postDetails.reviewTabBarSelectedText]}>
+                        {e.status}
+                    </Text>
+                </TouchableOpacity>
+                ))}   
             </View>
 
             <FlatList 
@@ -367,18 +321,18 @@ const PostDetails = (props) => {
     }
 
   return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View>
+      <ScrollView contentContainerStyle={postDetails.contentContainer}>
+        <View style = {header.headerView}>
         <ModernHeader 
           title="Pins"
-          titleStyle = {headerStyle.headerText}
+          titleStyle = {header.headerText}
           backgroundColor= {background}
           leftIconColor = {borderColor}
           leftIconOnPress={() => navigation.goBack()} 
           rightDisable
           />
         </View>
-        <View style = {styles.review}>
+        <View style = {postDetails.reviewImageContainer}>
           <Cover 
             imageList = {route.params.details.image_list}
             imageListDays = {route.params.details.day_product_used_image}
@@ -391,7 +345,7 @@ const PostDetails = (props) => {
             likeIndicator = {likeIndicator}
             />
         </View>
-        <View style = {styles.tab}>
+        <View style = {postDetails.reviewTabContainer}>
           <Tab 
             reviewArray = {route.params.details.content}
             dayArray = {route.params.details.day_product_used_content}
@@ -401,28 +355,28 @@ const PostDetails = (props) => {
           />
         </View>
         <View>
-            <View style ={styles.container5} > 
-                <KeyboardAvoidingView style ={styles.mainContainer5} >
+            <View style ={postDetails.reviewCommentContainerAddCommentContainer} > 
+                <KeyboardAvoidingView style ={postDetails.reviewCommentContainerTextInputContainer} >
                     <TextInput 
                     placeholder ={"Add a comment"}
-                    style ={styles.textInput5} 
+                    style ={postDetails.reviewCommentContainerTextInput} 
                     multiline
                     value = {message}
                     onChangeText = {setMessage}
                     />
                 </KeyboardAvoidingView>
 
-                <View style ={styles.buttonContainer5} >
+                <View style ={postDetails.reviewCommentContainerSubmitContainer} >
                     <TouchableOpacity onPress = {onCommentsSend}>
                         <MaterialIcons name = "send" size={24} color = '#0080FF' />
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style = {styles.commentsView}>
+            <View style = {postDetails.reviewCommentContainerReadCommentContainer}>
                 {comments.length > 0 && comments.map((item,index)=> {
                    return(
-                    <View key = {index} style = {styles.commentContainer} >
-                        <View style = {styles.dp}>
+                    <View key = {index} style = {postDetails.reviewCommentContainerReadCommentItem} >
+                        <View style = {postDetails.reviewCommentContainerReadCommentItemView}>
                         {item.engagement_user_name ? 
                         <Avatar.Image 
                             source={{
@@ -432,15 +386,15 @@ const PostDetails = (props) => {
                             source={{
                                 uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=64'
                              }} size={20}/>}
-                        <Text style = {styles.commentContainerName}>{item.engagement_user_name}</Text>
+                        <Text style = {postDetails.reviewCommentContainerReadCommentUserName}>{item.engagement_user_name}</Text>
                         </View>
                         
-                        <Text style = {styles.commentContainerText}>{item.comment}</Text>
+                        <Text style = {postDetails.reviewCommentContainerReadCommentUserComment}>{item.comment}</Text>
                     </View>) 
                 })}
                 {comments.length == 0 && 
-                    <View style = {styles.commentContainer} >
-                        <Text style = {styles.commentContainerText}>No comments yet</Text>
+                    <View style = {postDetails.reviewCommentContainerReadCommentEmptyContainer} >
+                        <Text style = {postDetails.reviewCommentContainerReadCommentEmptyContainerText}>No comments yet</Text>
                     </View>}
                 
             </View>
@@ -452,234 +406,3 @@ const PostDetails = (props) => {
 
 export default PostDetails
 
-const styles = StyleSheet.create({
-    dp : {
-        flexDirection : 'row',
-        alignItems : 'center',
-        
-    },
-    commentContainer : {
-        padding : 5 ,
-        marginTop : 10,
-        backgroundColor : 'white',
-        borderRadius : 5,
-
-    },
-    commentContainerText : {
-        marginTop : 10
-    },
-    commentContainerName : {
-        fontWeight : 'bold',
-        marginLeft : 10,
-    },
-    commentsView: {
-        margin : 10,
-
-    },
-  container:{
-    backgroundColor : background,
-    paddingBottom : 60
-   },
-   tinyLogo: {
-    width: 50,
-    height: 50,
-  },
-  tab:{
-    // position:'absolute',
-    // bottom:-60,
-    marginTop:-23,
-    zIndex: 101
-  },
-
-  review:{
-    backgroundColor:'black'
-  },
-
-  container2:{
-    marginTop: 0,
-    width,
-    height,
-    // backgroundColor:'black'
-},
-
-image2:{
-    width,
-    height,
-    // width:'100%',
-    aspectRatio:2/3,
-    resizeMode: 'cover',
-    // borderRadius: 20,
-    // margin: 10
-},
-productTitle2:{
-    position:'absolute',
-    bottom:0,
-    color : 'white',
-    marginBottom: 40,
-    marginLeft: 10,
-    fontSize:30,
-    fontWeight:'bold'
-    
-},
-content2:{
-    position:'absolute',
-    bottom:0,
-    color : 'white',
-    marginBottom: 15,
-    marginLeft: 10,
-    fontSize:15
-},
-usernameView : {
-    position:'absolute',
-    top:0,
-    zIndex : 103,
-    marginTop: 15,
-    marginLeft: 15,
-   
-},
-username2:{
-    color : 'white',
-    fontSize:20,
-   
-},
-
-heart2:{
-    position:'absolute',
-    top:0,
-    color : 'white',
-    marginTop: 100,
-    marginLeft: width - 60,
-    fontSize:20,
-    zIndex: 100
-},
-
-heartText2:{
-    position:'absolute',
-    top:0,
-    // backgroundColor : 'white',
-    marginTop: 140,
-    marginLeft: width * 0.89,
-    // fontSize:20,
-//     zIndex: 101
-},
-likeNumber2:{
-    fontSize:20,
-    fontWeight:'bold',
-    color:'#fff',
-},
-
-comment2:{
-    position:'absolute',
-    top:0,
-    color : '#AAA',
-    marginTop: 190,
-    marginLeft: width - 48,
-    fontSize:20,
-    zIndex: 100
-},
-
-commentText2:{
-    position:'absolute',
-    top:0,
-    // backgroundColor : 'white',
-    marginTop: 212,
-    marginLeft: width - 42,
-    // fontSize:20,
-//     zIndex: 101
-},
-commentNumber2:{
-    fontSize:20,
-    fontWeight:'bold',
-    color: background,
-},
-
-container1:{
-    flex: 1,
-    paddingHorizontal: 10,
-    justifyContent:'center'
-},
-
-listTab1:{
-    flexDirection: 'row',
-    alignSelf:'center',
-    marginBottom: 20
-},
-
-btnTab1:{
-    width: Dimensions.get('window').width /5,
-    flexDirection: 'row',
-    borderWidth: 0.5,
-    borderColor: background,
-    padding: 10,
-    justifyContent: 'center',
-    backgroundColor: background
-},
-
-textTab1:{
-    fontSize: 13,
-    color: borderColor
-},
-
-btnTabActive1:{
-    backgroundColor: theme
-},
-
-textTabActive1 :{
-    color: background
-},
-
-itemContainer1:{
-    width : '90%',
-    alignSelf:'center',
-    backgroundColor : background
-},
-
-textItem:{
-    fontSize: 16,
-    
-
-},
-container5:{
-    flexDirection :'row',
-    borderRadius : 5,
-    backgroundColor : '#FFFFFF',
-    borderWidth : 1,
-    borderColor : '#EEEEEE',
-    marginLeft : 10,
-    marginRight : 10,
-    marginTop : 20,
-},
-
-mainContainer5:{
-    flexDirection: 'row',
-    backgroundColor : '#FFFFFF',
-    borderRadius : 5,
-    alignContent : 'center',
-    flex : 1,
-    alignItems: 'center',
-    paddingLeft : 10,
-},
-
-textInput5 :{
-    flex: 1,
-    marginHorizontal: 10,
-    fontSize : 16,
-    color : 'black'
-},
-
-icon5:{
-    marginHorizontal: 5,
-},
-
-buttonContainer5:{
-    backgroundColor:"#FFF",
-    borderRadius:25,
-    width:50,
-    height : 50,
-    justifyContent:'center',
-    alignItems:'center',
-    alignSelf : 'center'
-    
-}
-
-});

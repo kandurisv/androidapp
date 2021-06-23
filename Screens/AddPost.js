@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {View , FlatList, SafeAreaView,Image, Button,StatusBar, StyleSheet, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid, RecyclerViewBackedScrollView } from "react-native";
+import {View , FlatList, SafeAreaView,Image, Button,StatusBar, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid, RecyclerViewBackedScrollView } from "react-native";
 import { FlatGrid } from 'react-native-super-grid';
 import {background, borderColor, headerStyle, s3URL, theme, uploadImageOnS3, URL} from './exports'
 import { useNavigation , useRoute , useIsFocused} from '@react-navigation/native';
@@ -12,6 +12,7 @@ import { ModernHeader } from "@freakycoder/react-native-header-view";
 import Modal from 'react-native-modal';
 
 import * as Amplitude from 'expo-analytics-amplitude';
+import { addPost, header1 } from "./styles";
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width,height} = Dimensions.get("screen")
@@ -48,31 +49,30 @@ const ImageBrowserScreen = ({ onComplete }) => {
 
   const updateHandler = (count, onSubmit) => {
     setHeader(
-      <View style = {{flex : 1 , alignItems : 'flex-end', margin : 5, marginRight : 10}}>
+      <View style = {addPost.imageBrowserDynamicHeaderContainer}>
         <TouchableOpacity 
-          style = {{margin : 5, padding : 5 , backgroundColor : theme , alignItems : 'center' , width : width * 0.4 , borderRadius : 20 , }}
+          style = {addPost.imageBrowserDynamicHeaderDoneButton}
           onPress={onSubmit}>
-          <Text style = {{color : background}}>Done/Back</Text>
+          <Text style = {addPost.imageBrowserDynamicHeaderDoneText}>Done/Back</Text>
         </TouchableOpacity>
       </View>
     );
   };
 
   const renderSelectedComponent = (number) => (
-    <View style={styles.countBadge10}>
-      <Text style={styles.countBadgeText10}>{number}</Text>
+    <View style={addPost.imageBrowserBadgeCountView}>
+      <Text style={addPost.imageBrowserBadgeCountText}>{number}</Text>
     </View>
   );
 
   const emptyStayComponent = (
-    <Text style={styles.emptyStay10}>No Photos Selected</Text>
+    <Text style={addPost.imageBrowserEmptyComponentText}>No Photos Selected</Text>
   );
 
   return (
-    <View>
+    <View style = {addPost.imageBrowserMasterContainer}>
     {header}
-    <View style={[styles.flex10, styles.container10]}>
-      
+    <View style={addPost.imageBrowserContainer}>
       <ImageBrowser
         max={5}
         onChange={updateHandler}
@@ -80,7 +80,6 @@ const ImageBrowserScreen = ({ onComplete }) => {
         renderSelectedComponent={renderSelectedComponent}
         emptyStayComponent={emptyStayComponent}
       />
-     
     </View>
     </View>
   );
@@ -89,8 +88,8 @@ const ImageBrowserScreen = ({ onComplete }) => {
 
    
 const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-    <Text style={[styles.title, textColor]}>{item}</Text>
+  <TouchableOpacity onPress={onPress} style={[addPost.mainViewContextQuestionsItemOptionsItemButton, backgroundColor]}>
+    <Text style={[addPost.mainViewContextQuestionsItemOptionsItemText, textColor]}>{item}</Text>
   </TouchableOpacity>
 );
 
@@ -117,13 +116,13 @@ const OptionsQuestions = ({questions, selectedAnswer}) => {
     };
 
   return (
-    <SafeAreaView style={styles.container}>
-    <View style ={styles.question} >
-         <Text style = {styles.questionText}> {questions.key} </Text>
+    <SafeAreaView style={addPost.mainViewContextQuestionsItemContainer}>
+    <View style ={addPost.mainViewContextQuestionsItemQuestionsView} >
+         <Text style = {addPost.mainViewContextQuestionsItemQuestionsText}> {questions.key} </Text>
     </View>
-    <View style ={styles.option} >
+    <View style ={addPost.mainViewContextQuestionsItemOptionsContainer} >
       <FlatList
-        contentContainerStyle={styles.list}
+        contentContainerStyle={addPost.mainViewContextQuestionsItemOptionsContentContainer}
         data={questions.option}
         renderItem={renderItem}
         keyExtractor={(item) => item}
@@ -394,10 +393,10 @@ const AddPost = () => {
         const calendarText = pieces[pieces.length-2]
 
         return(
-        <View style={styles.existingReviewImageContainer}>
-          <Image source = {{uri : item}} style = {styles.existingReviewImageFile} />
-          <View style = {styles.calendarView}>
-            <Text style={styles.calendarText}>{calendarText}</Text>
+        <View style={addPost.mainViewReviewExistsImagesContainer}>
+          <Image source = {{uri : item}} style = {addPost.mainViewReviewExistsImagesItem} />
+          <View style = {addPost.mainViewReviewExistsImagesCalendarView}>
+            <Text style={addPost.mainViewReviewExistsImagesCalendarText}>{calendarText}</Text>
           </View>
         </View>
         )
@@ -410,16 +409,16 @@ const AddPost = () => {
           setModalContent(existingReview[0].content[index])
         }
         return(
-        <View style = {styles.reviewModalContainer}>
-          <TouchableOpacity style = {styles.reviewModalButton} onPress = {onModalButtonClick}>
-            <Text style = {{color: background , padding : 5 , }}>Day:{item} Review </Text>
+        <View style = {addPost.mainViewReviewExistsDayReviewItemContainer}>
+          <TouchableOpacity style = {addPost.mainViewReviewExistsDayReviewItemButton} onPress = {onModalButtonClick}>
+            <Text style = {addPost.mainViewReviewExistsDayReviewItemText}>Day:{item} Review </Text>
           </TouchableOpacity>
         </View>)
       }
 
       return (  
-    <View style = {styles.existingReviewContainer}>
-      <Text style = {{fontWeight : 'bold' , fontSize : 18, textAlign : 'center'}}>Existing Review</Text>
+    <View style = {addPost.mainViewReviewExistsContainer}>
+      <Text style = {addPost.mainViewReviewExistsHeader}>Existing Review</Text>
 
       {existingReview.length && existingReview[0].day_product_used_content.length ?
         <FlatList
@@ -427,13 +426,13 @@ const AddPost = () => {
         renderItem={renderModalButton}
         keyExtractor={item => item}
         horizontal = {true}
-        contentContainerStyle = {styles.carouselStyle}
+        contentContainerStyle = {addPost.carouselStyle}
         showsHorizontalScrollIndicator = {false}
         />
       : null}
-      <View style = {styles.existingReviewContextView}>
-        <Text style = {{fontWeight : 'bold' , }}>Contextual Information:</Text>
-        <Text>{context}</Text>
+      <View style = {addPost.mainViewReviewExistsContextContainer}>
+        <Text style = {addPost.mainViewReviewExistsContextHeader}>Contextual Information:</Text>
+        <Text style = {addPost.mainViewReviewExistsContextText}>{context}</Text>
       </View>
       {existingReview.length && existingReview[0].image_list.length ?
         <FlatList
@@ -441,7 +440,7 @@ const AddPost = () => {
         renderItem={renderItem}
         keyExtractor={item => item}
         horizontal = {true}
-        contentContainerStyle = {styles.carouselStyle}
+        contentContainerStyle = {addPost.carouselStyle}
         snapToInterval = {width/2-10}
         showsHorizontalScrollIndicator = {false}
         />
@@ -459,9 +458,9 @@ const AddPost = () => {
     })
     }
     return(
-      <View style = {styles.existingCategoryContextView}>
-        <Text style = {{fontWeight : 'bold' , }}>Contextual Information</Text>
-        <Text>{context}</Text>
+      <View style = {addPost.mainViewContextExistsItemContainer}>
+        <Text style = {addPost.mainViewContextExistsItemHeader}>Contextual Information</Text>
+        <Text style = {addPost.mainViewContextExistsItemText}>{context}</Text>
       </View>
     )
   }
@@ -523,9 +522,9 @@ const AddPost = () => {
   }
 
 return(
-<View>
-    <View>
-        <ModernHeader title="Add Review" titleStyle = {headerStyle.headerText1}
+<View style = {addPost.container}>
+    <View style = {header1.headerView}>
+        <ModernHeader title="Add Review" titleStyle = {header1.headerText1}
           backgroundColor= {background} leftIconColor = {borderColor}
           leftIconOnPress={() => {productSelected ? setProductSelected(false): navigation.goBack()}}
           rightDisable
@@ -538,31 +537,31 @@ return(
     onBackdropPress={() => setModalVisible(false)}
     onSwipeComplete={() => setModalVisible(false)}
     swipeDirection="left"
-    style = {{marginTop : Dimensions.get('screen').height*0.2 ,marginBottom : Dimensions.get('screen').height*0.2}}
+    style = {addPost.modalContainer}
     >
-        <View style={{flex: 1 , backgroundColor : background, width : width * 0.9 , height : width * 0.9 ,}}>
-          <Text style = {{marginBottom : 10, marginLeft : 10 , marginTop : 10 , fontSize : 18 , fontWeight : 'bold' }}>Review:</Text>
-          <Text style = {{color : borderColor , margin : 10 ,}}>{modalContent}</Text>
+        <View style={addPost.modalView}>
+          <Text style = {addPost.modalHeading}>Review:</Text>
+          <Text style = {addPost.modalText}>{modalContent}</Text>
         </View>
     </Modal>
-    <ScrollView contentContainerStyle = {styles.FullPageContainer} style = {styles.FullPageContainer}>
-        <View style={styles.flex10}>
+    <ScrollView contentContainerStyle = {addPost.scrollableMasterContentContainer} style = {addPost.scrollableMasterContainer}>
+        <View style={addPost.scrollableContainer}>
 			{isOpen ? (
 			
 				<ImageBrowserScreen onComplete={onComplete} />) : (
 				
-				<View style={styles.flex10}>
+				<View style={addPost.scrollableContainer}>
           {productSelected ? 
           (
-            <TouchableOpacity style = {styles.ProductContainer2 } onPress = {() => setProductSelected(false)}>
+            <TouchableOpacity style = {addPost.productSearchBarInactiveView } onPress = {() => setProductSelected(false)}>
               <Fontisto name = "search" size = {20} color = {background} />
-              <Text style = {{fontWeight : 'bold', padding : 5 , color : background , flex : 1, marginLeft : 5} }>{searchText}</Text>
+              <Text style = {addPost.productSearchBarInactiveText}>{searchText}</Text>
             </TouchableOpacity>
           ) : (
-					<View style = {styles.ProductContainer}>
+					<View style = {addPost.productSearchBarActiveView}>
             <Fontisto name = "search" size = {20} color = {theme} />
 						<TextInput 
-              style = {{flex : 1, textAlign : 'center'}}
+              style = {addPost.productSearchBarActiveTextInput}
 							placeholder = "Search for Product"
 							onChangeText = {(text) => search(text)}
 							onFocus = {()=>setInputFocus(true)}
@@ -573,12 +572,12 @@ return(
 					{inputFocus ?
 						<View>
             <FlatList data={searchArray} keyExtractor = {item => item.product_id.toString()} 
-              contentContainerStyle = {{flex : 1, margin : 10,}}
+              contentContainerStyle = {addPost.productSearchResultsContentContainer}
               renderItem = {({item})=>{
 							return(<TouchableOpacity 
-                style = {{flex : 1 , borderWidth : 1, borderColor : '#DDD',  marginTop : 10, padding : 10, justifyContent : 'center'}}
-                onPress = {()=>onClickSearchItem(item)} styles = {{borderColor : 'red'}}>
-                <Text style = {{fontSize :14}}>{item.product_name}</Text>
+                style = {addPost.productSearchResultsButton}
+                onPress = {()=>onClickSearchItem(item)} >
+                <Text style = {addPost.productSearchResultsText}>{item.product_name}</Text>
 							</TouchableOpacity>)
 						}}
 						/>
@@ -587,26 +586,26 @@ return(
 						<View>
 							{existingReviewExists ? <ReviewSummary /> : null}
 							
-							<View style = {{flexDirection : 'row' , borderColor : '#000' , borderWidth : 1, margin : 10, marginTop : 5}}>
-								<TouchableOpacity style = {styles.imagePickerButton} onPress={() => setIsOpen(true)}>
+							<View style = {addPost.mainViewAddImagesContainer}>
+								<TouchableOpacity style = {addPost.mainViewAddImagesButton} onPress={() => setIsOpen(true)}>
 									<MaterialCommunityIcons name = "image-plus" size = {40} color = "#666"/>
-									<Text style = {{ }}>Add Photos</Text>
-                  <Text style = {{ }}>(Max 5)</Text>
+									<Text style = {addPost.mainViewAddImagesText}>Add Photos</Text>
+                  <Text style = {addPost.mainViewAddImagesText}>(Max 5)</Text>
 								</TouchableOpacity>
 								{!imageCount ? 
-									<View style = {{flex : 1, justifyContent : 'center' , alignItems : 'center', marginLeft : 30 , borderWidth : 1, borderColor : background}}>
+									<View style = {addPost.mainViewShowImagesEmptyContainer}>
 										<Text></Text>
 									</View> : 
 									<FlatGrid itemDimension={50} data={photos} renderItem={({item}, i) => ((
 										<Image
-										  style={{ height: 50, width: 50 }}
+										  style={addPost.mainViewShowImagesItem}
 										  source={{ uri: item.uri }}
 										  key={i}
 										/>))}/>}
 							</View>
 
 							{!existingReviewExists ? !categoryAnsExists ?
-								<View style = {styles.ContextContainer}>
+								<View style = {addPost.mainViewContextQuestionsContainer}>
 									{contextOptions.slice(0,3).map((item,index) => {
 										return <OptionsQuestions 
                       key = {item.id} 
@@ -618,13 +617,13 @@ return(
 								<CategoryAnsSummary /> : null
 							}
 			
-							<View style = {styles.timeSlideContainer}>
-								<View style ={styles.question} >
-									<Text style = {styles.questionText}> #Days Used </Text>
+							<View style = {addPost.mainViewDaysInputContainer}>
+								<View style ={addPost.mainViewDaysQuestionView} >
+									<Text style = {addPost.mainViewDaysQuestionText}> #Days Used </Text>
 								</View>
                 <TextInput 
                   placeholder = "01"
-                  style = {{borderWidth : 1, borderColor : borderColor , width : 50, flex:1, textAlign : 'center', borderRadius : 5}}
+                  style = {addPost.mainViewDaysTextInput}
                   onChangeText = {(text)=>{existingUser ? setDaysUsed(999) : setDaysUsed(text)}}
                   value = {existingUser ? "180+" : daysUsed}
                 />  
@@ -638,10 +637,10 @@ return(
                 </TouchableOpacity>
 							</View>
 	  
-							<View style = {styles.ReviewWritingContainer}>
+							<View style = {addPost.mainViewReviewWritingContainer}>
 							  <TextInput 
 								placeholder = "Add your review ( Atleast 100 words)"
-								style = {styles.reviewInput}  
+								style = {addPost.mainViewReviewWritingInput}  
 								multiline
 								autocomplete
 								scrollEnabled
@@ -655,8 +654,8 @@ return(
 								/>
 							</View>
 
-							<TouchableOpacity style = {styles.submitButton} onPress = {onSubmitReview}>
-							  <Text style = {styles.submitText}>Submit</Text>
+							<TouchableOpacity style = {addPost.mainViewSubmitReviewButton} onPress = {onSubmitReview}>
+							  <Text style = {addPost.mainViewSubmitReviewText}>Submit</Text>
 							</TouchableOpacity>
 						</View>) : null
            
@@ -669,228 +668,5 @@ return(
 
 )}
 
-const styles = StyleSheet.create({
-  submitButton : {
-    backgroundColor : theme,
-    elevation : 1, 
-    alignItems : 'center',
-    justifyContent : 'center',
-    padding : 10,
-    margin : 10,
-    width : width*0.5,
-    marginLeft : (width*0.5)-10,
-    borderRadius : 5,
-
-  },
-  submitText : {
-    fontSize : 16,
-    fontWeight : 'bold',
-    color : background
-  },
-  FullPageContainer : {
-    marginBottom : 130,
-    backgroundColor : background
-  },
-  ProductContainer : {
-    justifyContent : 'center',
-    alignItems : 'center',
-    backgroundColor : background,
-    padding : 5,
-    marginTop : 0,
-    flexDirection : 'row',
-    borderWidth : 1,
-    borderColor : borderColor,
-    borderRadius : 5,
-    marginLeft : 10,
-    marginRight : 10,
-    marginBottom : 10
-
-  },
-  ProductContainer2 : {
-    justifyContent : 'center',
-    alignItems : 'center',
-    backgroundColor : theme,
-    padding : 5,
-    marginTop : 0,
-    flexDirection : 'row',
-    borderWidth : 1,
-    borderColor : borderColor,
-    borderRadius : 5,
-    marginLeft : 10,
-    marginRight : 10,
-    marginBottom : 10
-
-  },
-  ProductContainer1 : {
-    justifyContent : 'space-between',
-    alignItems : 'center',
-    backgroundColor : background,
-    padding : 5,
-    flexDirection : 'row',
-    flex : 1,
-    width : width*0.9
-    
-    
-    
-
-  },
-  ContextContainer : {
-    borderWidth : 1,
-    borderColor : borderColor,
-    margin : 10,
-    paddingBottom : 10,
-  },
-  timeSlideContainer : {
-    paddingTop : 10,
-    flexDirection : 'row',
-    justifyContent : 'center'
-  },
-  ReviewWritingContainer : {
-    backgroundColor : background,
-    margin : 10,
-    height : 300,
-    borderWidth : 1,
-    borderColor : borderColor,
-    marginTop : 20
-
-  },
-  reviewInput : {
-    fontSize : 16,
-    padding : 5,
-},
-  sliderValueView : {
-    
-
-  },
-  sliderValueText : { 
-    width: 40, 
-    textAlign: 'center', 
-    fontSize : 20,
-    fontWeight : 'bold',
-    color : theme
-  },
-  imagePickerView : {
-    alignItems : 'center',
-    height : 40,
-    flexDirection : 'row'
-
-  },
-  imagePickerButton : {
-    backgroundColor : 'transparent',
-    borderRadius : 5, 
-    padding : 10 , 
-    alignItems : 'center',
-    justifyContent : 'center'
-  },
-  imagePickerText : {
-    fontSize : 15, 
-  },
-
-  container: {
-    backgroundColor: background,
-    margin : 5,
-    marginTop: 10,
-
-  },
-
-  question:{
-    
-    marginLeft : 20,
-    backgroundColor: background,
-    fontWeight:'bold',
-    marginBottom : 5, 
-    flex : 1,
-    justifyContent :'center'
-  },
-
-  option:{
-    width:'100%',
-    // justifyContent: 'center',
-    alignItems:'center',
-    backgroundColor: background
-  },
-
-  item: {
-    padding: 20,
-    paddingVertical : 15,
-    marginHorizontal: 16,
-    // width: 100 , 
-    height: 6,
-    // flexDirection:'row',
-    backgroundColor:background,
-    justifyContent: 'center',
-    alignItems:'center',
-    borderRadius : 5,
-    borderWidth : 1,
-    borderColor : borderColor
-  },
-  title: {
-    fontSize: 14,
-  },
-  list:{
-    justifyContent: 'center',
-    flexDirection: 'row',
-    borderRadius : 10,
-  },
-  question_list:{
-    width: '100%' ,
-    height: '20%'
-},
-  questionText : {
-    fontWeight:'bold',
-    fontSize : 15,
-},
-  
-
-flex10: {
-  flex: 1,
-},
-container10: {
-  position: 'relative',
-},
-emptyStay10: {
-  textAlign: 'center',
-},
-countBadge10: {
-  paddingHorizontal: 8.6,
-  paddingVertical: 5,
-  borderRadius: 50,
-  position: 'absolute',
-  right: 3,
-  bottom: 3,
-  justifyContent: 'center',
-  backgroundColor: theme,
-},
-countBadgeText10: {
-  fontWeight: 'bold',
-  alignSelf: 'center',
-  padding: 'auto',
-  color: '#ffffff',
-},
-reviewSummary : {
-  margin : 10,
-  borderWidth : 1,
-  borderColor : borderColor
-},
-existingCategoryContextView : {
-  margin : 10,
-  borderColor : borderColor,
-  borderWidth: 1,
-  padding : 5,
-  flex : 1
-},
-existingReviewImageContainer : {width : width*0.5-20, height : width*0.5-20, margin : 5, flex : 1 },
-existingReviewImageFile : {width : width*0.5-15, height : width*0.5-15 , flex : 1},
-calendarView : {position : 'absolute' , top : 0 , right : 0 , flex : 1 , margin : 5, backgroundColor : background , borderRadius : 50, width : 20, height : 20, alignItems : 'center' , justifyContent : 'center' },
-calendarText : {color : borderColor},
-existingReviewContainer : {marginLeft : 10 , marginRight : 10, borderWidth : 1 , borderColor : borderColor,},
-reviewModalButton : {borderColor : borderColor , backgroundColor : theme , margin : 5 , borderRadius : 10,},
-reviewModalContainer : {flex : 1 , alignItems : 'center' , justifyContent : 'center'},
-existingReviewContextView : {
-  marginLeft : 10,
-  
-  flex : 1
-},
-});
 
 export default AddPost;
