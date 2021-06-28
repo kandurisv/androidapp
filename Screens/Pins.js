@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text , ImageBackground, Dimensions} from 'react-native';
+import { View, Text , ImageBackground, Dimensions, ScrollView} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios'
-import {background, borderColor,URL} from './exports'
+import {AuthContext, background, borderColor,URL} from './exports'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { useNavigation } from '@react-navigation/native';
-
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header, pins } from './styles';
@@ -13,7 +12,7 @@ Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 export default function Pins() {
 
-  const [userId,setUserId] = React.useState(2)
+  const [userId,isLoggedIn] = React.useContext(AuthContext)
   const [pinsPost,setPinsPost] = React.useState([])
   const [pinsPostEmpty,setPinsPostEmpty] = React.useState(true)
   const [pinsProductEmpty,setPinsProductEmpty] = React.useState(true)
@@ -27,6 +26,7 @@ export default function Pins() {
 
   React.useEffect(()=>{
     const fetchPinsPost = () => {
+      console.log(userId)
       Amplitude.logEventWithPropertiesAsync('PINS_PAGE_VISIT',{"userId" : userId })
       axios.get(URL + "/pins/post", {params:{user_id : userId }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
@@ -71,15 +71,16 @@ export default function Pins() {
           rightDisable
           />
       </View>
+      <ScrollView style = {{}}>
       <View style = {pins.mainViewItem}>
         <Text style={pins.mainViewSubContainerHeader}>My Pinned Posts</Text>
         {pinsPostEmpty ? 
         <View style={pins.mainViewSubContainerEmptyView}>
           <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts to save it here</Text>
         </View> :
-        <FlatGrid itemDimension={200} data={pinsPost} renderItem={({item}, i) => (
+        <FlatGrid itemDimension={width*0.45} data={pinsPost} renderItem={({item}, i) => (
           <View style = {pins.mainViewSubContainerItemContainer}>
-            <ImageBackground source = {{uri : item.image_list[0]}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {1}></ImageBackground>
+            <ImageBackground source = {{uri : item.image_list[0]}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {0}></ImageBackground>
             <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.15}]}>
               <Text style={pins.mainViewSubContainerItemText}>{item.username}</Text>
             </View>
@@ -101,6 +102,7 @@ export default function Pins() {
           </View>)}
         />}
       </View>
+      </ScrollView>
     </View>
   );
 }

@@ -359,7 +359,20 @@ export const user = StyleSheet.create({
     editUserDetailsInputContainer : {
         marginTop : 50 ,
 
-    }
+    },
+    datepicker : {
+        justifyContent : 'center',
+        alignSelf : 'flex-end',
+        alignItems: 'flex-end',
+        marginLeft : 20,
+        marginRight : 10,
+    },
+    dateView : {
+        flexDirection : 'row', 
+        alignItems : 'center', 
+        margin : 5, 
+        marginLeft : 10
+    },
     
 
 })
@@ -630,7 +643,17 @@ export const feed = StyleSheet.create({
         color : 'white',
         marginTop: 15,
         marginRight: 10,
-        fontSize:20,
+        fontSize:14,
+        zIndex: 100
+    },
+    scrollableFeedItemImagesCount : {
+        backgroundColor : 'transparent' , 
+        position:'absolute', 
+        top: 20, 
+        right : 0 ,
+        marginTop: 15, 
+        marginRight: 10, 
+        borderRadius : 10,
         zIndex: 100
     },
     scrollableFeedItemProductName : {
@@ -705,9 +728,29 @@ export const postDetails = StyleSheet.create({
     reviewImageContainerScrollableImage : {
         width,
         height : width * 1.35,
+    },
+    reviewImageContainerScrollableImage : {
+        width,
+        height : width * 1.35,
         aspectRatio:2/3,
         resizeMode: 'cover',
     },
+    reviewImageContainerCalendarView : {
+        position:'absolute',
+        top:0,
+        color : 'white',
+        marginTop: 20,
+        marginLeft: width - 60,
+        zIndex: 100 ,
+        backgroundColor : 'transparent'
+    },
+    reviewImageContainerCalendarImage : {
+        width : width*0.05,
+        height : width*0.05,
+    },
+    reviewImageContainerCalendarTextView : {},
+    reviewImageContainerCalendarText : {},
+
     //Product Name View
     reviewImageContainerProductNameView : {},
     reviewImageContainerProductNameButton : {},

@@ -105,7 +105,7 @@ const UserDetails = () => {
 
     const onEdit = () => {
         console.log("EditProfile")
-        navigation.navigate("EditUserProfile")
+        navigation.navigate("EditUserProfile", {userId : userId})
     }
 
     return (   

@@ -623,6 +623,7 @@ return(
 								</View>
                 <TextInput 
                   placeholder = "01"
+                  keyboardType = 'number-pad'
                   style = {addPost.mainViewDaysTextInput}
                   onChangeText = {(text)=>{existingUser ? setDaysUsed(999) : setDaysUsed(text)}}
                   value = {existingUser ? "180+" : daysUsed}

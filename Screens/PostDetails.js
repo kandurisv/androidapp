@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid} from 'react-native';
+import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid , ImageBackground} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
 import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, borderColor, headerStyle, AuthContext} from './exports'
-import { useNavigation , useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
 import {MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header, postDetails } from './styles';
@@ -24,9 +25,12 @@ const images = [
 ]
 
 const Cover = (props) => {
+    const isFocused = useIsFocused()
+
     const progress = React.useRef(new Animated.Value(0)).current
     const [liked,setLiked] = React.useState(props.likeIndicator)
-    const [likeCount,setLikeCount] = React.useState(props.upvotes)
+    const [likeCount,setLikeCount] = React.useState(Math.max(props.upvotes,0))
+    
     const [commentCount,setCommentCount] = React.useState(props.comments)
     const navigation = useNavigation()
     const getFeedByUser = () => {
@@ -35,6 +39,9 @@ const Cover = (props) => {
         }
 
     React.useEffect(()=>{
+        setLiked(props.likeIndicator)
+        setLikeCount(props.upvotes+props.likeIndicator)
+        console.log("Like", props.likeIndicator , "liked indictor ", liked)
         if(liked) {
             Animated.timing(progress, {
                 toValue: 1,
@@ -43,11 +50,10 @@ const Cover = (props) => {
                 useNativeDriver : true
               },).start();  
         }
-    },[])
+    },[props])
 
   
-
-    const likeClick = () => {
+    const likeClick =  () => {
         setLiked(!liked)
         if(liked) {
             setLikeCount(likeCount-1)
@@ -103,9 +109,22 @@ const Cover = (props) => {
                 </TouchableOpacity>
                 </View>
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
-                    {props.imageList.map((image , index) => (
-                        <Image key = {index} source = {{uri: image}} style = {postDetails.reviewImageContainerScrollableImage}/>
-                    ))}
+                    {props.imageList.map((image , index) => {
+                        var pieces = image.split("/")
+                        const calendarText = pieces[pieces.length-2]
+                    return(
+                        // <View style = {postDetails.reviewImageContainerScrollableImageCover}>
+                            <Image key = {index} source = {{uri: image}} style = {postDetails.reviewImageContainerScrollableImage}/>
+                        //     <View style = {postDetails.reviewImageContainerCalendarView}>
+                        //         <ImageBackground source = {{uri : image}} style = {postDetails.reviewImageContainerCalendarImage} blurRadius = {0}></ImageBackground>
+                        //         <View style = {[postDetails.reviewImageContainerCalendarTextView, {marginTop : width * 0.15}]}>
+                        //             <Text style={postDetails.reviewImageContainerCalendarText}>{calendarText}</Text>
+                        //         </View>
+                        //     </View>
+                        // </View> 
+                        )  
+                        
+                    })}
                 </ScrollView>
                 <Text style ={postDetails.reviewImageContainerProductNameText} >{props.productname}</Text>
                 <View style = {postDetails.reviewImageContainerHeartContainer}>
@@ -119,7 +138,7 @@ const Cover = (props) => {
                     </TouchableOpacity>
                 </View>
                 <View style = {postDetails.reviewImageContainerHeartTextView}>
-                    <Text style = {postDetails.reviewImageContainerHeartTextValue}>{likeCount}</Text>
+                    <Text style = {postDetails.reviewImageContainerHeartTextValue}>{Math.max(likeCount,0)}</Text>
                 </View>
                 <View style = {postDetails.reviewImageContainerCommentContainer}>
                     <Fontisto name = "comment" size = {22} color = "#AAA" />
@@ -221,6 +240,9 @@ const PostDetails = (props) => {
 
     const navigation = useNavigation()
     const route = useRoute()
+    const isFocused = useIsFocused(); 
+
+
     const [userId,userDetails,isLoggedIn] = React.useContext(AuthContext)
     const [comments,setComments] = React.useState([])
     const [loading,setLoading] = React.useState(true)
@@ -231,17 +253,20 @@ const PostDetails = (props) => {
     const [showComments,setShowComments] = React.useState(false)
     const [renderAgain,setRenderAgain] = useState(false)
 
+
     React.useEffect(() => {
-    console.log(userId, userDetails,isLoggedIn)
+    console.log("________________THIS IS A NEW RENDER _____________________")
+    
+    console.log(route.params.details.user_id, route.params.details.review_sum_id )
     const getData = () => {
-        axios.get(URL + "/activity/user", {params:{user_id : route.params.details.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
+        axios.get(URL + "/activity/user", {params:{user_id : userDetails.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
             Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
-            console.log(responseData[0].upvote)
-            setLikeIndicator(responseData[0].upvote)
+            console.log("Like identifier ", responseData[0])
+            setLikeIndicator(responseData[0].upvote === "1" ? true : false)
             setLoading(false)
             setResult(true)
-            // console.log(responseData)
+            console.log(responseData[0].upvote === "1" ? true : false)
         })
         .catch(function(error) {
             // console.log("Reached to error")
@@ -273,7 +298,7 @@ const PostDetails = (props) => {
         fetchComments()
         getData()
 
-    },[renderAgain])
+    },[renderAgain,isFocused, likeIndicator])
 
 
 
@@ -285,7 +310,7 @@ const PostDetails = (props) => {
         ToastAndroid.show("Please add your comment", ToastAndroid.SHORT);
     }
 
-    const onSendPress = async () =>{
+    const onSendPress =  () =>{
         const body = 
             {
                 "review_sum_id": route.params.details.review_sum_id,
@@ -324,11 +349,15 @@ const PostDetails = (props) => {
         }
     }
 
+    const onClickLike = () => {
+        setRenderAgain(!renderAgain)
+    }
+
   return (
       <ScrollView contentContainerStyle={postDetails.contentContainer}>
         <View style = {header.headerView}>
         <ModernHeader 
-          title="Pins"
+          title="Review"
           titleStyle = {header.headerText}
           backgroundColor= {background}
           leftIconColor = {borderColor}
@@ -349,6 +378,7 @@ const PostDetails = (props) => {
             likeIndicator = {likeIndicator}
             engagementUserId = {userDetails.user_id}
             engagementUserName = {userDetails.username}
+            onClickLike = {()=>onClickLike()}
             />
         </View>
         <View style = {postDetails.reviewTabContainer}>

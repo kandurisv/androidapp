@@ -13,7 +13,7 @@ import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import { AuthContext, background, borderColor, theme, uploadImageOnS3 } from './exports';
 import { editUserDetails, home, user ,header } from './styles';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, EvilIcons } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
@@ -46,7 +46,7 @@ const EditUserProfile = () => {
     setSelectedItem(3)
   };
 
-  const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date())
     const [image, setImage] = useState("");
     const [coverImage,setCoverImage] = useState("")
     const [gender, setGender] = useState("")
@@ -89,11 +89,10 @@ const EditUserProfile = () => {
 
     const submit = () => {
       const body = {
-        "user_id": 5,
+        "user_id": userId,
         "username": userName,
         "gender": gender,
-        "dob": "1998-01-01",
-        "age" : age,
+        "dob": userDob,
         "email": "",
         "phone_number": phoneNumber,
         "location": ""
@@ -205,12 +204,12 @@ const EditUserProfile = () => {
                         value = {userName}
                 />
               </View>
-              <View style = {home.userDetailsElementContainer}>
-                <Text style = {{justifyContent : "center"}}> 
-                    Your Dob : { userDob ? userDob.replace('"','').substring(0,10) : ""} 
+              <View style = {user.dateView}>
+                <Text style = {{justifyContent : "center", flex : 1, fontSize : 16}}> 
+                    Date of birth : { userDob ? userDob.replace('"','').substring(0,10) : ""} 
                 </Text>
                 <TouchableOpacity style = {user.datepicker} onPress={showDatePicker}>
-                    <Text style = {{color : 'black'}}> Select date</Text>
+                    <EvilIcons name = "calendar" size = {24} color = {theme}/>
                 </TouchableOpacity>  
                 <DateTimePickerModal
                     isVisible={isDatePickerVisible}
