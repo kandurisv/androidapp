@@ -13,9 +13,12 @@ import * as fs from 'expo-file-system';
 
 
 export const AuthContext = createContext()
+export const UserContext = createContext()
 
 export const AuthProvider = AuthContext.Provider
 export const AuthConsumer = AuthContext.Consumer
+export const UserProvider = UserContext.Provider
+export const UserConsumer = UserContext.Consumer
         
 export const s3URL = "https://"+ bucketname+ ".s3.amazonaws.com/"
 export const s3BucketName = bucketname

@@ -5,16 +5,16 @@ import { ModernHeader } from "@freakycoder/react-native-header-view";
 import moment from 'moment';
 import * as ImagePicker from 'expo-image-picker';
 import { Checkbox } from 'react-native-paper';
-
+import axios from 'axios'
 import RadioGroup from 'react-native-custom-radio-group';
 //import {radioGroupList} from '../assets/Constants'
 
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
-import { background, borderColor, theme, uploadImageOnS3 } from './exports';
+import { AuthContext, background, borderColor, theme, uploadImageOnS3 } from './exports';
 import { editUserDetails, home, user ,header } from './styles';
 import { AntDesign } from '@expo/vector-icons';
-
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
 const EditUserProfile = () => {
@@ -55,10 +55,33 @@ const EditUserProfile = () => {
     const [age,setAge] = useState("")
     const [userName,setUserName] = React.useState("")
     const [phoneNumber,setPhoneNumber] = React.useState("")
-  
+    const userId = React.useContext(AuthContext)
+    const [userInfo,setUserInfo] = React.useState([])
+
+    const [userDob,setUserDob] = useState("")
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     
+    const showDatePicker = () => {setDatePickerVisibility(true);};
+    const hideDatePicker = () => {setDatePickerVisibility(false);};
+    const handleConfirm = (date) => {
+        setUserDob(moment(date).format("YYYY-MM-DD"))
+        hideDatePicker();
+    };
+
+
     useEffect(() => {
-       
+       const getUserInfo = () => {
+        axios.get(URL + "/user/info", {params:{phone_number : userId }} , {timeout:5000})
+        .then(res => res.data).then(function(responseData) {
+            console.log(responseData)
+            setUserInfo(responseData)
+           
+        })
+        .catch(function(error) {
+            //
+        });
+       }
+       getUserInfo()
        
     }, [])
 
@@ -183,12 +206,17 @@ const EditUserProfile = () => {
                 />
               </View>
               <View style = {home.userDetailsElementContainer}>
-                <Text style = {home.userDetailsElementText}>Age</Text>
-                <TextInput 
-                        style = {home.userDetailsElementTextInput} 
-                        placeholder = "27"
-                        onChangeText = {(text)=>setAge(text)}
-                        value = {age}
+                <Text style = {{justifyContent : "center"}}> 
+                    Your Dob : { userDob ? userDob.replace('"','').substring(0,10) : ""} 
+                </Text>
+                <TouchableOpacity style = {user.datepicker} onPress={showDatePicker}>
+                    <Text style = {{color : 'black'}}> Select date</Text>
+                </TouchableOpacity>  
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirm}
+                    onCancel={hideDatePicker}
                 />
               </View>
               <View>

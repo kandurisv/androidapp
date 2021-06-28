@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/core";
 import { background, firebaseConfig, theme } from "./exports";
 import { login } from "./styles";
 import axios from 'axios'
+import { createNativeWrapper } from "react-native-gesture-handler";
 
 
 try {
@@ -61,6 +62,9 @@ export default function Login() {
       easing: Easing.linear,
       useNativeDriver : true
     },).start()
+
+
+
     const timerId = setInterval(() => {
       if (secs <= 0) {
         setSecs(-1)
@@ -208,13 +212,11 @@ export default function Login() {
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,stringData);
       await firebase.auth().signInWithCredential(credential);
-      
-      navigation.navigate("Home")
+      navigation.navigate("Home" , {userId : phoneNumber})
     } catch (err) {
       ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
     }
   }
-
   return (
     
     <ScrollView 

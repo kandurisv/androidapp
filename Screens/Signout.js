@@ -20,36 +20,24 @@ const Signout = () => {
   const route = useRoute()
 
   const signoutToHome = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      
-      if (user != null) {
-        
-        console.log(user)
         firebase.auth().signOut().then(() => {
-          ToastAndroid.show("Signed Out succesfully !!", ToastAndroid.SHORT)
-          firebase.auth().onAuthStateChanged(user => { 
-            if(user != null){
-              console.log(user)
-            } else {
-              console.log("user is null")
-            }
-          })
+          navigation.navigate("Auth")
+     //     ToastAndroid.show("Signed Out succesfully !!", ToastAndroid.SHORT)
         }).catch((error) => {
           console.log(error)
         })
-      }
-      else {
-        console.log("user is even in first loop null")
-      }
-      goToAuth()
-  })
+        
+
+     
+      //goToAuth()
+  }
       
-}
+
 
   const goToAuth = () => {
     console.log("reached to go to auth")
-    
     navigation.navigate("Auth")
+    
   }
   const noToHome = () => {
     navigation.navigate("Home")

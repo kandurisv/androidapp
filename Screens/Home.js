@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid} from 'react-native'
+import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid, Platform} from 'react-native'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
@@ -8,13 +8,28 @@ import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { AntDesign } from '@expo/vector-icons';
 import RadioGroup from 'react-native-custom-radio-group';
 import { header1, home } from './styles';
+//import SpInAppUpdates, {NeedsUpdateResponse, IAUUpdateKind, StartUpdateOptions} from 'sp-react-native-in-app-updates';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import * as Amplitude from 'expo-analytics-amplitude';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
+import * as firebase from "firebase";
+try {
+    firebase.initializeApp(firebaseConfig);
+  } catch (err) {
+    // ignore app already initialized error in snack
+  }
+
 const {width, height} = Dimensions.get("window")
 const CAROUSEL_ITEM_SQUARE_SIZE = 100
 const CAROUSEL_ITEM_SPACING = 5
+
+// const inAppUpdates = new SpInAppUpdates(
+//     true
+//      // isDebug
+//   );
 
 const radioGroupList = [{
     label: 'Male',
@@ -93,10 +108,12 @@ const radioGroupList = [{
 
 const Home = () => {
 
-    const userId = React.useContext(AuthContext)
+    const [userId,userDetails, isLoggedIn] = React.useContext(AuthContext)
+    
 
     const navigation = useNavigation()
     const route = useRoute()
+
     const [response, setResponse] = React.useState([])
     const [userResponse, setUserResponse] = React.useState([])
     const [homeLoading,setHomeLoading] = React.useState(true)
@@ -107,6 +124,11 @@ const Home = () => {
     const [refresh,setRefresh] = React.useState(false)
     const [result,setResult] = React.useState(false)
     const [hero,setHero] = React.useState("")
+
+    const [updateAvailable,setUpdateAvailable] = React.useState(false)
+    const [updateApp, setUpdateApp] = React.useState(false)
+    const [updateOptions,setUpdateOptions] = React.useState({})
+    
 
     const [userDetailsAvailable,setUserDetailsAvailable] = React.useState(false)
 
@@ -120,44 +142,84 @@ const Home = () => {
     }
 
     React.useEffect(() => {
-    const getData = () => {
-        axios.get(URL + "/user/info", {params:{user_id : 1}} , {timeout:5000})
-            .then(res => res.data).then(function(responseData) {
-                setUserResponse(responseData[0])
-                setInfoLoading(false)
-                if(responseData[0].username) {
-                    setUserDetailsAvailable(true)
-                }
-                setRefresh(false)
-            })
-            .catch(function(error) {
-                console.log(error)
-                setError(true)
-            });
-        axios.get(URL + "/home", {timeout : 5000})
-        .then(res => res.data).then(function(responseData) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user != null) {
+                const getData =  () => {
+                    axios.get(URL + "/user/info", {params:{phone_number : user.phoneNumber }} , {timeout:5000})
+                    .then(res => res.data).then(async (responseData) => {
+                        console.log("HOME USER RESPONSE",responseData)
+                        setUserResponse(responseData[0])
+                        setInfoLoading(false)
+                        if(responseData.length && responseData[0].username) {
+                            setUserDetailsAvailable(true)
+                            await AsyncStorage.setItem('isLogin', "TRUE")
+                            await AsyncStorage.setItem('phoneNumber', user.phoneNumber)
+                            await AsyncStorage.setItem('userName', responseData[0].username )
+                        }
+                        setRefresh(false)
+                    })
+                    .catch(function(error) {
+                        setInfoLoading(false)
+                        console.log(error)
+                        setError(true)
+                    });
+                axios.get(URL + "/home", {timeout : 5000})
+                .then(res => res.data).then(function(responseData) {
+                    
+                    setResponse(responseData)
+                    setHomeLoading(false)
+                    setResult(true)
+                    
+                })
+                .catch(function(error) {
+                    setInfoLoading(false)
+                    setHomeLoading(false)
+                    setResult(true)
+                    setError(true)
+                });
+                axios.get(URL + "/home/hero", {timeout : 5000})
+                .then(res => res.data).then(function(responseData) {
+                    setHero(responseData[0].image)
+                })
+                .catch(function(error) {
+                  
+                });
+            }
+            getData()
             
-            setResponse(responseData)
-            setHomeLoading(false)
-            setResult(true)
-            
+            } else {
+                navigation.navigate("Auth")
+            }
         })
-        .catch(function(error) {
-            
-            setLoading(false)
-            setResult(true)
-            setError(true)
-        });
-        axios.get(URL + "/home/hero", {timeout : 5000})
-        .then(res => res.data).then(function(responseData) {
-            setHero(responseData[0].image)
-        })
-        .catch(function(error) {
-          
-        });
-    }
-      getData()
+
+        console.log("USERID DEFAULT", userId)
+        console.log("USER DETAILS", userDetails)
+        
+
+// App Update 
+
+    // inAppUpdates.checkNeedsUpdate().then((result) => {
+    //     if (result.shouldUpdate) {
+    //         setUpdateAvailable(true)
+    //         if (Platform.OS === 'android') {
+    //         // android only, on iOS the user will be promped to go to your app store page
+    //         setUpdateOptions({updateType: IAUUpdateKind.FLEXIBLE})
+    //     }
+    //     }
+    // });
+
+
 },[result])
+
+
+const onClickUpdateApp = () => {
+    // inAppUpdates.startUpdate(updateOptions);
+    // inAppUpdates.addStatusUpdateListener(onStatusUpdate);
+}
+
+const onStatusUpdate = (status) => {
+    ToastAndroid.show("Your app is updated. Enjoy using the app", ToastAndroid.SHORT)
+}
 
 const signout = () => {
     navigation.navigate("Signout")
@@ -165,11 +227,11 @@ const signout = () => {
 
 const submitUserDetails = () => {
     const body = {
+        "var" : "new user",
         "username": userName,
-        "age" : age,
-        "gender" : gender,
-        "phonenumber" : userId
+        "phone_number" : userId
     }
+    console.log(body)
     axios({
       method: 'post',
       url: URL + '/user/info',
@@ -204,38 +266,17 @@ return (
         {(infoLoading || homeLoading) ? <LoadingPage /> : 
         !userDetailsAvailable ? (
             <View style = {home.userDetailsContainer}>
-                <View style = {home.userDetailsElementContainer}>
-                    <Text style = {home.userDetailsElementText}>UserName</Text>
+                <View style = {home.userDetailsUserNameContainer}>
+                    <Text style = {home.userDetailsUserNameText}>Select your username</Text>
                     <TextInput 
                         placeholder = "arianagrande"
-                        style = {home.userDetailsElementTextInput}
+                        style = {home.userDetailsUserNameTextInput}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
+                        autoFocus
                     />
                 </View>
-                <View style = {home.userDetailsElementContainer}>
-                    <Text style = {home.userDetailsElementText}>Age</Text>
-                    <TextInput 
-                        style = {home.userDetailsElementTextInput} 
-                        placeholder = "27"
-                        onChangeText = {(text)=>setAge(text)}
-                        value = {age}
-                    />
-                </View>
-                <View style = {home.userDetailsGenderView}>
-                <Text style = {home.userDetailsGenderHeading}> Gender : {gender}</Text>
-                <RadioGroup 
-                    radioGroupList={radioGroupList} 
-                    onChange = {(value) => setGender(value)}
-                    initialValue = {gender}
-                    containerStyle = {home.userDetailsGenderRadioContainerStyle}
-                    buttonContainerStyle ={home.userDetailsGenderRadioButtonContainerStyle}
-                    buttonTextStyle = {home.userDetailsGenderRadioButtonTextStyle}
-                    buttonContainerActiveStyle = {home.userDetailsGenderRadioButtonContainerActiveStyle}
-                    buttonContainerInactiveStyle = {home.userDetailsGenderRadioButtonContainerInactiveStyle}
-                    buttonTextActiveStyle = {home.userDetailsGenderRadioButtonTextActiveStyle}
-                    buttonTextInactiveStyle = {home.userDetailsGenderRadioButtonTextInactiveStyle}/>
-                </View> 
+                 
                 <View style = {home.userDetailsSubmitContainer}>
                     <TouchableOpacity 
                         onPress = {submitUserDetails}
@@ -250,11 +291,13 @@ return (
             style = {home.mainViewScrollableContainer}
             >
                 <View style = {home.mainViewHeroBannerContainer}>
+                    <TouchableOpacity onPress = {updateAvailable ? onClickUpdateApp : null} disabled = {!updateAvailable}>
                     <ImageLoader
                         source={hero}
                         fallback={require('../assets/hero.png')}
                         style = {home.mainViewHeroBannerImage}
                     />
+                    </TouchableOpacity>
                 </View>
 
         {response.length > 0 && response.map((item,index) =>{

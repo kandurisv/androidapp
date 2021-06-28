@@ -5,8 +5,9 @@ import axios from 'axios'
 import {URL, FetchData , AuthProvider , firebaseConfig, LoadingPage} from './Screens/exports'
 import Navigator from './Screens/Navigator'
 import * as firebase from "firebase";
-
+import * as Sentry from 'sentry-expo';
 import * as Amplitude from 'expo-analytics-amplitude';
+
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 try {
@@ -14,6 +15,12 @@ try {
 } catch (err) {
   // ignore app already initialized error in snack
 }
+
+Sentry.init({
+  dsn: 'https://85b5a621eecd41cd871370cb96dec267@o878788.ingest.sentry.io/5830918',
+  enableInExpoDevelopment: true,
+  debug: false, // Sentry will try to print out useful debugging information if something goes wrong with sending an event. Set this to `false` in production.
+});
 
 
 
@@ -45,31 +52,37 @@ const App = () => {
     const [refresh,setRefresh] = React.useState(false)
 
     const [userId,setUserId] = React.useState("")
-    
+    const [userDetails,setUserDetails] = React.useState({})
+    const [isLoggedIn,setLoggedIn] = React.useState(false)
 
     React.useEffect( () => {
-        const getData = () => {
+        
+        const getData = async () => {
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
+              console.log("fireabase",user)
+              setLoggedIn(true)
               setUserId(user.phoneNumber)
               Amplitude.setUserIdAsync(user.phoneNumber)
               Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
               console.log('App User!' , user.phoneNumber);
 
-            }
-          
-            setLoading(false)
+              axios.get(URL + "/user/info", {params:{phone_number : user.phoneNumber }} , {timeout:5000})
+                .then(res => res.data).then(function(responseData) {
+                  console.log("APP PAGE USER DETAILS", responseData)
+                  setUserDetails(responseData[0])
+                })
+                .catch(function(error) {
+                  //
+                });
+            }  
           })
-            
+          setLoading(false)
         }
        
         getData()
          
-        
         console.log("loading ", isLoading)
-                   
-      
-
         
     },[isLoading]);
 
@@ -84,7 +97,8 @@ const App = () => {
       <View style = {{flex : 1}}>
       {isLoading ? <LoadingPage /> : 
 
-      (<AuthProvider value = {userId}>
+      (
+      <AuthProvider value = {[userId , userDetails, isLoggedIn]}>
        <NavigationContainer>
            <Navigator />
        </NavigationContainer>

@@ -1,6 +1,6 @@
 import React, { useState , useEffect, useContext} from 'react'
 import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, ActivityIndicator, StyleSheet, Image , Dimensions} from 'react-native'
-
+import moment from 'moment';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import axios from 'axios'
 import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor} from './exports'
@@ -32,10 +32,13 @@ const FeedItem = ({item}) => {
     const onItemClick = () => {
       navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
     }
-   
+
     return(
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
-            <Text style ={feed.scrollableFeedItemUserName} > {item.username}</Text>    
+            
+            <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
+            <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").fromNow()}</Text>  
+            
             <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
             {item.image_list.map((image , index) => (
                 <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image}}

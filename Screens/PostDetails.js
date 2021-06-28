@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, borderColor, headerStyle} from './exports'
+import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, borderColor, headerStyle, AuthContext} from './exports'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
@@ -45,6 +45,7 @@ const Cover = (props) => {
         }
     },[])
 
+  
 
     const likeClick = () => {
         setLiked(!liked)
@@ -68,14 +69,13 @@ const Cover = (props) => {
         }
             
         const body = {
-            "engagement_id": 22,
-            "review_sum_id": "32",
-            "user_id": 3,
-            "engagement_user_id": 2,
-            "product_id": 2,
-            "category_id": 2,
-            "engagement_user_name": "abcde",
-            "upvote": 1,
+            "review_sum_id": props.details.review_sum_id,
+            "user_id": props.userId,
+            "engagement_user_id": props.engagementUserId,
+            "product_id": props.details.product_id,
+            "category_id": props.details.category_id,
+            "engagement_user_name": props.engagementUserName,
+            "upvote": !liked,
             "downvote": null,
             "comment": null
         }
@@ -99,6 +99,7 @@ const Cover = (props) => {
                 <View style = {postDetails.reviewImageContainerUserNameView}>
                 <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
                     <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text>
+                    <Text style = {postDetails.reviewImageContainerUserNameTime}>{props.category_name}</Text>  
                 </TouchableOpacity>
                 </View>
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
@@ -121,7 +122,7 @@ const Cover = (props) => {
                     <Text style = {postDetails.reviewImageContainerHeartTextValue}>{likeCount}</Text>
                 </View>
                 <View style = {postDetails.reviewImageContainerCommentContainer}>
-                    <Fontisto name = "comment" size = {22} color = {background} />
+                    <Fontisto name = "comment" size = {22} color = "#AAA" />
                 </View>
                 <View style = {postDetails.reviewImageContainerCommentTextView}>
                     <Text style = {postDetails.reviewImageContainerCommentTextValue}>{commentCount}</Text>
@@ -220,7 +221,7 @@ const PostDetails = (props) => {
 
     const navigation = useNavigation()
     const route = useRoute()
-
+    const [userId,userDetails,isLoggedIn] = React.useContext(AuthContext)
     const [comments,setComments] = React.useState([])
     const [loading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
@@ -228,10 +229,10 @@ const PostDetails = (props) => {
     const [result,setResult] = React.useState(false)
     const [likeIndicator,setLikeIndicator] = React.useState(false)
     const [showComments,setShowComments] = React.useState(false)
-    
+    const [renderAgain,setRenderAgain] = useState(false)
 
     React.useEffect(() => {
-     
+    console.log(userId, userDetails,isLoggedIn)
     const getData = () => {
         axios.get(URL + "/activity/user", {params:{user_id : route.params.details.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
@@ -272,12 +273,13 @@ const PostDetails = (props) => {
         fetchComments()
         getData()
 
-    },[])
+    },[renderAgain])
 
 
 
     const [message , setMessage] = useState('');
     const [newAnswer,setNewAnswer] = useState(false)
+  
     
     const onMicrophonePress = () =>{
         ToastAndroid.show("Please add your comment", ToastAndroid.SHORT);
@@ -286,14 +288,14 @@ const PostDetails = (props) => {
     const onSendPress = async () =>{
         const body = 
             {
-                "review_sum_id": "32",
-                "user_id": 3,
-                "engagement_user_id": 2,
-                "product_id": 2,
-                "category_id": 2,
-                "engagement_user_name": "abcde",
-                "upvote": 3,
-                "downvote": 1,
+                "review_sum_id": route.params.details.review_sum_id,
+                "user_id": route.params.details.user_id,
+                "engagement_user_id": userDetails.user_id,
+                "product_id": route.params.details.product_id,
+                "category_id": route.params.details.category_id,
+                "engagement_user_name": userDetails.username,
+                "upvote": null,
+                "downvote": null,
                 "comment": message
             }
             
@@ -305,6 +307,7 @@ const PostDetails = (props) => {
               })
             .then(res => {
                 setMessage('')
+                setRenderAgain(!renderAgain)
           }).catch((e) => console.log(e))
     }
 
@@ -314,6 +317,7 @@ const PostDetails = (props) => {
         }
         else {
             onSendPress()
+            
             setMessage("")
             ToastAndroid.show("Thanks for comment", ToastAndroid.SHORT);
             
@@ -343,6 +347,8 @@ const PostDetails = (props) => {
             userId = {route.params.details.user_id}
             details = {route.params.details}
             likeIndicator = {likeIndicator}
+            engagementUserId = {userDetails.user_id}
+            engagementUserName = {userDetails.username}
             />
         </View>
         <View style = {postDetails.reviewTabContainer}>
@@ -362,7 +368,7 @@ const PostDetails = (props) => {
                     style ={postDetails.reviewCommentContainerTextInput} 
                     multiline
                     value = {message}
-                    onChangeText = {setMessage}
+                    onChangeText = {(text)=>setMessage(text)}
                     />
                 </KeyboardAvoidingView>
 
@@ -386,9 +392,9 @@ const PostDetails = (props) => {
                             source={{
                                 uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=64'
                              }} size={20}/>}
-                        <Text style = {postDetails.reviewCommentContainerReadCommentUserName}>{item.engagement_user_name}</Text>
-                        </View>
-                        
+                            <Text style = {postDetails.reviewCommentContainerReadCommentUserName}>{item.engagement_user_name}</Text>
+                            <Text style = {postDetails.reviewCommentContainerReadCommentTime}>{moment(item.created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
+                        </View> 
                         <Text style = {postDetails.reviewCommentContainerReadCommentUserComment}>{item.comment}</Text>
                     </View>) 
                 })}
@@ -396,7 +402,6 @@ const PostDetails = (props) => {
                     <View style = {postDetails.reviewCommentContainerReadCommentEmptyContainer} >
                         <Text style = {postDetails.reviewCommentContainerReadCommentEmptyContainerText}>No comments yet</Text>
                     </View>}
-                
             </View>
         </View>
       </ScrollView>

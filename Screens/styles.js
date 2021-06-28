@@ -33,6 +33,27 @@ export const home = StyleSheet.create({
     userDetailsContainer : {
 
     },
+    userDetailsUserNameContainer : {
+        margin : 10,
+        alignItems : 'center'
+    },
+    userDetailsUserNameText : {
+        fontWeight : 'bold',
+        textAlign : 'center'
+
+    },
+    userDetailsUserNameTextInput : {
+        width , 
+        marginLeft : 10,
+        marginRight : 10,
+        color : borderColor,
+        textAlign : 'center',
+        marginTop : 20,
+        borderBottomColor : "#DDD",
+        borderBottomWidth : 1,
+        fontSize : 20,
+        letterSpacing : 2,
+    },
     userDetailsElementContainer : {
         flexDirection : 'row',
         borderRadius : 5,
@@ -99,7 +120,7 @@ export const home = StyleSheet.create({
     },
     userDetailsSubmitButton : {
         backgroundColor : theme,
-        width : width*0.5,
+        width : width*0.3,
         marginTop : 20,
         alignItems : 'center',
         padding : 10,
@@ -582,22 +603,33 @@ export const feed = StyleSheet.create({
     },
     // Main Container
     mainContainer : {
-        marginBottom : 0
+        marginBottom : 200
     },
     scrollableFeedContainer : {
-        marginBottom : 200
+        marginBottom : 10
     },
     scrollableFeedItemContainer : {
         marginBottom: 5,
         width,
         height : width * 1.2
     },
+
     scrollableFeedItemUserName : {
         position:'absolute',
         top:0,
         color : 'white',
         marginTop: 15,
         marginLeft: 15,
+        fontSize:20,
+        zIndex: 100
+    },
+    scrollableFeedItemTime : {
+        position:'absolute',
+        top:0,
+        right : 0 ,
+        color : 'white',
+        marginTop: 15,
+        marginRight: 10,
         fontSize:20,
         zIndex: 100
     },
@@ -658,11 +690,16 @@ export const postDetails = StyleSheet.create({
         marginLeft: 15,
     },
     reviewImageContainerUserNameButton : {
-
+        
     },
     reviewImageContainerUserNameText : {
         color : 'white',
         fontSize:20,
+    },
+    reviewImageContainerUserNameTime : {
+        color : 'white',
+        fontSize:15,
+        marginLeft : 10
     },
     //Scrollable Image
     reviewImageContainerScrollableImage : {
@@ -716,7 +753,7 @@ export const postDetails = StyleSheet.create({
         reviewImageContainerCommentContainer : {
         position:'absolute',
         top:0,
-        color : '#AAA',
+        color : 'rgba(255,255,255,0.2)',
         marginTop: 190,
         marginLeft: width - 48,
         fontSize:20,
@@ -828,12 +865,16 @@ export const postDetails = StyleSheet.create({
     },
     reviewCommentContainerReadCommentItemView : {
         flexDirection : 'row',
-        alignItems : 'center',
+        
     },
     reviewCommentContainerReadCommentUserImage : {},
     reviewCommentContainerReadCommentUserName : {
         fontWeight : 'bold',
         marginLeft : 10,
+        flex : 1
+    },
+    reviewCommentContainerReadCommentTime : {
+
     },
     reviewCommentContainerReadCommentUserComment : {
         marginTop : 10

@@ -29,6 +29,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "mish-fit",
+            "project": "mish-fit",
+            "authToken": "ed2d85b9986645659037b96cb6384f16f3f94230f86c47f4baa7a59ee9e50b4d"
+          }
+        }
+      ]
     }
   }
 }

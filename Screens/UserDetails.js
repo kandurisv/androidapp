@@ -11,7 +11,7 @@ import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borde
 import { useNavigation , useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header , user } from './styles';
@@ -21,9 +21,9 @@ const UserDetails = () => {
 
     const navigation = useNavigation()
     const route = useRoute()
-    const userId = React.useContext(AuthContext)
+    const [userId,isLoggedIn] = React.useContext(AuthContext)
 
-    const [userDetails, setUserDetails] = React.useState({})
+    const [userDetails, setUserDetails] = React.useState([])
     const [loading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
     const [error,setError] = React.useState(false)
@@ -36,12 +36,15 @@ const UserDetails = () => {
  
     React.useEffect(() => {
         console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
-      
-        const getData = () => {
-        axios.get(URL + "/user/summary", {params:{user_id : 1}} , {timeout : 5})
+        console.log(userId, isLoggedIn)
+        const getData =  async () => {
+            const phoneNumber = await AsyncStorage.getItem("phoneNumber")
+            axios.get(URL + "/user/summary", {params:{user_id : phoneNumber}} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
+            console.log(phoneNumber)
             console.log("REached to response")
-            setUserDetails(responseData[0])
+      
+            setUserDetails(responseData)
             setLoading(false)
             setResult(true)
             console.log(responseData)
@@ -55,8 +58,6 @@ const UserDetails = () => {
         });
     }
 
-
-    
       getData()
 
       const fetchPinsPost = () => {
@@ -134,10 +135,10 @@ const UserDetails = () => {
                         <Text> Cover photo </Text>
                     </View>
                     <View style = {user.mainViewDisplayContainer}>
-                        {userDetails.username ? 
+                        {userDetails.length && userDetails[0].username ? 
                                 <Avatar.Image 
                                 source={{
-                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ userDetails.username + '&size=512'
+                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ userDetails[0].username + '&size=512'
                                 }} size={80}/> :
                                 <Avatar.Image 
                                 source={{
@@ -145,20 +146,22 @@ const UserDetails = () => {
                                 }} size={80}/>}
                     </View>
                     <View style = {user.mainViewDetailsContainer}>
+                    {userDetails.length && userDetails[0].username ? 
                         <View style = {user.mainViewDetailsUserNameContainer}>
-                            <Text style={user.mainViewDetailsUserNameText} >{userDetails.username}</Text>
-                        </View>
+                            <Text style={user.mainViewDetailsUserNameText} >{userDetails[0].username}</Text>
+                        </View> : null }
                         <View style = {user.mainViewDetailsSummaryContainer}>
+                    
                         <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onReviewsClick}>
-                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.number_of_reviews}</Text>
+                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_reviews ? userDetails[0].number_of_reviews : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>Reviews</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onUpvotesClick}>
-                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.number_of_upvotes}</Text>
+                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_upvotes ?  userDetails[0].number_of_upvotes : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>UpVotes</Text>
                         </TouchableOpacity>   
                         <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onDownvotesClick}>
-                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.number_of_downvotes}</Text>
+                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length &&  userDetails[0].number_of_downvotes ?  userDetails[0].number_of_downvotes : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>Downvotes</Text>
                         </TouchableOpacity>
                         </View>   
