@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid, Platform} from 'react-native'
+import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid, Platform , Share} from 'react-native'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
@@ -10,8 +10,8 @@ import RadioGroup from 'react-native-custom-radio-group';
 import { header1, home } from './styles';
 //import SpInAppUpdates, {NeedsUpdateResponse, IAUUpdateKind, StartUpdateOptions} from 'sp-react-native-in-app-updates';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import * as Amplitude from 'expo-analytics-amplitude';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -123,7 +123,9 @@ const Home = () => {
     const [secs,setSecs] = React.useState(0)
     const [refresh,setRefresh] = React.useState(false)
     const [result,setResult] = React.useState(false)
-    const [hero,setHero] = React.useState("")
+    const [heroImage,setHeroImage] = React.useState("")
+    const [heroLink,setHeroLink] = React.useState("https://play.google.com/store/apps/details?id=com.mishreview.androidapp")
+    const [heroLinkExists,setHeroLinkExists] = React.useState(false)
 
     const [updateAvailable,setUpdateAvailable] = React.useState(false)
     const [updateApp, setUpdateApp] = React.useState(false)
@@ -179,7 +181,9 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    setHero(responseData[0].image)
+                    setHeroImage(responseData[0].image)
+                    setHeroLink(responseData[0].clickable_link)
+                    setHeroLinkExists(responseData[0].clickable)
                 })
                 .catch(function(error) {
                   
@@ -210,6 +214,31 @@ const Home = () => {
 
 
 },[result])
+
+
+const heroBannerClick = (link) => {
+    WebBrowser.openBrowserAsync(link);
+  };
+
+
+  const share = async () => {
+    Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : userId})
+    try {
+        const result = await Share.share({
+          message: 'Install Candid App at https://play.google.com/store/apps/details?id=com.mishreview.androidapp',
+        });
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {console.log(result.activityType)} 
+          else {console.log(result)}
+        } 
+        else if (result.action === Share.dismissedAction) {
+            console.log(result)
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+}
+
 
 
 const onClickUpdateApp = () => {
@@ -254,12 +283,9 @@ return (
                 backgroundColor= {background}
                 leftDisable
                 rightIconComponent = {
-                    <AntDesign name = "logout" size = {20} color = "black" />
+                    <AntDesign name = "sharealt" size = {20} color = "black" />
                 }
-                rightIconOnPress = {()=> {
-                    Amplitude.logEventAsync('SIGNOUT_FROM_HOME')
-                    navigation.navigate("Signout")
-                }}
+                rightIconOnPress = {share}
                 />
         </View>
 
@@ -291,9 +317,9 @@ return (
             style = {home.mainViewScrollableContainer}
             >
                 <View style = {home.mainViewHeroBannerContainer}>
-                    <TouchableOpacity onPress = {updateAvailable ? onClickUpdateApp : null} disabled = {!updateAvailable}>
+                    <TouchableOpacity onPress = {() => heroBannerClick(heroLink)} disabled = {!heroLinkExists}>
                     <ImageLoader
-                        source={hero}
+                        source={heroImage}
                         fallback={require('../assets/hero.png')}
                         style = {home.mainViewHeroBannerImage}
                     />
