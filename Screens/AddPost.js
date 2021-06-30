@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {View , FlatList, SafeAreaView,Image, Button,StatusBar, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid, RecyclerViewBackedScrollView } from "react-native";
 import { FlatGrid } from 'react-native-super-grid';
-import {background, borderColor, headerStyle, s3URL, theme, uploadImageOnS3, URL} from './exports'
+import {AuthContext, background, borderColor, headerStyle, s3URL, theme, uploadImageOnS3, URL} from './exports'
 import { useNavigation , useRoute , useIsFocused} from '@react-navigation/native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ImageBrowser } from 'expo-image-picker-multiple';
@@ -139,6 +139,7 @@ const AddPost = () => {
   const navigation = useNavigation()
   const route = useRoute()
   const isFocused = useIsFocused();
+  const [userId,userDetails, isLoggedIn] = React.useContext(AuthContext)
   
 
   const [imageURLArray,setImageURLArray] = React.useState([])
@@ -153,7 +154,7 @@ const AddPost = () => {
   const [existingCategoryInfo,setExistingCategoryInfo] = React.useState([])
   const [existingUser,setExistingUser] = React.useState(false)
   const [daysUsed,setDaysUsed] = React.useState(1)
-  const [userId,setUserId] = React.useState("")
+  
   const [productId,setProductId] = React.useState('')
   const [categoryId,setCategoryId] = React.useState('')
   const [userName,setUserName] = React.useState("")
@@ -175,7 +176,8 @@ const AddPost = () => {
 
   
   React.useEffect(()=>{
-    Amplitude.logEventWithPropertiesAsync('ADD_POST_VISIT',{"userId" : userId , "productId" : productId })
+    console.log(userId.slice(1,12))
+    Amplitude.logEventWithPropertiesAsync('ADD_POST_VISIT',{"userId" : userId.slice(1,13) , "productId" : productId })
     const defaultSearch = () => {
       setSearchLoading(true)
       
@@ -194,12 +196,15 @@ const AddPost = () => {
 
     if(productSelected) {
       const fetchPreviousReview = () => {
-        axios.get(URL + "/post/review", {params:{product_id : productId, user_id : userId }} , {timeout : 5})
+        axios.get(URL + "/post/review", {params:{product_id : productId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
             console.log("Existing Review",responseData)
             if(responseData.length) {
               setExistingReviewExists(true)
               setExistingReview(responseData)
+              setContextAnswersValid(true)
+              setCategoryQuestions(responseData[0].category_ques)
+              setCategoryAnswers(responseData[0].category_ans)
             }
             setLoading(false) 
             
@@ -214,12 +219,15 @@ const AddPost = () => {
       fetchPreviousReview()
 
       const fetchPreviousUserCategory = () => {
-        axios.get(URL + "/post/reviewcontext", {params:{category_id : categoryId, user_id : "1" }} , {timeout : 5})
+        axios.get(URL + "/post/reviewcontext", {params:{category_id : categoryId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
             console.log("PreviousUserCategory", responseData)
             if(responseData.length) {
               setCategoryAnsExists(true)
               setExistingCategoryInfo(responseData)
+              setCategoryQuestions(responseData[0].category_ques_list)
+              setCategoryAnswers(responseData[0].category_ans_list)
+              setContextAnswersValid(true)
             }
             setLoading(false) 
         })
@@ -285,7 +293,6 @@ const AddPost = () => {
     setExistingCategoryInfo([])
     setExistingUser(false)
     setDaysUsed(1)
-    setUserId("")
     setProductId('')
     setCategoryId('')
     setUserName("")
@@ -315,10 +322,10 @@ const AddPost = () => {
     const array = []
     
     photos.slice(0,5).map((item,index) => {
-      const imagename = s3URL + userName + userId + "/" + productId + "/" + daysUsed + "/" + index
+      const imagename = s3URL + userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index
       console.log("Item",item)
-      uploadImageOnS3(userName + userId + "/" + productId + "/" + daysUsed + "/" + index, item.uri )
-      array.push(s3URL + userName + userId + "/" + productId + "/" + daysUsed + "/" + index)
+      uploadImageOnS3(userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index, item.uri )
+      array.push(s3URL + userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index)
       setImageURLArray([...imageURLArray,imagename])
       console.log("Array Push", array)
       console.log("Array State", imageURLArray)

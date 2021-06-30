@@ -37,7 +37,7 @@ const FeedItem = ({item}) => {
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
             
             <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
-            <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").fromNow()}</Text>  
+            <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>  
             
             <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
             {item.image_list.map((image , index) => (

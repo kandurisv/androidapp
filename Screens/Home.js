@@ -181,6 +181,7 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
+                    console.log(responseData)
                     setHeroImage(responseData[0].image)
                     setHeroLink(responseData[0].clickable_link)
                     setHeroLinkExists(responseData[0].clickable)

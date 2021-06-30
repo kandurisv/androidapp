@@ -28,7 +28,7 @@ export default function Pins() {
     const fetchPinsPost = () => {
       console.log(userId)
       Amplitude.logEventWithPropertiesAsync('PINS_PAGE_VISIT',{"userId" : userId })
-      axios.get(URL + "/pins/post", {params:{user_id : userId }} , {timeout : 5})
+      axios.get(URL + "/pins/post", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
           console.log("A", responseData)
           if(responseData.length) {
@@ -44,7 +44,7 @@ export default function Pins() {
     fetchPinsPost()
 
     const fetchPinsProduct = () => {
-      axios.get(URL + "/pins/product", {params:{user_id : userId }} , {timeout : 5})
+      axios.get(URL + "/pins/product", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
       .then(res => res.data).then(function(responseData) {
           console.log("b", responseData)
           if(responseData.length) {

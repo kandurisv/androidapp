@@ -61,7 +61,7 @@ const UserDetails = () => {
       getData()
 
       const fetchPinsPost = () => {
-        axios.get(URL + "/user/items", {params:{user_id : userId }} , {timeout : 5})
+        axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
             console.log("A", responseData)
             if(responseData.length) {
