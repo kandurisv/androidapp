@@ -253,16 +253,15 @@ const PostDetails = (props) => {
     const [showComments,setShowComments] = React.useState(false)
     const [renderAgain,setRenderAgain] = useState(false)
 
-
     React.useEffect(() => {
   //  console.log("________________THIS IS A NEW RENDER _____________________")
-    console.log("USER DETAILS", userDetails)
+  //  console.log("USER DETAILS", userDetails)
   //  console.log(route.params.details.user_id, route.params.details.review_sum_id )
     const getData = () => {
-        axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
+        axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 500})
         .then(res => res.data).then(function(responseData) {
             Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
-      //      console.log("Like identifier ", responseData[0])
+            console.log("Like identifier ", responseData[0])
             setLikeIndicator(responseData[0].upvote === "1" ? true : false)
             setLoading(false)
             setResult(true)

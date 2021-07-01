@@ -54,8 +54,8 @@ const EditUserProfile = () => {
     const [imageChange,setImageChange] = useState(false)
     const [age,setAge] = useState("")
     const [userName,setUserName] = React.useState(route.params.userDetails.username)
-    const [phoneNumber,setPhoneNumber] = React.useContext(AuthContext)
-    const [userId,setUserId] = React.useState(route.params.userDetails.user_id)
+    const [userId, userDetails, isLoggedIn] = React.useContext(AuthContext)
+    const [user_id,setuser_id] = React.useState(route.params.userDetails.user_id)
     const [userInfo,setUserInfo] = React.useState([])
 
     const [userDob,setUserDob] = useState("")
@@ -72,7 +72,7 @@ const EditUserProfile = () => {
     useEffect(() => {
     //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
        const getUserInfo = () => {
-        axios.get(URL + "/user/info", {params:{user_id : userId }} , {timeout:5000})
+        axios.get(URL + "/user/info", {params:{user_id : user_id }} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
         //    console.log("USER INFO",responseData)
             setUserInfo(responseData)
@@ -91,12 +91,12 @@ const EditUserProfile = () => {
     const submit = () => {
       const body = {
         "var" : "edit user",
-        "user_id": userId,
+        "user_id": user_id,
         "username": userName,
         "gender": gender,
         "dob": userDob,
         "email": "",
-        "phone_number": phoneNumber,
+        "phone_number": userId,
         "location": ""
       }
 

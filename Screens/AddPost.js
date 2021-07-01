@@ -221,7 +221,7 @@ const AddPost = () => {
       const fetchPreviousUserCategory = () => {
         axios.get(URL + "/post/reviewcontext", {params:{category_id : categoryId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-          //  console.log("PreviousUserCategory", responseData)
+            console.log("PreviousUserCategory", responseData)
             if(responseData.length) {
               setCategoryAnsExists(true)
               setExistingCategoryInfo(responseData)
@@ -521,9 +521,9 @@ const AddPost = () => {
   }
 
   const selectedAnswer = (question,answer,index) => {
-    console.log("QUESTION", question, "ANSWER" , answer, "INDEX" , index)
-    console.log("CATEGORY QUESTIONS", categoryQuestions)
-    console.log('CATEGORY ANSWERS', categoryAnswers)
+  //  console.log("QUESTION", question, "ANSWER" , answer, "INDEX" , index)
+  //  console.log("CATEGORY QUESTIONS", categoryQuestions)
+  //  console.log('CATEGORY ANSWERS', categoryAnswers)
     let questionsArray = [...categoryQuestions]
     let answersArray = [...categoryAnswers]
     questionsArray[index] = question
