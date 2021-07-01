@@ -34,7 +34,7 @@ const ImageBrowserScreen = ({ onComplete }) => {
       .then(async (photos) => {
         const cPhotos = [];
         for (let photo of photos) {
-          console.log(photo);
+        //  console.log(photo);
           const pPhoto = await _processImageAsync(photo.uri);
           cPhotos.push({
             uri: pPhoto.uri,
@@ -176,7 +176,7 @@ const AddPost = () => {
 
   
   React.useEffect(()=>{
-    console.log(userId.slice(1,12))
+   // console.log(userId.slice(1,12))
     Amplitude.logEventWithPropertiesAsync('ADD_POST_VISIT',{"userId" : userId.slice(1,13) , "productId" : productId })
     const defaultSearch = () => {
       setSearchLoading(true)
@@ -198,7 +198,7 @@ const AddPost = () => {
       const fetchPreviousReview = () => {
         axios.get(URL + "/post/review", {params:{product_id : productId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log("Existing Review",responseData)
+          //  console.log("Existing Review",responseData)
             if(responseData.length) {
               setExistingReviewExists(true)
               setExistingReview(responseData)
@@ -221,7 +221,7 @@ const AddPost = () => {
       const fetchPreviousUserCategory = () => {
         axios.get(URL + "/post/reviewcontext", {params:{category_id : categoryId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log("PreviousUserCategory", responseData)
+          //  console.log("PreviousUserCategory", responseData)
             if(responseData.length) {
               setCategoryAnsExists(true)
               setExistingCategoryInfo(responseData)
@@ -250,7 +250,7 @@ const AddPost = () => {
           setLoading(false) 
       })
       .catch(function(error) {
-          console.log("Reached to error")
+        //  console.log("Reached to error")
           setLoading(false)
           setError(true)
       });
@@ -318,17 +318,17 @@ const AddPost = () => {
     }
     else {
     Amplitude.logEventWithPropertiesAsync('POST_SUBMIT',{"userId" : userId , "productId" : productId })
-    console.log("Review Submit")
+  //  console.log("Review Submit")
     const array = []
     
     photos.slice(0,5).map((item,index) => {
       const imagename = s3URL + userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index
-      console.log("Item",item)
+    //  console.log("Item",item)
       uploadImageOnS3(userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index, item.uri )
       array.push(s3URL + userName + userId.slice(1,13) + "/" + productId + "/" + daysUsed + "/" + index)
       setImageURLArray([...imageURLArray,imagename])
-      console.log("Array Push", array)
-      console.log("Array State", imageURLArray)
+    //  console.log("Array Push", array)
+    //  console.log("Array State", imageURLArray)
     })
     
     const body = {
@@ -349,7 +349,7 @@ const AddPost = () => {
         "image": array
     }
 
-    console.log(body)
+  //  console.log(body)
 
     axios({
         method: 'post',
@@ -357,7 +357,7 @@ const AddPost = () => {
         data: body
       })
     .then(res => {
-        console.log("reached to post feed")
+     //   console.log("reached to post feed")
         ToastAndroid.show("Thanks for adding review", ToastAndroid.LONG)
         refresh()
         setTimeout(function(){
@@ -500,14 +500,14 @@ const AddPost = () => {
     
     axios.get(URL + "/search/product", {params:{str2Match : text }} , {timeout : 2})
       .then(res => res.data).then(function(responseData) {
-          console.log("SearchArray",searchArray)
+      //    console.log("SearchArray",searchArray)
           setSearchLoading(false)
           setSearchArray(responseData)
-          console.log("Reached Here response")
+      //    console.log("Reached Here response")
     })
     .catch(function(error) {
           setSearchLoading(false)
-          console.log("Reached Here error")
+      //    console.log("Reached Here error")
     });
  
   }
@@ -517,7 +517,7 @@ const AddPost = () => {
     setProductSelected(true)
     setSearchText(item.product_name)
     setProductId(item.product_id)
-    console.log(item)
+  //  console.log(item)
   }
 
   const selectedAnswer = (question,answer) => {

@@ -35,23 +35,24 @@ const UserDetails = () => {
     const [userPostsError,setUserPostsError] = React.useState(false)
  
     React.useEffect(() => {
-        console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
-        console.log(userId, isLoggedIn)
+     //   console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
+     //   console.log(userId, isLoggedIn)
         const getData =  async () => {
             const phoneNumber = await AsyncStorage.getItem("phoneNumber")
-            axios.get(URL + "/user/summary", {params:{user_id : phoneNumber}} , {timeout : 5})
+     //       console.log(phoneNumber)
+            axios.get(URL + "/user/summary", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log(phoneNumber)
-            console.log("REached to response")
+      //      console.log("USER DETAILS " , responseData)
+      //      console.log("REached to response")
       
             setUserDetails(responseData)
             setLoading(false)
             setResult(true)
-            console.log(responseData)
+      //      console.log(responseData)
         })
         .catch(function(error) {
-            console.log("REached to error")
-            console.log(error)
+      //      console.log("REached to error")
+      //      console.log(error)
             setLoading(false)
             setResult(true)
             setError(true)
@@ -63,7 +64,7 @@ const UserDetails = () => {
       const fetchPinsPost = () => {
         axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log("A", responseData)
+      //      console.log("A", responseData)
             if(responseData.length) {
               setMyPostsEmpty(false)
             }
@@ -104,8 +105,8 @@ const UserDetails = () => {
     }
 
     const onEdit = () => {
-        console.log("EditProfile")
-        navigation.navigate("EditUserProfile", {userId : userId})
+     //   console.log("EditProfile")
+        navigation.navigate("EditUserProfile", {userDetails : userDetails[0]})
     }
 
     return (   
@@ -138,11 +139,11 @@ const UserDetails = () => {
                         {userDetails.length && userDetails[0].username ? 
                                 <Avatar.Image 
                                 source={{
-                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ userDetails[0].username + '&size=512'
+                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userDetails[0].username.replace(' ','+') + '&size=512'
                                 }} size={80}/> :
                                 <Avatar.Image 
                                 source={{
-                                uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=512'
+                                uri: 'https://ui-avatars.com/api/?rounded=true&background=random&size=512'
                                 }} size={80}/>}
                     </View>
                     <View style = {user.mainViewDetailsContainer}>

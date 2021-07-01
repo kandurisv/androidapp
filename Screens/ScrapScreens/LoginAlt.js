@@ -33,7 +33,7 @@ const Login = () => {
   // Handle the button press
   
     const signInWithPhoneNumber = async (phoneNumber) => {
-      console.log(phoneNumber)
+   //   console.log(phoneNumber)
         // const confirmation = await auth().signInWithPhoneNumber("+91"+ phoneNumber)
         navigation.navigate("Validation", {phoneNumber , confirmation})
     }
@@ -44,7 +44,7 @@ const Login = () => {
     const onChangeNumber = ({text}) => {
       setNumber(text)
       setLength(text.length)
-      console.log(text.length)
+   //   console.log(text.length)
       if(text.length === 10) {
         setValid(true)
         Keyboard.dismiss(false)

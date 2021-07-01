@@ -35,13 +35,13 @@ const Cover = (props) => {
     const navigation = useNavigation()
     const getFeedByUser = () => {
        // navigation.navigate("Feed", {varValue : "user_id" , id : props.userId, value : props.username })
-        console.log("Go to Feed")
+      //  console.log("Go to Feed")
         }
 
     React.useEffect(()=>{
         setLiked(props.likeIndicator)
         setLikeCount(props.upvotes+props.likeIndicator)
-        console.log("Like", props.likeIndicator , "liked indictor ", liked)
+     //   console.log("Like", props.likeIndicator , "liked indictor ", liked)
         if(liked) {
             Animated.timing(progress, {
                 toValue: 1,
@@ -86,7 +86,7 @@ const Cover = (props) => {
             "comment": null
         }
         
-            console.log(body)
+         //   console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',
@@ -255,18 +255,18 @@ const PostDetails = (props) => {
 
 
     React.useEffect(() => {
-    console.log("________________THIS IS A NEW RENDER _____________________")
-    
-    console.log(route.params.details.user_id, route.params.details.review_sum_id )
+  //  console.log("________________THIS IS A NEW RENDER _____________________")
+    console.log("USER DETAILS", userDetails)
+  //  console.log(route.params.details.user_id, route.params.details.review_sum_id )
     const getData = () => {
-        axios.get(URL + "/activity/user", {params:{user_id : userDetails.user_id , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
+        axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
             Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
-            console.log("Like identifier ", responseData[0])
+      //      console.log("Like identifier ", responseData[0])
             setLikeIndicator(responseData[0].upvote === "1" ? true : false)
             setLoading(false)
             setResult(true)
-            console.log(responseData[0].upvote === "1" ? true : false)
+      //      console.log(responseData[0].upvote === "1" ? true : false)
         })
         .catch(function(error) {
             // console.log("Reached to error")
@@ -280,7 +280,7 @@ const PostDetails = (props) => {
     const fetchComments = () => {
         axios.get(URL + "/post/comments", {params:{review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log(responseData)
+       //     console.log(responseData)
             setShowComments(true)
             setComments(responseData)
             setLoading(false)
@@ -324,7 +324,7 @@ const PostDetails = (props) => {
                 "comment": message
             }
             
-            console.log(body)
+       //     console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',

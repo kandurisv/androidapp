@@ -245,7 +245,7 @@ const TabNavigator = () => {
     const userId = useContext(AuthContext)
 
     React.useEffect(()=>{
-      console.log("navigator", userId)
+   //   console.log("navigator", userId)
     },[])
     return (
       <Stack.Navigator 

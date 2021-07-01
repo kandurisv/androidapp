@@ -1,5 +1,5 @@
 import React , {useState,useEffect , useContext} from 'react'
-import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button} from 'react-native'
+import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid} from 'react-native'
 
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import moment from 'moment';
@@ -11,7 +11,7 @@ import RadioGroup from 'react-native-custom-radio-group';
 
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
-import { AuthContext, background, borderColor, theme, uploadImageOnS3 } from './exports';
+import { AuthContext, background, borderColor, theme, uploadImageOnS3, URL } from './exports';
 import { editUserDetails, home, user ,header } from './styles';
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -49,13 +49,13 @@ const EditUserProfile = () => {
     const [date, setDate] = useState(new Date())
     const [image, setImage] = useState("");
     const [coverImage,setCoverImage] = useState("")
-    const [gender, setGender] = useState("")
+    const [gender, setGender] = useState(route.params.userDetails.gender)
     const [imageUrl,setImageUrl] = useState("")
     const [imageChange,setImageChange] = useState(false)
     const [age,setAge] = useState("")
-    const [userName,setUserName] = React.useState("")
-    const [phoneNumber,setPhoneNumber] = React.useState("")
-    const userId = React.useContext(AuthContext)
+    const [userName,setUserName] = React.useState(route.params.userDetails.username)
+    const [phoneNumber,setPhoneNumber] = React.useContext(AuthContext)
+    const [userId,setUserId] = React.useState(route.params.userDetails.user_id)
     const [userInfo,setUserInfo] = React.useState([])
 
     const [userDob,setUserDob] = useState("")
@@ -70,10 +70,11 @@ const EditUserProfile = () => {
 
 
     useEffect(() => {
+    //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
        const getUserInfo = () => {
-        axios.get(URL + "/user/info", {params:{phone_number : userId }} , {timeout:5000})
+        axios.get(URL + "/user/info", {params:{user_id : userId }} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-            console.log(responseData)
+        //    console.log("USER INFO",responseData)
             setUserInfo(responseData)
            
         })
@@ -89,6 +90,7 @@ const EditUserProfile = () => {
 
     const submit = () => {
       const body = {
+        "var" : "edit user",
         "user_id": userId,
         "username": userName,
         "gender": gender,
@@ -98,13 +100,18 @@ const EditUserProfile = () => {
         "location": ""
       }
 
+    //  console.log(body)
+
     axios({
       method: 'post',
       url: URL + '/user/info',
       data: body
     })
   .then(res => {
-      setMessage('')
+      ToastAndroid.show("Thanks for updating your details. It will be updated in 5 minutes", ToastAndroid.LONG)
+      setTimeout(function(){
+        navigation.navigate("Home")
+      }, 500);
     }).catch((e) => console.log(e))
 
     }
@@ -120,10 +127,10 @@ const EditUserProfile = () => {
     
       
         if (!result.cancelled) {
-          console.log(result.uri)
+       //   console.log(result.uri)
           setImage(result.uri);
           setImageChange(true)
-          console.log("I am reaching here")
+       //   console.log("I am reaching here")
           uploadImageOnS3("name",result.uri)
         }
       };   
@@ -136,10 +143,10 @@ const EditUserProfile = () => {
           quality: 1,
         });
     
-        console.log(result);
+      //  console.log(result);
     
         if (!result.cancelled) {
-          console.log(result.uri)
+      //    console.log(result.uri)
           setCoverImage(result.uri);
           setImageChange(true)
         }
@@ -148,16 +155,16 @@ const EditUserProfile = () => {
      
 
       const selectGender = (value) => {
-          console.log(value)
+       //   console.log(value)
           setGender(value)
       }
 
     const pickCoverPhoto = () => {
-      console.log("image picker")
+    //  console.log("image picker")
       pickCoverImage()
     }
     const pickProfilePhoto = () => {
-      console.log("image picker")
+    //  console.log("image picker")
       pickImage()
     }
 
@@ -198,7 +205,7 @@ const EditUserProfile = () => {
               <View style = {home.userDetailsElementContainer}>
                 <Text style = {home.userDetailsElementText}>UserName</Text>
                 <TextInput 
-                        placeholder = "arianagrande"
+                        placeholder = {userName ? userName : "arianagrande"}
                         style = {home.userDetailsElementTextInput}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}

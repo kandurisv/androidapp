@@ -147,9 +147,9 @@ const Home = () => {
         firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
                 const getData =  () => {
-                    axios.get(URL + "/user/info", {params:{phone_number : user.phoneNumber }} , {timeout:5000})
+                    axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                     .then(res => res.data).then(async (responseData) => {
-                        console.log("HOME USER RESPONSE",responseData)
+                    //    console.log("HOME USER RESPONSE",responseData)
                         setUserResponse(responseData[0])
                         setInfoLoading(false)
                         if(responseData.length && responseData[0].username) {
@@ -162,7 +162,7 @@ const Home = () => {
                     })
                     .catch(function(error) {
                         setInfoLoading(false)
-                        console.log(error)
+                    //    console.log(error)
                         setError(true)
                     });
                 axios.get(URL + "/home", {timeout : 5000})
@@ -181,7 +181,7 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    console.log(responseData)
+                //    console.log(responseData)
                     setHeroImage(responseData[0].image)
                     setHeroLink(responseData[0].clickable_link)
                     setHeroLinkExists(responseData[0].clickable)
@@ -197,8 +197,8 @@ const Home = () => {
             }
         })
 
-        console.log("USERID DEFAULT", userId)
-        console.log("USER DETAILS", userDetails)
+     //   console.log("USERID DEFAULT", userId)
+     //   console.log("USER DETAILS", userDetails)
         
 
 // App Update 
@@ -229,11 +229,15 @@ const heroBannerClick = (link) => {
           message: 'Install Candid App at https://play.google.com/store/apps/details?id=com.mishreview.androidapp',
         });
         if (result.action === Share.sharedAction) {
-          if (result.activityType) {console.log(result.activityType)} 
-          else {console.log(result)}
+          if (result.activityType) {
+         //     console.log(result.activityType)
+            } 
+          else {
+        //  console.log(result)
+        }
         } 
         else if (result.action === Share.dismissedAction) {
-            console.log(result)
+        //    console.log(result)
         }
       } catch (error) {
         alert(error.message);
@@ -261,7 +265,7 @@ const submitUserDetails = () => {
         "username": userName,
         "phone_number" : userId
     }
-    console.log(body)
+  //  console.log(body)
     axios({
       method: 'post',
       url: URL + '/user/info',

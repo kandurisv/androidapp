@@ -159,7 +159,7 @@ const Validation = () => {
         <TouchableOpacity 
           style = {{margin : 10}}
           onPress={()=>{
-            console.log("Press")
+        //    console.log("Press")
             setAttemptsRemaining(attemptsRemaining-1)
             setSecs(60)
           }}>

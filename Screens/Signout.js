@@ -24,7 +24,7 @@ const Signout = () => {
           navigation.navigate("Auth")
      //     ToastAndroid.show("Signed Out succesfully !!", ToastAndroid.SHORT)
         }).catch((error) => {
-          console.log(error)
+     //     console.log(error)
         })
         
 
@@ -35,7 +35,7 @@ const Signout = () => {
 
 
   const goToAuth = () => {
-    console.log("reached to go to auth")
+   // console.log("reached to go to auth")
     navigation.navigate("Auth")
     
   }

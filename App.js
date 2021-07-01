@@ -60,16 +60,16 @@ const App = () => {
         const getData = async () => {
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
-              console.log("fireabase",user)
+            //  console.log("fireabase",user)
               setLoggedIn(true)
               setUserId(user.phoneNumber)
               Amplitude.setUserIdAsync(user.phoneNumber)
               Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
-              console.log('App User!' , user.phoneNumber);
+            //  console.log('App User!' , user.phoneNumber);
 
-              axios.get(URL + "/user/info", {params:{phone_number : user.phoneNumber }} , {timeout:5000})
+              axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                 .then(res => res.data).then(function(responseData) {
-                  console.log("APP PAGE USER DETAILS", responseData)
+              //    console.log("APP PAGE USER DETAILS", responseData)
                   setUserDetails(responseData[0])
                 })
                 .catch(function(error) {
@@ -82,7 +82,7 @@ const App = () => {
        
         getData()
          
-        console.log("loading ", isLoading)
+    //    console.log("loading ", isLoading)
         
     },[isLoading]);
 

@@ -80,7 +80,7 @@ export default function Login() {
       setNumber(text)
       setPhoneNumber("+91" + text)
       setLength(text.length)
-      console.log(text.length)
+    //  console.log(text.length)
       if(text.length === 10) {
         setValid(true)
         Keyboard.dismiss(false)
@@ -93,7 +93,7 @@ export default function Login() {
   const onChangeOTP = (text) => {
       setVerificationCode(text)
       setotpLength(text.length)
-      console.log(text.length)
+    //  console.log(text.length)
       if(text.length === 6) {
         setOtpValid(true)
         Keyboard.dismiss(false)
@@ -194,7 +194,7 @@ export default function Login() {
       return `${result}${item}`
     }, "")
     
-    console.log(stringData)
+  //  console.log(stringData)
     const body = {
       var : 'new user',
       phone_number : phoneNumber
@@ -206,8 +206,12 @@ export default function Login() {
       data: body
     })
     .then(res => {
-       console.log("New user")
-    }).catch((e) => console.log(e))
+   //    console.log("New user")
+    }).catch((e) => {
+  //    console.log(e)
+    }
+     
+    )
 
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,stringData);
