@@ -520,9 +520,18 @@ const AddPost = () => {
   //  console.log(item)
   }
 
-  const selectedAnswer = (question,answer) => {
-    setCategoryQuestions([...categoryQuestions,question])
-    setCategoryAnswers([...categoryAnswers,answer])
+  const selectedAnswer = (question,answer,index) => {
+    console.log("QUESTION", question, "ANSWER" , answer, "INDEX" , index)
+    console.log("CATEGORY QUESTIONS", categoryQuestions)
+    console.log('CATEGORY ANSWERS', categoryAnswers)
+    let questionsArray = [...categoryQuestions]
+    let answersArray = [...categoryAnswers]
+    questionsArray[index] = question
+    answersArray[index] = answer
+   // setCategoryQuestions([...categoryQuestions,question])
+   // setCategoryAnswers([...categoryAnswers,answer])
+    setCategoryQuestions(questionsArray)
+    setCategoryAnswers(answersArray)
     if(contextOptions.length ==  categoryQuestions.length+1) {
       setContextAnswersValid(true)
     }
@@ -617,7 +626,7 @@ return(
 										return <OptionsQuestions 
                       key = {item.id} 
                       questions = {contextOptions[index]} 
-                      selectedAnswer = {(question,answer)=>selectedAnswer(question,answer)}
+                      selectedAnswer = {(question,answer)=>selectedAnswer(question,answer,index)}
                     />
 									})}
 								</View> : 
