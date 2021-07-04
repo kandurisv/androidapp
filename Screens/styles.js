@@ -3,24 +3,39 @@ import { borderColor,theme,background } from './exports'
 
 const {width,height} = Dimensions.get('screen')
 
+const HEADER_HEIGHT = 50
+const HEADER_FONT = 18
+const TAB_BAR_HEIGHT = 60
+const TAB_SLIDER_HEIGHT = 2
+const TAB_SLIDER_COLOR = "#C51E3A"
+
+
 export const header = StyleSheet.create({
     headerView : {
-        
+        height : HEADER_HEIGHT,
+        paddingBottom : 10 ,
+        justifyContent : 'center',
+        alignItems : 'center'
     },
     headerText : {
-        fontSize: 18 , 
-        color : theme
+        fontSize: HEADER_FONT , 
+        color : theme,
+        padding : 10
     },
 })
 
 export const header1 = StyleSheet.create({
     headerView : {
-
+        height : HEADER_HEIGHT,
+        padding : 10 ,
+        justifyContent : 'center',
+        alignItems : 'center'
     },
     headerText :{
         fontWeight : 'bold',
-        fontSize: 18 , 
+        fontSize: HEADER_FONT , 
         color : borderColor,
+        padding : 10
     }
 })
 
@@ -135,10 +150,10 @@ export const home = StyleSheet.create({
     mainViewScrollableContentContainer : {
         justifyContent : 'center',
         alignItems : 'center',
-        marginBottom : 60,
+        marginBottom : TAB_BAR_HEIGHT,
     },
     mainViewScrollableContainer : {
-        marginBottom : 60,
+        marginBottom : TAB_BAR_HEIGHT,
     },
     mainViewHeroBannerContainer : {
         backgroundColor : background,
@@ -310,7 +325,8 @@ export const user = StyleSheet.create({
 
     },
     myPostedReviewsEmptyText : {
-        fontSize : 16
+        fontSize : 16,
+        marginLeft : 10,
     },
     myPostedReviewsItemContainer : {
         justifyContent : 'center',
@@ -342,7 +358,7 @@ export const user = StyleSheet.create({
     // Edit User Details
     editUserDetailsDisplayContainer : {
         position : 'absolute',
-        top : 180,
+        top : 150,
         left : 20,
     },
     editUserDetailsDisplayImageButton : {
@@ -574,7 +590,8 @@ export const pins = StyleSheet.create({
 
     },
     mainViewSubContainerEmptyText : {
-        fontSize : 16
+        fontSize : 16,
+        marginLeft : 10
     },
     mainViewSubContainerItemContainer : {
         justifyContent : 'center',
@@ -616,7 +633,7 @@ export const feed = StyleSheet.create({
     },
     // Main Container
     mainContainer : {
-        marginBottom : 200
+        marginBottom : HEADER_HEIGHT + TAB_BAR_HEIGHT
     },
     scrollableFeedContainer : {
         marginBottom : 10
@@ -656,21 +673,30 @@ export const feed = StyleSheet.create({
         borderRadius : 10,
         zIndex: 100
     },
-    scrollableFeedItemProductName : {
+    scrollableFeedItemProductView : {
         position:'absolute',
+        width : width * 0.95,
         bottom:0,
-        color : 'white',
-        marginBottom: 35,
         marginLeft: 10,
-        fontSize:30,
+        marginRight : 10,
+        backgroundColor : 'rgba(52, 52, 52, 0.5)',
+        zIndex : 102,
+    },
+    scrollableFeedItemProductName : {
+        // position:'absolute',
+        // bottom:0,
+        marginTop : 5,
+         marginLeft : 5 ,
+        color : 'white',
+        fontSize:20,
         fontWeight:'bold'
     },
     scrollableFeedItemProductReview  : {
-        position:'absolute',
-        bottom:0,
+        // position:'absolute',
+        // bottom:0,
+         marginBottom : 10,
+         marginLeft : 5 ,
         color : 'white',
-        marginBottom: 15,
-        marginLeft: 10,
         fontSize:15
     },
     scrollableFeedItemHorizontalScrollContainer : {
@@ -994,7 +1020,7 @@ export const addPost = StyleSheet.create({
     productSearchBarInactiveView : {
         justifyContent : 'center',
         alignItems : 'center',
-        backgroundColor : theme,
+        backgroundColor : background,
         padding : 5,
         marginTop : 0,
         flexDirection : 'row',
@@ -1009,7 +1035,7 @@ export const addPost = StyleSheet.create({
     productSearchBarInactiveText : {
         fontWeight : 'bold', 
         padding : 5 , 
-        color : background , 
+        color : borderColor , 
         flex : 1, 
         marginLeft : 5
     },
@@ -1287,6 +1313,34 @@ export const addPost = StyleSheet.create({
 
     carouselStyle : {},
 
+})
+
+
+export const navigator = StyleSheet.create({
+    tabContainer: {
+        height: TAB_BAR_HEIGHT,
+        shadowOffset: {
+          width: 0,
+          height: -1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2.0,
+        backgroundColor: background,
+        borderTopRightRadius: 5,
+        borderTopLeftRadius: 5,
+        elevation: 5,
+        position: "absolute",
+        bottom: 0,
+      },
+      slider: {
+        height: TAB_SLIDER_HEIGHT,
+        position: "absolute",
+        top: 0,
+        left: 13,
+        backgroundColor: TAB_SLIDER_COLOR,
+        borderRadius: 10,
+        width: 50
+    },
 })
 
 

@@ -23,7 +23,8 @@ public class BasePackageList {
         new expo.modules.medialibrary.MediaLibraryPackage(),
         new expo.modules.screenorientation.ScreenOrientationPackage(),
         new expo.modules.splashscreen.SplashScreenPackage(),
-        new expo.modules.updates.UpdatesPackage()
+        new expo.modules.updates.UpdatesPackage(),
+        new expo.modules.webbrowser.WebBrowserPackage()
     );
   }
 }

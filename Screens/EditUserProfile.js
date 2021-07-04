@@ -11,7 +11,7 @@ import RadioGroup from 'react-native-custom-radio-group';
 
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
-import { AuthContext, background, borderColor, theme, uploadImageOnS3, URL } from './exports';
+import { AuthContext, background, borderColor, theme, uploadImageOnS3, URL , s3URL } from './exports';
 import { editUserDetails, home, user ,header } from './styles';
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -51,7 +51,8 @@ const EditUserProfile = () => {
     const [coverImage,setCoverImage] = useState("")
     const [gender, setGender] = useState(route.params.userDetails.gender)
     const [imageUrl,setImageUrl] = useState("")
-    const [imageChange,setImageChange] = useState(false)
+    const [profileImageChange,setProfileImageChange] = useState(false)
+    const [coverImageChange,setCoverImageChange] = useState(false)
     const [age,setAge] = useState("")
     const [userName,setUserName] = React.useState(route.params.userDetails.username)
     const [userId, userDetails, isLoggedIn] = React.useContext(AuthContext)
@@ -97,7 +98,7 @@ const EditUserProfile = () => {
         "dob": userDob,
         "email": "",
         "phone_number": userId,
-        "location": ""
+        "location": "",
       }
 
     //  console.log(body)
@@ -129,9 +130,34 @@ const EditUserProfile = () => {
         if (!result.cancelled) {
        //   console.log(result.uri)
           setImage(result.uri);
-          setImageChange(true)
+          setProfileImageChange(true)
        //   console.log("I am reaching here")
-          uploadImageOnS3("name",result.uri)
+          uploadImageOnS3(s3URL + user_id + "profile",result.uri)
+
+          const body = {
+            "var" : "edit user",
+            "user_id": user_id,
+            "username": userName,
+            "gender": gender,
+            "dob": userDob,
+            "email": "",
+            "phone_number": userId,
+            "location": "",
+            "profile_image" : s3URL + user_id + "profile"
+          }
+    
+        //  console.log(body)
+    
+        axios({
+          method: 'post',
+          url: URL + '/user/info',
+          data: body
+        })
+      .then(res => {
+          // Do Nothing
+        }).catch((e) => console.log(e))
+    
+
         }
       };   
       
@@ -139,7 +165,7 @@ const EditUserProfile = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [16, 9],
           quality: 1,
         });
     
@@ -148,7 +174,31 @@ const EditUserProfile = () => {
         if (!result.cancelled) {
       //    console.log(result.uri)
           setCoverImage(result.uri);
-          setImageChange(true)
+          setCoverImageChange(true)
+          uploadImageOnS3(s3URL + user_id + "cover",result.uri)
+          const body = {
+            "var" : "edit user",
+            "user_id": user_id,
+            "username": userName,
+            "gender": gender,
+            "dob": userDob,
+            "email": "",
+            "phone_number": userId,
+            "location": "",
+            "cover_image" : s3URL + user_id + "cover"
+          }
+    
+        //  console.log(body)
+    
+        axios({
+          method: 'post',
+          url: URL + '/user/info',
+          data: body
+        })
+        .then(res => {
+          // Do Nothing
+        }).catch((e) => console.log(e))
+    
         }
       }; 
 
@@ -195,14 +245,14 @@ const EditUserProfile = () => {
             </View>
             <View style = {user.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {user.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image ? {uri : image} : require('../assets/defaultProfile.png')} 
+                <ImageBackground source = {image ? {uri : image} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
                         style = {user.editUserDetailsDisplayImage} >
                 </ImageBackground>
               </TouchableOpacity>
             </View>
             
             <View style = {user.editUserDetailsInputContainer}>
-              <View style = {home.userDetailsElementContainer}>
+              <View style = {[home.userDetailsElementContainer,{borderWidth : 0}]}>
                 <Text style = {home.userDetailsElementText}>UserName</Text>
                 <TextInput 
                         placeholder = {userName ? userName : "arianagrande"}

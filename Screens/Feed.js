@@ -44,13 +44,15 @@ const FeedItem = ({item}) => {
               <View key = {index}>
                 <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image}}/>
                 <View style = {feed.scrollableFeedItemImagesCount}>
-                <Text style = {{fontSize:14, color : '#888888'}} >{index+1}/{item.image_list.length}</Text>
+                <Text style = {{fontSize:14, color : '#BBBBBB'}} >{index+1}/{item.image_list.length}</Text>
                 </View>
               </View>  
             ))} 
             </ScrollView>
-            <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
-            <Text style ={feed.scrollableFeedItemProductReview} > {review.substring(0,40)} ...</Text>
+            <View style ={feed.scrollableFeedItemProductView}>
+              <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
+              <Text style ={feed.scrollableFeedItemProductReview} > {review.substring(0,40)} ...</Text>
+            </View>
         </TouchableWithoutFeedback>
     );
 };

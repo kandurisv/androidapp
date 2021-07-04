@@ -263,7 +263,8 @@ const submitUserDetails = () => {
     const body = {
         "var" : "new user",
         "username": userName,
-        "phone_number" : userId
+        "phone_number" : userId,
+        "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg"
     }
   //  console.log(body)
     axios({
@@ -281,7 +282,7 @@ const submitUserDetails = () => {
 
 return (
     <View style = {home.container}>  
-        <View style = {home.userDetailsContainer}>
+        <View style = {header1.headerView}>
             <ModernHeader 
                 title="Home"
                 titleStyle = {header1.headerText}

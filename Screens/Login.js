@@ -8,6 +8,7 @@ import { background, firebaseConfig, theme } from "./exports";
 import { login } from "./styles";
 import axios from 'axios'
 import { createNativeWrapper } from "react-native-gesture-handler";
+import { SliderBox } from "react-native-image-slider-box";
 
 
 try {
@@ -19,6 +20,13 @@ try {
 export default function Login() {
 
   const navigation = useNavigation()
+
+
+  const [sliderImages,setSliderImages] = React.useState([
+    "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/1.jpg",
+    "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/2.jpg",
+    "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/3.jpg",  
+  ])
 
   const recaptchaVerifier = React.useRef(null);
   const [phoneNumber, setPhoneNumber] = React.useState();
@@ -233,6 +241,13 @@ export default function Login() {
         firebaseConfig={firebaseConfig}
       />
       <View style = {login.loginViewCoverContainer}>
+        <SliderBox 
+          images={sliderImages} 
+          sliderBoxHeight= {Dimensions.get('screen').height*0.75}
+          dotColor="#DDDDDD"
+          inactiveDotColor="#EEEEEE"
+          circleLoop
+         />
       {/* <LottieView
           ref={animation => animation}
           progress = {progress}
@@ -281,6 +296,10 @@ export default function Login() {
       ) : (
       <View style = {login.validationViewContainer}>
       <View style = {login.validationViewCoverContainer}>
+        <Image
+          source = {require("../assets/A500T.png")}
+          style = {{width : 200 , height : 200}}
+          />
       {/* <LottieView
           ref={animation => animation}
           progress = {progress}

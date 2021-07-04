@@ -96,7 +96,7 @@ export const LoadingPage = () => {
 
 
 export const background = "#EEEEEE"
-export const theme = "#DE3C4B"
+export const theme = "#D7354A"
 export const borderColor = "#222222"
 
 export const firebaseConfig = {

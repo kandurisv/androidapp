@@ -7,7 +7,7 @@ import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
 import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor, AuthContext} from './exports'
-
+import {ImageLoader} from 'react-native-image-fallback';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
@@ -24,6 +24,7 @@ const UserDetails = () => {
     const [userId,isLoggedIn] = React.useContext(AuthContext)
 
     const [userDetails, setUserDetails] = React.useState([])
+    const [userInfo,setUserInfo] = React.useState([])
     const [loading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
     const [error,setError] = React.useState(false)
@@ -60,6 +61,32 @@ const UserDetails = () => {
     }
 
       getData()
+
+
+      const getUserInfo =  async () => {
+        const phoneNumber = await AsyncStorage.getItem("phoneNumber")
+ //       console.log(phoneNumber)
+        axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then(function(responseData) {
+  //      console.log("USER DETAILS " , responseData)
+  //      console.log("REached to response")
+  
+        setUserInfo(responseData)
+        setLoading(false)
+        setResult(true)
+  //      console.log(responseData)
+    })
+    .catch(function(error) {
+  //      console.log("REached to error")
+  //      console.log(error)
+        setLoading(false)
+        setResult(true)
+        setError(true)
+    });
+}
+
+        getUserInfo()
+
 
       const fetchPinsPost = () => {
         axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
@@ -106,7 +133,7 @@ const UserDetails = () => {
 
     const onEdit = () => {
      //   console.log("EditProfile")
-        navigation.navigate("EditUserProfile", {userDetails : userDetails[0]})
+        navigation.navigate("EditUserProfile", {userDetails : userDetails[0] , userInfo : userInfo[0]})
     }
 
     return (   
@@ -133,10 +160,16 @@ const UserDetails = () => {
                 contentContainerStyle = {user.mainViewContentContainer}
                 style = {user.mainViewContainer}>
                     <View style = {user.mainViewCoverContainer}>
-                        <Text> Cover photo </Text>
+                     <ImageLoader 
+                        source = {userInfo[0].cover_image} 
+                        style = {{width : width, height : 180 }}
+                        fallback = {require("../assets/defaultCover.png")}
+                        />
                     </View>
                     <View style = {user.mainViewDisplayContainer}>
-                        {userDetails.length && userDetails[0].username ? 
+                        {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
+                        <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 50, height : 50 }}/> :
+                        userDetails.length && userDetails[0].username ? 
                                 <Avatar.Image 
                                 source={{
                                 uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userDetails[0].username.replace(' ','+') + '&size=512'

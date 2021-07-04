@@ -570,7 +570,7 @@ return(
           {productSelected ? 
           (
             <TouchableOpacity style = {addPost.productSearchBarInactiveView } onPress = {() => setProductSelected(false)}>
-              <Fontisto name = "search" size = {20} color = {background} />
+              <Fontisto name = "search" size = {24} color = {theme} />
               <Text style = {addPost.productSearchBarInactiveText}>{searchText}</Text>
             </TouchableOpacity>
           ) : (
@@ -642,7 +642,7 @@ return(
                   keyboardType = 'number-pad'
                   style = {addPost.mainViewDaysTextInput}
                   onChangeText = {(text)=>{existingUser ? setDaysUsed(999) : setDaysUsed(text)}}
-                  value = {existingUser ? "180+" : daysUsed}
+                  value = {existingUser ? "100+" : daysUsed}
                 />  
                 <TouchableOpacity 
                   onPress = {()=>{
@@ -650,7 +650,7 @@ return(
                     setDaysUsed(999)
                   }}
                   style = {{backgroundColor : existingUser ? theme : background , flex : 1, justifyContent : 'center', marginLeft : 10, marginRight : 10, borderRadius : 20, borderWidth : 1, borderColor : !existingUser ? theme : background }}>
-                  <Text style = {{color : !existingUser ? theme : background , textAlign: 'center'}}>Existing User</Text>
+                  <Text style = {{color : !existingUser ? theme : background , textAlign: 'center'}}>100+</Text>
                 </TouchableOpacity>
 							</View>
 	  
