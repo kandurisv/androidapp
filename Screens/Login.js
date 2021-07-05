@@ -11,6 +11,7 @@ import { createNativeWrapper } from "react-native-gesture-handler";
 import { SliderBox } from "react-native-image-slider-box";
 
 
+
 try {
   firebase.initializeApp(firebaseConfig);
 } catch (err) {
@@ -59,6 +60,10 @@ export default function Login() {
   const [resendButtonDisabledTime, setResendButtonDisabledTime] =  React.useState(60);
   const [isAndroid, setAndroid] = React.useState(true)
   const [attemptsRemaining,setAttemptsRemaining] = React.useState(3)
+  
+
+  const [expoToken,setExpoToken] = React.useState()
+  const [deviceToken,setDeviceToken] = React.useState()
 
   const [screen,setScreen] = React.useState(false)
   const [mins, setMins] = useState(0)
@@ -83,6 +88,75 @@ export default function Login() {
  
       clearInterval(timerId);}
   },[secs])
+
+//   const registerForExpoPushNotificationsAsync= async() => {
+//     let experienceId = '@kandurisv/yelo';
+       
+//     let token;
+//     if (Constants.isDevice) {
+//     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
+//     if (existingStatus !== 'granted') {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
+//     if (finalStatus !== 'granted') {
+//       alert('Failed to get push token for push notification!');
+//       return;
+//     }
+//     token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
+    
+//   } else {
+//     alert('Must use physical device for Push Notifications');
+//   }
+
+//   if (Platform.OS === 'android') {
+//     Notifications.setNotificationChannelAsync('default', {
+//       name: 'default',
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       lightColor: '#FF231F',
+//     });
+//   }
+
+//   return token;
+// }
+
+// const registerForDevicePushNotificationsAsync = async() => {
+//   let token;
+//   if (Constants.isDevice) {
+//     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
+//     if (existingStatus !== 'granted') {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
+//     if (finalStatus !== 'granted') {
+//       alert('Failed to get push token for push notification!');
+//       return;
+//     }
+//     token = (await Notifications.getDevicePushTokenAsync()).data;
+    
+//   } else {
+//     alert('Must use physical device for Push Notifications');
+//   }
+
+//   return token;
+// }
+
+// const registerNotification = async () => {
+//   registerForExpoPushNotificationsAsync().then(token => {
+//     console.log("expo token", token)
+//     setExpoToken(token)
+//   });
+//   registerForDevicePushNotificationsAsync().then(token => {
+//     console.log("device token", token)
+//     setDeviceToken(token)
+//   });
+// }
+
+
+
 
   const onChangeNumber = (text) => {
       setNumber(text)
@@ -124,6 +198,7 @@ export default function Login() {
         easing: Easing.linear,
         useNativeDriver : true
       },).start();
+      registerNotification()
     } catch (err) {
       ToastAndroid.show("We couldn't log you in due to network error",ToastAndroid.SHORT )
       setLoginClick(true)
@@ -203,32 +278,36 @@ export default function Login() {
     }, "")
     
   //  console.log(stringData)
-    const body = {
-      var : 'new user',
-      phone_number : phoneNumber
-    }
+  //   const body = {
+  //     var : 'new user',
+  //     phone_number : phoneNumber,
+  //     cover_photo : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
+  //     device_token : deviceToken,
+  //     expo_token : expoToken
+  //   }
 
-    axios({
-      method: 'post',
-      url: URL + '/user/info',
-      data: body
-    })
-    .then(res => {
-   //    console.log("New user")
-    }).catch((e) => {
-  //    console.log(e)
-    }
+  //   axios({
+  //     method: 'post',
+  //     url: URL + '/user/info',
+  //     data: body
+  //   })
+  //   .then(res => {
+  //  //    console.log("New user")
+  //   }).catch((e) => {
+  // //    console.log(e)
+  //   }
      
-    )
+  //   )
 
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,stringData);
       await firebase.auth().signInWithCredential(credential);
-      navigation.navigate("Home" , {userId : phoneNumber})
+      navigation.navigate("Home" , {userId : phoneNumber, expoToken : expoToken , deviceToken : deviceToken})
     } catch (err) {
       ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
     }
   }
+
   return (
     
     <ScrollView 

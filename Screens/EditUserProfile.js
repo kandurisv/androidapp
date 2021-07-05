@@ -132,7 +132,7 @@ const EditUserProfile = () => {
           setImage(result.uri);
           setProfileImageChange(true)
        //   console.log("I am reaching here")
-          uploadImageOnS3(s3URL + user_id + "profile",result.uri)
+          uploadImageOnS3(user_id + "/profile",result.uri)
 
           const body = {
             "var" : "edit user",
@@ -143,7 +143,7 @@ const EditUserProfile = () => {
             "email": "",
             "phone_number": userId,
             "location": "",
-            "profile_image" : s3URL + user_id + "profile"
+            "profile_image" : s3URL + user_id + "/profile"
           }
     
         //  console.log(body)
@@ -175,7 +175,7 @@ const EditUserProfile = () => {
       //    console.log(result.uri)
           setCoverImage(result.uri);
           setCoverImageChange(true)
-          uploadImageOnS3(s3URL + user_id + "cover",result.uri)
+          uploadImageOnS3(user_id + "/cover",result.uri)
           const body = {
             "var" : "edit user",
             "user_id": user_id,
@@ -185,7 +185,7 @@ const EditUserProfile = () => {
             "email": "",
             "phone_number": userId,
             "location": "",
-            "cover_image" : s3URL + user_id + "cover"
+            "cover_image" : s3URL + user_id + "/cover"
           }
     
         //  console.log(body)
@@ -252,17 +252,17 @@ const EditUserProfile = () => {
             </View>
             
             <View style = {user.editUserDetailsInputContainer}>
-              <View style = {[home.userDetailsElementContainer,{borderWidth : 0}]}>
-                <Text style = {home.userDetailsElementText}>UserName</Text>
+              <View style = {[home.userDetailsElementContainer,{borderWidth : 0, }]}>
+                <Text style = {[home.userDetailsElementText,{fontSize : 16, flex : 1, marginLeft : 0}]}>UserName:</Text>
                 <TextInput 
                         placeholder = {userName ? userName : "arianagrande"}
-                        style = {home.userDetailsElementTextInput}
+                        style = {[home.userDetailsElementTextInput,{flex : 2, paddingBottom : 0 , marginBottom : 0}]}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
                 />
               </View>
               <View style = {user.dateView}>
-                <Text style = {{justifyContent : "center", flex : 1, fontSize : 16}}> 
+                <Text style = {{justifyContent : "center", flex : 1, fontSize : 16, marginLeft : 15}}> 
                     Date of birth : { userDob ? userDob.replace('"','').substring(0,10) : ""} 
                 </Text>
                 <TouchableOpacity style = {user.datepicker} onPress={showDatePicker}>
@@ -276,7 +276,7 @@ const EditUserProfile = () => {
                 />
               </View>
               <View>
-                <Text style = {home.userDetailsGenderHeading}> Gender : {gender}</Text>
+                <Text style = {[home.userDetailsGenderHeading,{fontSize : 16, fontStyle : 'normal', marginLeft : 20}]}> Gender : {gender}</Text>
                 <RadioGroup 
                     radioGroupList={radioGroupList} 
                     onChange = {(value) => setGender(value)}

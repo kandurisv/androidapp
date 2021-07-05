@@ -13,6 +13,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import * as Amplitude from 'expo-analytics-amplitude';
+
+import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants';
+
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 import * as firebase from "firebase";
@@ -130,6 +134,9 @@ const Home = () => {
     const [updateAvailable,setUpdateAvailable] = React.useState(false)
     const [updateApp, setUpdateApp] = React.useState(false)
     const [updateOptions,setUpdateOptions] = React.useState({})
+
+    const [deviceToken , setDeviceToken] = React.useState()
+    const [expoToken , setExpoToken] = React.useState()
     
 
     const [userDetailsAvailable,setUserDetailsAvailable] = React.useState(false)
@@ -142,6 +149,66 @@ const Home = () => {
     const goToProductFeed = (name, idValue, value) => {
         navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
     }
+
+
+    const registerForExpoPushNotificationsAsync= async() => {
+        let experienceId = '@kandurisv/yelo';
+           
+        let token;
+        if (Constants.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
+        token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
+        
+      } else {
+        alert('Must use physical device for Push Notifications');
+      }
+    
+      if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F',
+        });
+      }
+    
+      return token;
+    }
+    
+    const registerForDevicePushNotificationsAsync = async() => {
+      let token;
+      if (Constants.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
+        token = (await Notifications.getDevicePushTokenAsync()).data;
+        
+      } else {
+        alert('Must use physical device for Push Notifications');
+      }
+    
+      return token;
+    }
+    
+
+    
+    
 
     React.useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -190,8 +257,20 @@ const Home = () => {
                   
                 });
             }
+
+            const registerNotification = async () => {
+                registerForExpoPushNotificationsAsync().then(token => {
+                  console.log("expo token", token)
+                  setExpoToken(token)
+                });
+                registerForDevicePushNotificationsAsync().then(token => {
+                  console.log("device token", token)
+                  setDeviceToken(token)
+                });
+            }
+
             getData()
-            
+            registerNotification()
             } else {
                 navigation.navigate("Auth")
             }
@@ -264,7 +343,9 @@ const submitUserDetails = () => {
         "var" : "new user",
         "username": userName,
         "phone_number" : userId,
-        "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg"
+        "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
+        "expo_token" : expoToken,
+        "device_token" : deviceToken
     }
   //  console.log(body)
     axios({
