@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text , ImageBackground, Dimensions, ScrollView} from 'react-native';
+import { View, Text , ImageBackground, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios'
 import {AuthContext, background, borderColor,URL} from './exports'
@@ -59,6 +59,26 @@ export default function Pins() {
   fetchPinsProduct()
   },[])
 
+
+  const onClickProduct = (product) => {
+    axios.get(URL + "/search/review", {params:{str2Match : product }} , {timeout:5000})
+    .then(res => res.data).then(async (responseData) => {
+      console.log(responseData)
+      if (responseData.length) {
+        navigation.navigate("HeroSearchFeed", {items : responseData})
+      } else {
+        ToastAndroid.show("Invalid Seach Query", ToastAndroid.SHORT)
+      }
+    })
+    .catch(function(error) {
+      ToastAndroid.show("Invalid Search Query", ToastAndroid.SHORT)
+    });
+  }
+
+  const onClickPost = (item,review,context) => {
+    navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
+}
+
   return (
     <View style = {pins.container}>
       <View style = {header.headerView}>
@@ -78,13 +98,26 @@ export default function Pins() {
         <View style={pins.mainViewSubContainerEmptyView}>
           <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts to save it here</Text>
         </View> :
-        <FlatGrid itemDimension={width*0.45} data={pinsPost} renderItem={({item}, i) => (
-          <View style = {pins.mainViewSubContainerItemContainer}>
+        <FlatGrid itemDimension={width*0.45} data={pinsPost} renderItem={({item}, i) => {
+          var review = ""
+          item.content.map((reviewItem,index) => {
+          if(reviewItem.length > 0) {
+            review = review + "Day " + item.day_product_used_content[index] + ": " + reviewItem + "\n"
+              }
+            })
+          var context = ""
+          item.category_ques.map((contextItem,index)=>{
+            context = context + item.category_ques[index] + " : " + item.category_ans[index] + "\n" + "\n"
+          })
+          return (
+          <TouchableOpacity onPress = {()=>onClickPost(item,review,context)}
+            style = {pins.mainViewSubContainerItemContainer}>
             <ImageBackground source = {{uri : item.image_list[0]}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {0}></ImageBackground>
             <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.15}]}>
               <Text style={pins.mainViewSubContainerItemText}>{item.username}</Text>
             </View>
-          </View>)}
+          </TouchableOpacity>)}
+          }
         />}
       </View>
       <View style = {pins.mainViewItem}>
@@ -94,12 +127,15 @@ export default function Pins() {
             <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>
           </View> :
         <FlatGrid itemDimension={width*0.45} data={pinsProduct} renderItem={({item}, i) => (
-          <View style = {pins.mainViewSubContainerItemContainer}>
+          <TouchableOpacity 
+            style = {pins.mainViewSubContainerItemContainer}
+            onPress = {() => onClickProduct(item.product_name) }
+          >
             <ImageBackground source = {{uri : item.image}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {2}></ImageBackground>
             <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.05}]}>
               <Text style={pins.mainViewSubContainerItemText}>{item.product_name}</Text>
             </View>
-          </View>)}
+          </TouchableOpacity>)}
         />}
       </View>
       </ScrollView>

@@ -130,8 +130,20 @@ export const home = StyleSheet.create({
     userDetailsGenderRadioButtonTextInactiveStyle: {
 
     },
+    userDetailsUserNameCouponValid : {
+        
+    },
     userDetailsSubmitContainer : {
         alignItems : 'flex-end'
+    },
+    userDetailsDisabledSubmitButton : {
+        backgroundColor : background,
+        width : width*0.3,
+        marginTop : 20,
+        alignItems : 'center',
+        padding : 10,
+        borderRadius : 10,
+        marginRight : 10,
     },
     userDetailsSubmitButton : {
         backgroundColor : theme,
@@ -228,10 +240,11 @@ export const user = StyleSheet.create({
     },
     //mainView
     mainViewContentContainer : {
-
+        marginBottom : TAB_BAR_HEIGHT
     },
     mainViewContainer : {
-        flex: 1
+        flex: 1,
+        marginBottom : TAB_BAR_HEIGHT
     },
     //main view cover picture
     mainViewCoverContainer : {
@@ -266,7 +279,10 @@ export const user = StyleSheet.create({
         alignItems : 'center',
         padding : 5,
         marginLeft : 0,
-        width : 120},
+        width : 120,
+   
+        
+    },
     mainViewDetailsUserNameText : {
         padding : 8,
         textAlign : 'center',
@@ -276,7 +292,8 @@ export const user = StyleSheet.create({
         flex : 1 ,
         alignItems : 'center',
         flexDirection : 'row',
-        justifyContent : 'center'
+        justifyContent : 'center',
+        
     },
     mainViewDetailsSummaryButtonContainer : {
         justifyContent : 'center',
@@ -292,6 +309,22 @@ export const user = StyleSheet.create({
         marginRight : 15,
         fontSize : 12
     },
+    // referral code container
+    mainViewReferralCodeView : {
+        borderStyle : 'dashed',
+        borderRadius : 1 ,
+        elevation : 1,
+        borderColor : theme,
+        padding : 5,
+        margin : 10 ,
+        justifyContent : 'center',
+        alignItems : 'center',
+
+    },
+    mainViewReferralCodeText : {
+        color : 'black'
+    },
+
     //main view edit button
     mainViewEditProfileContainer : {
 
@@ -350,10 +383,12 @@ export const user = StyleSheet.create({
     },
     myPostedReviewsItemText : {
         color: "white",
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: "200",
         textAlign: "center",
-        marginTop : width * 0.05
+        marginTop : width * 0.05,
+        marginLeft : 5,
+        marginRight : 5,
     },
     // Edit User Details
     editUserDetailsDisplayContainer : {

@@ -100,25 +100,27 @@ const Feed = (props) => {
   // //  fetchMoreItems()
   // };
 
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   axios.get(mishfitURL + "/itemsforfeed", {
-  //     params: {
-  //       user_id : userId,
-  //       page_number : 1
-  //     }
-  //   })
-  // .then(res => res.data)
-  // .then(function (responseData) {
-  //     console.log(responseData)
-  //     setItemsForFeed(responseData)
-  //     setRefreshing(false)})
-  // .catch(function (error) {
-  //   console.log(error);
-  //   setError(true);      
-  // });
-    
-  // }, []);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    axios.get(URL + "/post/feed", {
+      params: {
+         var : varValue,
+         value : requestId
+       }
+   })
+  .then(res => res.data)
+  .then(function (responseData) {
+     Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
+    //   console.log(responseData)
+    // console.log(responseData.length)
+    setItemsForFeed(responseData)
+    setRefreshing(false);
+     })
+  .catch(function (error) {
+   setError(true);   
+    })
+  });
+  
 
   useEffect(() => {
 //    console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
@@ -176,7 +178,7 @@ const Feed = (props) => {
         style = {feed.scrollableFeedContainer}
         data = {itemsForFeed}            
         renderItem = {items}
-    //    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     //    ListFooterComponent={loadingMore && <Loader />}
     //    onEndReachedThreshold={0.01}
     //    onEndReached={loadMoreItems}

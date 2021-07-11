@@ -1,6 +1,6 @@
 
 import React,{useEffect} from 'react'
-import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions} from 'react-native'
+import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions, Clipboard} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
 import faker from 'faker'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
@@ -12,9 +12,11 @@ import { useNavigation , useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
 import AsyncStorage from '@react-native-async-storage/async-storage';
+//import * as Clipboard from 'expo-clipboard';
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header , user } from './styles';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const UserDetails = () => {
@@ -34,6 +36,9 @@ const UserDetails = () => {
     const [myPostsEmpty,setMyPostsEmpty] = React.useState(true)
     const [userPosts,setUserPosts]= React.useState([])
     const [userPostsError,setUserPostsError] = React.useState(false)
+
+    const [testpoints,setpoints] = React.useState(500)
+    const [testcode,setcode] = React.useState("ABCDE")
  
     React.useEffect(() => {
      //   console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
@@ -43,7 +48,7 @@ const UserDetails = () => {
      //       console.log(phoneNumber)
             axios.get(URL + "/user/summary", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-      //      console.log("USER DETAILS " , responseData)
+            console.log("USER Summary " , responseData)
       //      console.log("REached to response")
       
             setUserDetails(responseData)
@@ -68,7 +73,7 @@ const UserDetails = () => {
  //       console.log(phoneNumber)
         axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-  //      console.log("USER DETAILS " , responseData)
+        console.log("USER DETAILS " , responseData)
   //      console.log("REached to response")
   
         setUserInfo(responseData)
@@ -136,6 +141,15 @@ const UserDetails = () => {
         navigation.navigate("EditUserProfile", {userDetails : userDetails[0] , userInfo : userInfo[0]})
     }
 
+    const onReferralPress = () => {
+        Clipboard.setString(userDetails[0].existing_referral_code)
+        ToastAndroid.show("Referral Code copied to clipboard", ToastAndroid.SHORT)
+    }
+
+    const onMyReviewClick = (item,review,context) => {
+        navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
+    }
+
     return (   
         error ? (<ErrorPage />) :
         loading ? (<LoadingPage />) :
@@ -159,13 +173,15 @@ const UserDetails = () => {
                 <ScrollView 
                 contentContainerStyle = {user.mainViewContentContainer}
                 style = {user.mainViewContainer}>
+                    {userInfo.length && userInfo[0].cover_image ?
                     <View style = {user.mainViewCoverContainer}>
                      <ImageLoader 
                         source = {userInfo[0].cover_image} 
                         style = {{width : width, height : 180 }}
                         fallback = {require("../assets/defaultCover.png")}
                         />
-                    </View>
+                    </View> : null
+                    }
                     <View style = {user.mainViewDisplayContainer}>
                         {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
                         <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 50, height : 50 }}/> :
@@ -180,26 +196,31 @@ const UserDetails = () => {
                                 }} size={80}/>}
                     </View>
                     <View style = {user.mainViewDetailsContainer}>
-                    {userDetails.length && userDetails[0].username ? 
+                   
                         <View style = {user.mainViewDetailsUserNameContainer}>
-                            <Text style={user.mainViewDetailsUserNameText} >{userDetails[0].username}</Text>
-                        </View> : null }
+                        {userDetails.length && userDetails[0].username ? 
+                            <Text style={user.mainViewDetailsUserNameText} >{userDetails[0].username}</Text> : null }
+                        </View> 
                         <View style = {user.mainViewDetailsSummaryContainer}>
-                    
+                        <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onReviewsClick}>
+                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_referrals ? userDetails[0].number_of_reviews : 0}</Text>
+                            <Text style={user.mainViewDetailsSummaryName}>Referrals</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onReviewsClick}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_reviews ? userDetails[0].number_of_reviews : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>Reviews</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onUpvotesClick}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_upvotes ?  userDetails[0].number_of_upvotes : 0}</Text>
-                            <Text style={user.mainViewDetailsSummaryName}>UpVotes</Text>
+                            <Text style={user.mainViewDetailsSummaryName}>Hearts</Text>
                         </TouchableOpacity>   
-                        <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onDownvotesClick}>
-                            <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length &&  userDetails[0].number_of_downvotes ?  userDetails[0].number_of_downvotes : 0}</Text>
-                            <Text style={user.mainViewDetailsSummaryName}>Downvotes</Text>
-                        </TouchableOpacity>
                         </View>   
                     </View>
+                    {userDetails.length &&  userDetails[0].show_referral_code && userDetails[0].existing_referral_code ?
+                    <TouchableWithoutFeedback style = {user.mainViewReferralCodeView} onPress = {onReferralPress}>
+                        <Text style = {user.mainViewReferralCodeText}>Your referral code is '{userDetails[0].existing_referral_code}'</Text>
+                    </TouchableWithoutFeedback> : null
+                    }
                     <TouchableOpacity style = {user.mainViewEditProfileButton} onPress={onEdit}>
                         <Text style = {user.mainViewEditProfileText}> Edit Profile </Text>
                     </TouchableOpacity>
@@ -209,13 +230,29 @@ const UserDetails = () => {
                         <View style = {user.myPostedReviewsEmptyContainer}>
                             <Text style = {user.myPostedReviewsEmptyText}>Please start posting reviews</Text>
                         </View> :
-                        <FlatGrid itemDimension={width*0.45} data={userPosts} renderItem={({item}, i) => (
-                        <View style = {user.myPostedReviewsItemContainer}>
-                            <ImageBackground source = {{uri : item.image_list[0]}} style = {user.myPostedReviewsItemImageBackground} blurRadius = {2}></ImageBackground>
-                            <View style = {user.myPostedReviewsItemTextView}>
-                            <Text style={user.myPostedReviewsItemText}>{item.product_name}</Text>
-                            </View>
-                        </View>)}
+                        <FlatGrid itemDimension={width*0.45} data={userPosts} renderItem={({item}, i) => {
+                            var review = ""
+                            item.content.map((reviewItem,index) => {
+                                if(reviewItem.length > 0) {
+                                    review = review + "Day " + item.day_product_used_content[index] + ": " + reviewItem + "\n"
+                                }
+                            })
+                            var context = ""
+                            item.category_ques.map((contextItem,index)=>{
+                                context = context + item.category_ques[index] + " : " + item.category_ans[index] + "\n" + "\n"
+                            })
+
+                            return(
+                                <TouchableOpacity 
+                                    style = {user.myPostedReviewsItemContainer}
+                                    onPress = {()=>onMyReviewClick(item,review,context)}    
+                                >
+                                    <ImageBackground source = {{uri : item.image_list[0]}} style = {user.myPostedReviewsItemImageBackground} blurRadius = {2}></ImageBackground>
+                                        <View style = {user.myPostedReviewsItemTextView}>
+                                            <Text style={user.myPostedReviewsItemText}>{item.product_name}</Text>
+                                        </View>
+                                </TouchableOpacity>)}
+                            }
                         />}
                     </View>
                 </ScrollView>

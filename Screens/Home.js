@@ -5,7 +5,7 @@ import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
 import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, firebaseConfig, AuthContext, headerStyle} from './exports'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import RadioGroup from 'react-native-custom-radio-group';
 import { header1, home } from './styles';
 //import SpInAppUpdates, {NeedsUpdateResponse, IAUUpdateKind, StartUpdateOptions} from 'sp-react-native-in-app-updates';
@@ -16,6 +16,10 @@ import * as Amplitude from 'expo-analytics-amplitude';
 
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants';
+
+import 'react-native-get-random-values'
+import { nanoid } from 'nanoid'
+
 
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -29,6 +33,8 @@ try {
 const {width, height} = Dimensions.get("window")
 const CAROUSEL_ITEM_SQUARE_SIZE = 100
 const CAROUSEL_ITEM_SPACING = 5
+
+
 
 // const inAppUpdates = new SpInAppUpdates(
 //     true
@@ -142,9 +148,14 @@ const Home = () => {
     const [userDetailsAvailable,setUserDetailsAvailable] = React.useState(false)
 
     const [userName,setUserName] = React.useState("")
-    const [age,setAge] = React.useState("")
-    const [gender,setGender] = React.useState('')
- 
+    const [instagram,setInstagram] = React.useState("https://www.instagram.com/")
+    const [coupon,setCoupon] = React.useState('')
+    const [couponValid,setCouponValid] = React.useState(false)
+    const [couponUserName,setCouponUserName] = React.useState("")
+    const [couponPoints,setCouponPoints] = React.useState(0)
+    const [myCouponCode,setMyCouponCode] = React.useState(nanoid(5))
+
+    const [heroSearchText,setHeroSearchText] = React.useState("")
   
     const goToProductFeed = (name, idValue, value) => {
         navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
@@ -305,7 +316,7 @@ const heroBannerClick = (link) => {
     Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : userId})
     try {
         const result = await Share.share({
-          message: 'Install Candid App at https://play.google.com/store/apps/details?id=com.mishreview.androidapp',
+          message: 'Get Rs 50 by writing your first review on Candid App at https://play.google.com/store/apps/details?id=com.mishreview.androidapp'
         });
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
@@ -338,6 +349,38 @@ const signout = () => {
     navigation.navigate("Signout")
 }
 
+const onSearchHero = () => {
+  axios.get(URL + "/search/review", {params:{str2Match : heroSearchText }} , {timeout:5000})
+  .then(res => res.data).then(async (responseData) => {
+    console.log(responseData)
+    if (responseData.length) {
+      navigation.navigate("HeroSearchFeed", {items : responseData})
+    } else {
+      ToastAndroid.show("Invalid Seach Query", ToastAndroid.SHORT)
+    }
+  })
+  .catch(function(error) {
+    ToastAndroid.show("Invalid Search Query", ToastAndroid.SHORT)
+  });
+}
+
+const onCouponValid = () => {
+  axios.get(URL + "/referral", {params:{coupon_code : coupon }} , {timeout:5000})
+  .then(res => res.data).then(async (responseData) => {
+    console.log(responseData)
+    if (responseData[0].validation) {
+      setCouponUserName(responseData[0].username)
+      setCouponValid(true)
+    } else {
+      ToastAndroid.show("Invalid Coupon Code", ToastAndroid.SHORT)
+    }
+    
+  })
+  .catch(function(error) {
+    ToastAndroid.show("Invalid Coupon Code", ToastAndroid.SHORT)
+  });
+}
+
 const submitUserDetails = () => {
     const body = {
         "var" : "new user",
@@ -345,17 +388,30 @@ const submitUserDetails = () => {
         "phone_number" : userId,
         "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
         "expo_token" : expoToken,
-        "device_token" : deviceToken
+        "device_token" : deviceToken,
+        "used_coupon_code" : coupon,
+        "user_coupon_points" : couponPoints,
+        "my_coupon_code" : myCouponCode
+
     }
+
+    const body1 = {
+      "new_user_id": "911234567890",
+      "username": "dfd dfadsas",
+      "new_referral_code": "32432",
+      "existing_referral_code": "abc4d"
+    }
+
   //  console.log(body)
-    axios({
-      method: 'post',
-      url: URL + '/user/info',
-      data: body
-    })
+    axios({method: 'post',url: URL + '/user/info',data: body})
     .then(res => {
         ToastAndroid.show("Thanks for your details",ToastAndroid.SHORT)
     }).catch((e) => ToastAndroid.show("Sorry ! Let's try later",ToastAndroid.SHORT) )
+
+    axios({method: 'post',url: URL + '/referral',data: body1})
+    .then(res => {
+      console.log("res")
+    }).catch((e) => console.log(e) )
 
     
     setUserDetailsAvailable(true)
@@ -389,13 +445,43 @@ return (
                         autoFocus
                     />
                 </View>
+                <View style = {home.userDetailsUserNameContainer}>
+                    <Text style = {home.userDetailsUserNameText}>Instagram UserName (Optional)</Text>
+                    <TextInput 
+                        placeholder = "arianagrande"
+                        style = {home.userDetailsUserNameTextInput}
+                        onChangeText = {(text)=>setInstagram("https://www.instagram.com/" + text + "/")}
+                        value = {instagram}
+                        autoFocus
+                    />
+                </View>
+                <View style = {home.userDetailsUserNameContainer}>
+                    <Text style = {home.userDetailsUserNameText}>Coupon Code (Optional)</Text>
+                    <TextInput 
+                        placeholder = "ABCD"
+                        style = {home.userDetailsUserNameTextInput}
+                        onChangeText = {(text)=>setCoupon(text)}
+                        value = {coupon}
+                        autoFocus
+                    />
+                    <TouchableOpacity 
+                      onPress = {onCouponValid}
+                      style = {home.userDetailsUserNameCouponValid}>
+                      <Ionicons name = "checkmark-sharp" size = {couponValid ? 20 : 18} color = {couponValid ? "green" : "black"} />
+                    </TouchableOpacity>
+                </View>
                  
                 <View style = {home.userDetailsSubmitContainer}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
+                        disabled = {userName === "" ? true : false} 
                         onPress = {submitUserDetails}
-                        style = {home.userDetailsSubmitButton}>
+                        style = {userName === "" ? home.userDetailsDisabledSubmitButton : home.userDetailsSubmitButton}>
                         <Text style = {home.userDetailsSubmitText}>Submit</Text>
                     </TouchableOpacity>
+                </View>
+
+                <View style = {{position : 'absolute' , bottom : 0 ,  marginBottom : 20}}>
+                  <Text>Your coupon code : {myCouponCode}</Text>
                 </View>
             </View>
         ) : (
@@ -403,15 +489,30 @@ return (
             contentContainerStyle = {home.mainViewScrollableContentContainer}
             style = {home.mainViewScrollableContainer}
             >
-                <View style = {home.mainViewHeroBannerContainer}>
-                    <TouchableOpacity onPress = {() => heroBannerClick(heroLink)} disabled = {!heroLinkExists}>
-                    <ImageLoader
+              <View style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#111', padding : 5, margin : 5}}>
+                <TextInput 
+                  style = {{flex : 1 , fontSize : 16}}
+                  placeholder = "Ask Questions, Search Products"
+                  onChangeText = {(text)=>setHeroSearchText(text)}
+                  value = {heroSearchText}
+                />
+                <TouchableOpacity 
+                  style = {{backgroundColor : "#D7354A" , padding : 5,}}
+                  onPress = {onSearchHero}
+                >
+                  <Text style = {{color : 'white'}}>Search</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style = {home.mainViewHeroBannerContainer}>
+                <TouchableOpacity onPress = {() => heroBannerClick(heroLink)} disabled = {!heroLinkExists}>
+                  <ImageLoader
                         source={heroImage}
                         fallback={require('../assets/hero.png')}
                         style = {home.mainViewHeroBannerImage}
-                    />
-                    </TouchableOpacity>
-                </View>
+                  />
+                </TouchableOpacity>
+              </View>
 
         {response.length > 0 && response.map((item,index) =>{
             return (

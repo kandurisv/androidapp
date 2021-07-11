@@ -15,6 +15,7 @@ import TermsAndConditions from './TermsAndConditions'
 import UserDetails from './UserDetails'
 import PostDetails from './PostDetails'
 import { AuthContext, background, theme } from "./exports";
+import HeroSearchFeed from "./HeroSearchFeed";
 
 
 
@@ -129,7 +130,7 @@ const HomeStack = ({navigation}) => {
           <Stack.Screen name="Pins" component={Pins} />  
           <Stack.Screen name="UserDetails" component ={UserDetails} />
           <Stack.Screen name="PostDetails" component ={PostDetails} />
-          
+          <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
           <Stack.Screen name="Login" component ={Login} />
           <Stack.Screen name="Signout" component ={Signout} />
         </Stack.Navigator>
@@ -147,7 +148,7 @@ const FeedStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        
+        <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
@@ -165,7 +166,7 @@ const AddPostStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        
+        <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
@@ -183,7 +184,7 @@ const PinsStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        
+        <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
        
@@ -202,7 +203,7 @@ const UserDetailsStack = ({navigation}) => {
         <Stack.Screen name="Pins" component={Pins} />  
         <Stack.Screen name="UserDetails" component ={UserDetails} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
-        
+        <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
         <Stack.Screen name="Login" component ={Login} />
         <Stack.Screen name="Signout" component ={Signout} />
       </Stack.Navigator>
