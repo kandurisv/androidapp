@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.mishreview.androidapp",
+  "applicationId": "com.candid.app",
   "variantName": "release",
   "elements": [
     {

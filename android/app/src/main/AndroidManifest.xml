@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mishreview.androidapp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.candid.app">
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -26,7 +26,8 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="com.mishreview.androidapp"/>
+        <data android:scheme="candid"/>
+        <data android:scheme="com.candid.app"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>

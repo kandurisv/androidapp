@@ -1,8 +1,7 @@
 
 import React,{useEffect} from 'react'
-import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions, Clipboard} from 'react-native'
+import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
-import faker from 'faker'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
@@ -13,6 +12,8 @@ import { AntDesign } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //import * as Clipboard from 'expo-clipboard';
+//import Clipboard from '@react-native-community/clipboard';
+//import { useClipboard } from '@react-native-community/clipboard';
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header , user } from './styles';
@@ -23,6 +24,9 @@ const UserDetails = () => {
 
     const navigation = useNavigation()
     const route = useRoute()
+
+  //  const [data, setString] = useClipboard();
+
     const [userId,isLoggedIn] = React.useContext(AuthContext)
 
     const [userDetails, setUserDetails] = React.useState([])
@@ -142,8 +146,8 @@ const UserDetails = () => {
     }
 
     const onReferralPress = () => {
-        Clipboard.setString(userDetails[0].existing_referral_code)
-        ToastAndroid.show("Referral Code copied to clipboard", ToastAndroid.SHORT)
+  //      Clipboard.setString(userDetails[0].existing_referral_code)
+  //      ToastAndroid.show("Referral Code copied to clipboard", ToastAndroid.SHORT)
     }
 
     const onMyReviewClick = (item,review,context) => {

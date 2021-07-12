@@ -1,4 +1,4 @@
-package com.mishreview.androidapp.generated;
+package com.candid.app.generated;
 
 import java.util.Arrays;
 import java.util.List;

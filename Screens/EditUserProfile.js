@@ -8,7 +8,7 @@ import { Checkbox } from 'react-native-paper';
 import axios from 'axios'
 import RadioGroup from 'react-native-custom-radio-group';
 //import {radioGroupList} from '../assets/Constants'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import { AuthContext, background, borderColor, theme, uploadImageOnS3, URL , s3URL } from './exports';
@@ -90,6 +90,8 @@ const EditUserProfile = () => {
 
 
     const submit = () => {
+      var expoToken = AsyncStorage.getItem('expoToken')
+      var deviceToken = AsyncStorage.getItem('deviceToken')
       const body = {
         "var" : "edit user",
         "user_id": user_id,
@@ -99,9 +101,12 @@ const EditUserProfile = () => {
         "email": "",
         "phone_number": userId,
         "location": "",
+        "expo_token" : expoToken,
+        "device_token" : deviceToken,
+        
       }
 
-    //  console.log(body)
+      console.log(body)
 
     axios({
       method: 'post',
@@ -146,7 +151,7 @@ const EditUserProfile = () => {
             "profile_image" : s3URL + user_id + "/profile"
           }
     
-        //  console.log(body)
+          console.log(body)
     
         axios({
           method: 'post',
@@ -188,7 +193,7 @@ const EditUserProfile = () => {
             "cover_image" : s3URL + user_id + "/cover"
           }
     
-        //  console.log(body)
+          console.log(body)
     
         axios({
           method: 'post',
@@ -196,7 +201,7 @@ const EditUserProfile = () => {
           data: body
         })
         .then(res => {
-          // Do Nothing
+          console.log(res)
         }).catch((e) => console.log(e))
     
         }
