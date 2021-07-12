@@ -10,6 +10,8 @@ import axios from 'axios'
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import Modal from 'react-native-modal';
+import 'react-native-get-random-values'
+import { nanoid , customAlphabet  } from 'nanoid'
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { addPost, header1 } from "./styles";
@@ -171,6 +173,14 @@ const AddPost = () => {
   const [contextAnswersValid,setContextAnswersValid] = React.useState(false)
   const [reviewTextValid,setReviewTextValid] = React.useState(false)
 
+
+  const [brandId,setBrandId] = React.useState("")
+  const [brand,setBrand] = React.useState("")
+  const [categoryName,setCategoryName] = React.useState("")
+  const [claim,setClaim] = React.useState("")
+
+
+
   const [modalVisible,setModalVisible] = React.useState(false)
   const [modalContent,setModalContent] = React.useState("")
 
@@ -245,6 +255,10 @@ const AddPost = () => {
       .then(res => res.data).then(function(responseData) {
           setEditorInfo(responseData)
           setCategoryId(responseData[0].category_id)
+          setBrandId(responseData[0].brand_id)
+          setCategoryName(responseData[0].category_name)
+          setBrand(responseData[0].brand)
+          setClaim(responseData[0].brand)
           setContextOptions(responseData[0].category_ques)
           fetchPreviousUserCategory()
           setLoading(false) 
@@ -336,14 +350,14 @@ const AddPost = () => {
         "user_id": userId,
         "product_id": productId,
         "category_id": categoryId,
-        "brand_id": editorInfo[0].brand_id,
+        "brand_id": brandId,
         "username": userName,
         "product_name": searchText,
-        "brand": editorInfo[0].brand,
-        "category_name": editorInfo[0].category_name,
+        "brand": brand,
+        "category_name": categoryName,
         "category_ques": categoryQuestions,
         "category_ans": categoryAnswers,
-        "claim": editorInfo[0].claim,
+        "claim": claim,
         "content": reviewText,
         "day_product_used": daysUsed,
         "image": array
@@ -513,10 +527,22 @@ const AddPost = () => {
   }
 
   const onClickSearchItem = (item) => {
-    setInputFocus(false)
-    setProductSelected(true)
-    setSearchText(item.product_name)
-    setProductId(item.product_id)
+    const nanoid = customAlphabet('1234567890', 10)
+    const nanoid1 = customAlphabet('1234567890', 4)
+    if(item.product_name != "Other") {
+      setInputFocus(false)
+      setProductSelected(true)
+      setSearchText(item.product_name)
+      setProductId(item.product_id)
+    } else {
+      setInputFocus(false)
+      setProductSelected(true)
+      setSearchText(item.product_name)
+      setProductId(nanoid())
+      setCategoryId(nanoid1())
+      setContextAnswersValid(true)
+    }
+   
   //  console.log(item)
   }
 
