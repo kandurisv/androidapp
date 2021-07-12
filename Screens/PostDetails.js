@@ -11,6 +11,7 @@ import {MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as WebBrowser from 'expo-web-browser';
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { header, postDetails } from './styles';
@@ -30,13 +31,29 @@ const Cover = (props) => {
     const progress = React.useRef(new Animated.Value(0)).current
     const [liked,setLiked] = React.useState(props.likeIndicator)
     const [likeCount,setLikeCount] = React.useState(Math.max(props.upvotes,0))
+
+    const [result, setResult] = useState(null);
     
     const [commentCount,setCommentCount] = React.useState(props.comments)
     const navigation = useNavigation()
     const getFeedByUser = () => {
-       // navigation.navigate("Feed", {varValue : "user_id" , id : props.userId, value : props.username })
-      //  console.log("Go to Feed")
-        }
+        console.log("Username click")
+        axios.get(URL + "/user/instagram", {params:{username : props.username }} , {timeout : 5})
+        .then(res => res.data)
+        .then(async function(responseData) {
+            console.log(responseData)
+            if (responseData.length && responseData[0].instagram_username) {
+                let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+responseData[0].instagram_username+'/');
+                setResult(result);
+            }
+        })
+        .catch(function(error) {
+          
+        });
+    }
+
+
+        
 
     React.useEffect(()=>{
         setLiked(props.likeIndicator)

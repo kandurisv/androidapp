@@ -1,6 +1,6 @@
 
 import React,{useEffect} from 'react'
-import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions} from 'react-native'
+import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions, Image} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { FlatGrid } from 'react-native-super-grid';
@@ -188,7 +188,7 @@ const UserDetails = () => {
                     }
                     <View style = {user.mainViewDisplayContainer}>
                         {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
-                        <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 50, height : 50 }}/> :
+                        <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
                         userDetails.length && userDetails[0].username ? 
                                 <Avatar.Image 
                                 source={{

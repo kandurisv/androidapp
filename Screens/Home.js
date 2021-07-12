@@ -163,7 +163,7 @@ const Home = () => {
 
 
     const registerForExpoPushNotificationsAsync= async() => {
-        let experienceId = '@kandurisv/yelo';
+        let experienceId = '@kandurisv/candidapp';
            
         let token;
         if (Constants.isDevice) {
@@ -392,7 +392,8 @@ const submitUserDetails = () => {
         "phone_number" : userId,
         "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
         "expo_token" : expoToken,
-        "device_token" : deviceToken
+        "device_token" : deviceToken,
+        "instagram_username" : instagram.toLowerCase()
     }
 
     const body1 = {
@@ -402,7 +403,7 @@ const submitUserDetails = () => {
       "existing_referral_code": coupon
     }
 
-  //  console.log(body)
+    console.log(body)
     axios({method: 'post',url: URL + '/user/info',data: body})
     .then(res => {
         ToastAndroid.show("Thanks for your details",ToastAndroid.SHORT)
@@ -449,8 +450,8 @@ return (
                     <Text style = {home.userDetailsUserNameText}>Instagram UserName (Optional)</Text>
                     <TextInput 
                         placeholder = "Instagram username"
-                        style = {home.userDetailsUserNameTextInput}
-                        onChangeText = {(text)=>setInstagram("https://www.instagram.com/" + text + "/")}
+                        style = {[home.userDetailsUserNameTextInput,{fontSize : 14}]}
+                        onChangeText = {(text)=>setInstagram(text )}
                         value = {instagram}
                         autoFocus
                     />

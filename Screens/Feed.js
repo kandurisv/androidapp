@@ -111,7 +111,7 @@ const Feed = (props) => {
   .then(res => res.data)
   .then(function (responseData) {
      Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-    //   console.log(responseData)
+       console.log("response",responseData)
     // console.log(responseData.length)
     setItemsForFeed(responseData)
     setRefreshing(false);
@@ -123,14 +123,14 @@ const Feed = (props) => {
   
 
   useEffect(() => {
-//    console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
+    console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
     setVarValue(route ? route.params ? route.params.varValue ? route.params.varValue : "time" : "time" : "time")
     setRequestValue(route ? route.params ? route.params.value ? route.params.value : null : null : null)
     setRequestId(route ? route.params ? route.params.id ? route.params.id : null :null : null)
   //  setParameter(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
    
 
-  //  console.log("Parameter", parameter)
+   
 
     axios.get(URL + "/post/feed", {
          params: {
@@ -141,13 +141,13 @@ const Feed = (props) => {
     .then(res => res.data)
     .then(function (responseData) {
         Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-     //   console.log(responseData)
+           console.log("Response", responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
         })
     .catch(function (error) {
       setError(true);   
-    //  console.log("Error" , error)   
+      console.log("Error" , error)   
     });
   },[varValue,requestId,requestValue]);
 

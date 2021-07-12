@@ -146,17 +146,21 @@ export const home = StyleSheet.create({
         marginRight : 10,
     },
     userDetailsSubmitButton : {
-        backgroundColor : theme,
+        backgroundColor : 'white',
         width : width*0.3,
         marginTop : 20,
         alignItems : 'center',
-        padding : 10,
+        padding : 5,
         borderRadius : 10,
         marginRight : 10,
+        borderWidth : 1,
+        borderColor : theme,
+        elevation : 1,
     },
     userDetailsSubmitText : {
-        color : background,
-        textAlign : 'center'
+        color : theme,
+        textAlign : 'center',
+        fontSize : 16,
     },
     //ScrollableMainView
     mainViewScrollableContentContainer : {

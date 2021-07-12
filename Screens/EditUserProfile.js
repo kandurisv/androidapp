@@ -1,5 +1,5 @@
 import React , {useState,useEffect , useContext} from 'react'
-import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid} from 'react-native'
+import { View, Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid , ScrollView} from 'react-native'
 
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import moment from 'moment';
@@ -47,19 +47,20 @@ const EditUserProfile = () => {
   };
 
     const [date, setDate] = useState(new Date())
-    const [image, setImage] = useState("");
-    const [coverImage,setCoverImage] = useState("")
-    const [gender, setGender] = useState(route.params.userDetails.gender)
+    const [image, setImage] = useState(route?.params?.userInfo.profile_image ? route.params.userInfo.profile_image : "");
+    const [coverImage,setCoverImage] = useState(route?.params?.userInfo.cover_image ? route.params.userInfo.cover_image : "")
+    const [gender, setGender] = useState(route?.params?.userInfo.gender ? route.params.userInfo.gender : "")
+    const [instagram, setInstagram] = useState(route?.params?.userInfo.instagram_username ? route.params.userInfo.instagram_username : "")
     const [imageUrl,setImageUrl] = useState("")
     const [profileImageChange,setProfileImageChange] = useState(false)
     const [coverImageChange,setCoverImageChange] = useState(false)
     const [age,setAge] = useState("")
-    const [userName,setUserName] = React.useState(route.params.userDetails.username)
+    const [userName,setUserName] = React.useState(route.params.userInfo.username)
     const [userId, userDetails, isLoggedIn] = React.useContext(AuthContext)
-    const [user_id,setuser_id] = React.useState(route.params.userDetails.user_id)
+    const [user_id,setuser_id] = React.useState(route.params.userInfo.user_id)
     const [userInfo,setUserInfo] = React.useState([])
 
-    const [userDob,setUserDob] = useState("")
+    const [userDob,setUserDob] = useState(route?.params?.userInfo.dob ? route.params.userInfo.dob :"")
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     
     const showDatePicker = () => {setDatePickerVisibility(true);};
@@ -103,6 +104,7 @@ const EditUserProfile = () => {
         "location": "",
         "expo_token" : expoToken,
         "device_token" : deviceToken,
+        "instagram_username" : instagram
         
       }
 
@@ -225,7 +227,7 @@ const EditUserProfile = () => {
 
     
     return (
-        <View style = {user.container}>
+        <ScrollView style = {user.container} >
           <View style = {header.headerView}>
                     <ModernHeader 
                         title="Details"
@@ -243,14 +245,14 @@ const EditUserProfile = () => {
                 </View>
             <View style = {user.mainViewCoverContainer}>
               <TouchableOpacity onPress = {pickCoverPhoto}>
-                <ImageBackground source = {coverImage ? {uri : coverImage} :require('../assets/defaultCover.png')} 
+                <ImageBackground source = {coverImage && coverImage != "None" ? {uri : coverImage} :require('../assets/defaultCover.png')} 
                         style = {user.mainViewCoverImage} >
                 </ImageBackground>
               </TouchableOpacity>
             </View>
             <View style = {user.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {user.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image ? {uri : image} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
+                <ImageBackground source = {image && image != "None"? {uri : image} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
                         style = {user.editUserDetailsDisplayImage} >
                 </ImageBackground>
               </TouchableOpacity>
@@ -264,6 +266,15 @@ const EditUserProfile = () => {
                         style = {[home.userDetailsElementTextInput,{flex : 2, paddingBottom : 0 , marginBottom : 0}]}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
+                />
+              </View>
+              <View style = {[home.userDetailsElementContainer,{borderWidth : 0, }]}>
+                <Text style = {[home.userDetailsElementText,{fontSize : 16, flex : 1, marginLeft : 0}]}>Instagram Username:</Text>
+                <TextInput 
+                        placeholder = {instagram ? instagram : "arianagrande"}
+                        style = {[home.userDetailsElementTextInput,{flex : 2, paddingBottom : 0 , marginBottom : 0}]}
+                        onChangeText = {(text)=>setInstagram(text)}
+                        value = {instagram}
                 />
               </View>
               <View style = {user.dateView}>
@@ -302,7 +313,7 @@ const EditUserProfile = () => {
                 </TouchableOpacity>
               </View>                  
             </View>
-          </View>
+          </ScrollView>
     )
 }
 
