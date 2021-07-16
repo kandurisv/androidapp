@@ -14,7 +14,7 @@ import 'react-native-get-random-values'
 import { nanoid , customAlphabet  } from 'nanoid'
 
 import * as Amplitude from 'expo-analytics-amplitude';
-import { addPost, header1 } from "./styles";
+import { addPost, header, header1 } from "./styles";
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width,height} = Dimensions.get("screen")
@@ -172,7 +172,7 @@ const AddPost = () => {
   const [contextOptions,setContextOptions] = React.useState([])
   const [contextAnswersValid,setContextAnswersValid] = React.useState(false)
   const [reviewTextValid,setReviewTextValid] = React.useState(false)
-
+  const [productSelectedOther,setProductSelectedOther] = React.useState(false)
 
   const [brandId,setBrandId] = React.useState("")
   const [brand,setBrand] = React.useState("")
@@ -538,6 +538,7 @@ const AddPost = () => {
       setInputFocus(false)
       setProductSelected(true)
       setSearchText(item.product_name)
+      setProductSelectedOther(true)
       setProductId(nanoid())
       setCategoryId(nanoid1())
       setContextAnswersValid(true)
@@ -565,8 +566,8 @@ const AddPost = () => {
 
 return(
 <View style = {addPost.container}>
-    <View style = {header1.headerView}>
-        <ModernHeader title="Add Review" titleStyle = {header1.headerText1}
+    <View style = {header.headerView}>
+        <ModernHeader title="Add Review" titleStyle = {header.headerText1}
           backgroundColor= {background} leftIconColor = {borderColor}
           leftIconOnPress={() => {productSelected ? setProductSelected(false): navigation.goBack()}}
           rightDisable
@@ -658,6 +659,20 @@ return(
 								</View> : 
 								<CategoryAnsSummary /> : null
 							}
+
+              {
+                productSelectedOther ? 
+                <View>
+                  <TextInput 
+                    	placeholder = "Product Name "
+								      style = {addPost.mainViewReviewWritingInput}  
+								      autoFocus
+                      onChangeText = {(text)=> {setSearchText(text)}}
+                      value = {searchText}
+                  />
+                </View> : 
+                null
+              }
 			
 							<View style = {addPost.mainViewDaysInputContainer}>
 								<View style ={addPost.mainViewDaysQuestionView} >

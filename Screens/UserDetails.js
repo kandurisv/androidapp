@@ -116,29 +116,29 @@ const UserDetails = () => {
         
     },[result]);
     
-    const onReviewsClick = () => {
-        setEnableFeed(true)
-        setReviewsClick(true)
-        setUpvotesClick(false)
-        setDownvotesClick(false)
-       // setFeedData(Reviews)
-    }
+    // const onReviewsClick = () => {
+    //     setEnableFeed(true)
+    //     setReviewsClick(true)
+    //     setUpvotesClick(false)
+    //     setDownvotesClick(false)
+    //    // setFeedData(Reviews)
+    // }
 
-    const onUpvotesClick = () => {
-        setEnableFeed(true)
-        setReviewsClick(falsee)
-        setUpvotesClick(true)
-        setDownvotesClick(false)
-        // setFeedData(Upvote)
-    }
+    // const onUpvotesClick = () => {
+    //     setEnableFeed(true)
+    //     setReviewsClick(falsee)
+    //     setUpvotesClick(true)
+    //     setDownvotesClick(false)
+    //     // setFeedData(Upvote)
+    // }
 
-    const onDownvotesClick = () => {
-        setEnableFeed(true)
-        setReviewsClick(false)
-        setUpvotesClick(false)
-        setDownvotesClick(true)
-        // setFeedData(Downvotes)
-    }
+    // const onDownvotesClick = () => {
+    //     setEnableFeed(true)
+    //     setReviewsClick(false)
+    //     setUpvotesClick(false)
+    //     setDownvotesClick(true)
+    //     // setFeedData(Downvotes)
+    // }
 
     const onEdit = () => {
      //   console.log("EditProfile")
@@ -206,18 +206,18 @@ const UserDetails = () => {
                             <Text style={user.mainViewDetailsUserNameText} >{userDetails[0].username}</Text> : null }
                         </View> 
                         <View style = {user.mainViewDetailsSummaryContainer}>
-                        <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onReviewsClick}>
+                        <View style = {user.mainViewDetailsSummaryButtonContainer}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_referrals ? userDetails[0].number_of_reviews : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>Referrals</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onReviewsClick}>
+                        </View>
+                        <View style = {user.mainViewDetailsSummaryButtonContainer}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_reviews ? userDetails[0].number_of_reviews : 0}</Text>
                             <Text style={user.mainViewDetailsSummaryName}>Reviews</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style = {user.mainViewDetailsSummaryButtonContainer} onPress = {onUpvotesClick}>
+                        </View>
+                        <View style = {user.mainViewDetailsSummaryButtonContainer}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_upvotes ?  userDetails[0].number_of_upvotes : 0}</Text>
-                            <Text style={user.mainViewDetailsSummaryName}>Hearts</Text>
-                        </TouchableOpacity>   
+                            <Text style={user.mainViewDetailsSummaryName}>Pins</Text>
+                        </View>   
                         </View>   
                     </View>
                     {userDetails.length &&  userDetails[0].show_referral_code && userDetails[0].existing_referral_code ?

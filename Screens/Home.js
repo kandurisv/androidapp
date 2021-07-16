@@ -141,8 +141,8 @@ const Home = () => {
     const [updateApp, setUpdateApp] = React.useState(false)
     const [updateOptions,setUpdateOptions] = React.useState({})
 
-    const [deviceToken , setDeviceToken] = React.useState()
-    const [expoToken , setExpoToken] = React.useState()
+    const [deviceToken , setDeviceToken] = React.useState("")
+    const [expoToken , setExpoToken] = React.useState("")
     
 
     const [userDetailsAvailable,setUserDetailsAvailable] = React.useState(false)
@@ -163,42 +163,51 @@ const Home = () => {
 
 
     const registerForExpoPushNotificationsAsync= async() => {
-        let experienceId = '@kandurisv/candidapp';
-           
         let token;
+        console.log("Constants.isDevice ", Constants.isDevice)
         if (Constants.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          console.log("existingStatus ",existingStatus)
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            ToastAndroid.show('Failed to get push token for push notification!',ToastAndroid.SHORT);
+            return;
+          }
+          try {
+            token = await Notifications.getExpoPushTokenAsync({
+              experienceId : '@kandurisv/candidapp'
+            })
+          }
+          catch(e) {
+            console.log(e)
+          }
+           } 
+        else {
+          alert('Must use physical device for Push Notifications');
         }
-        if (finalStatus !== 'granted') {
-          alert('Failed to get push token for push notification!');
-          return;
-        }
-        token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
-        
-      } else {
-        alert('Must use physical device for Push Notifications');
-      }
-    
+
       if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default', {
           name: 'default',
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F',
+          lightColor: '#FF231F7C',
         });
       }
-    
-      return token;
+      console.log("EXPO TOKEN ", token)
+      return token.data;
     }
     
     const registerForDevicePushNotificationsAsync = async() => {
       let token;
+      console.log("Constants.isDevice ", Constants.isDevice)
       if (Constants.isDevice) {
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        console.log("existingStatus ",existingStatus)
         let finalStatus = existingStatus;
         if (existingStatus !== 'granted') {
           const { status } = await Notifications.requestPermissionsAsync();
@@ -208,12 +217,13 @@ const Home = () => {
           alert('Failed to get push token for push notification!');
           return;
         }
+
         token = (await Notifications.getDevicePushTokenAsync()).data;
         
       } else {
         alert('Must use physical device for Push Notifications');
       }
-    
+      console.log("token", token)
       return token;
     }
     
@@ -222,6 +232,19 @@ const Home = () => {
     
 
     React.useEffect(() => {
+      const registerNotification = async () => {
+        registerForExpoPushNotificationsAsync().then(token => {
+          console.log("expo token", token)
+          setExpoToken(token)
+          AsyncStorage.setItem('expoToken', token )
+        });
+        registerForDevicePushNotificationsAsync().then(token => {
+          console.log("device token", token)
+          setDeviceToken(token)
+          AsyncStorage.setItem('deviceToken', token )
+        });
+    }
+        registerNotification()
         firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
                 const getData =  () => {
@@ -269,21 +292,10 @@ const Home = () => {
                 });
             }
 
-            const registerNotification = async () => {
-                registerForExpoPushNotificationsAsync().then(token => {
-                  console.log("expo token", token)
-                  setExpoToken(token)
-                  AsyncStorage.setItem('expoToken', token )
-                });
-                registerForDevicePushNotificationsAsync().then(token => {
-                  console.log("device token", token)
-                  setDeviceToken(token)
-                  AsyncStorage.setItem('deviceToken', token )
-                });
-            }
+            
 
             getData()
-            registerNotification()
+           
             } else {
                 navigation.navigate("Auth")
             }
@@ -318,7 +330,7 @@ const heroBannerClick = (link) => {
     Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : userId})
     try {
         const result = await Share.share({
-          message: 'Get Rs 50 by writing your first review on Candid App at https://play.google.com/store/apps/details?id=com.candid.app'
+          message: 'Write your first review on Candid App at https://play.google.com/store/apps/details?id=com.candid.app'
         });
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
@@ -390,7 +402,7 @@ const submitUserDetails = () => {
         "var" : "new user",
         "username": userName,
         "phone_number" : userId,
-        "cover_photo" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
+        "cover_image" : "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/defaultCover.jpg",
         "expo_token" : expoToken,
         "device_token" : deviceToken,
         "instagram_username" : instagram.toLowerCase()
@@ -453,7 +465,6 @@ return (
                         style = {[home.userDetailsUserNameTextInput,{fontSize : 14}]}
                         onChangeText = {(text)=>setInstagram(text )}
                         value = {instagram}
-                        autoFocus
                     />
                 </View>
                 <View style = {home.userDetailsUserNameContainer}>
@@ -497,10 +508,10 @@ return (
                   value = {heroSearchText}
                 />
                 <TouchableOpacity 
-                  style = {{backgroundColor : "#D7354A" , padding : 5,}}
+                  style = {{borderColor : "#D7354A" , paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 ,}}
                   onPress = {onSearchHero}
                 >
-                  <Text style = {{color : 'white'}}>Search</Text>
+                  <Text style = {{color : 'white', marginLeft : 5, marginRight : 5}}> Search </Text>
                 </TouchableOpacity>
               </View>
 

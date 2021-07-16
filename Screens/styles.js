@@ -269,6 +269,7 @@ export const user = StyleSheet.create({
         position : 'absolute',
         top : 140,
         left : 20,
+        marginBottom : 10,
     },
     mainViewDisplayImage : {
         width : 80,
@@ -283,8 +284,8 @@ export const user = StyleSheet.create({
         alignItems : 'center',
         padding : 5,
         marginLeft : 0,
+        marginTop : 10,
         width : 120,
-   
         
     },
     mainViewDetailsUserNameText : {
@@ -620,8 +621,8 @@ export const pins = StyleSheet.create({
 
     },
     mainViewSubContainerHeader : {
-        fontWeight : '200',
-        fontSize : 18,
+        fontWeight : 'bold',
+        fontSize : 20,
         marginLeft : 20,
         margin : 10,
     },

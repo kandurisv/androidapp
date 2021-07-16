@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Candid",
+    "owner": "kandurisv",
     "slug": "candidapp",
     "scheme": "candid",
     "version": "1.0.0",
@@ -26,7 +27,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.candid.app",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyCelzKVnbYY07aLtswA4EE9pF9mNeXJtRs"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -42,6 +48,17 @@
           }
         }
       ]
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo.png",
+          "color": "#ffffff",
+          "mode": "production"
+        }
+      ]
+    ],
+    "description": ""
   }
 }
