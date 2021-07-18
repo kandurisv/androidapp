@@ -164,10 +164,10 @@ const Home = () => {
 
     const registerForExpoPushNotificationsAsync= async() => {
         let token;
-        console.log("Constants.isDevice ", Constants.isDevice)
+        
         if (Constants.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          console.log("existingStatus ",existingStatus)
+          
           let finalStatus = existingStatus;
           if (existingStatus !== 'granted') {
             const { status } = await Notifications.requestPermissionsAsync();
@@ -198,16 +198,16 @@ const Home = () => {
           lightColor: '#FF231F7C',
         });
       }
-      console.log("EXPO TOKEN ", token)
+      
       return token.data;
     }
     
     const registerForDevicePushNotificationsAsync = async() => {
       let token;
-      console.log("Constants.isDevice ", Constants.isDevice)
+     
       if (Constants.isDevice) {
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        console.log("existingStatus ",existingStatus)
+       
         let finalStatus = existingStatus;
         if (existingStatus !== 'granted') {
           const { status } = await Notifications.requestPermissionsAsync();
@@ -434,7 +434,7 @@ return (
     <View style = {home.container}>  
         <View style = {header1.headerView}>
             <ModernHeader 
-                title="Home"
+                title="Candid"
                 titleStyle = {header1.headerText}
                 backgroundColor= {background}
                 leftDisable
@@ -508,10 +508,10 @@ return (
                   value = {heroSearchText}
                 />
                 <TouchableOpacity 
-                  style = {{borderColor : "#D7354A" , paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 ,}}
+                  style = {{borderColor : "#D7354A" , paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 , borderWidth : 1}}
                   onPress = {onSearchHero}
                 >
-                  <Text style = {{color : 'white', marginLeft : 5, marginRight : 5}}> Search </Text>
+                  <Text style = {{color : "#D7354A", marginLeft : 5, marginRight : 5}}> Search </Text>
                 </TouchableOpacity>
               </View>
 

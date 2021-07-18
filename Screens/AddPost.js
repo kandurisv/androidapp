@@ -168,6 +168,7 @@ const AddPost = () => {
   const [searchArray, setSearchArray] = React.useState([])
   const [inputFocus,setInputFocus] = React.useState(false)
   const [searchText,setSearchText] = React.useState("")
+  const [productName,setProductName] = React.useState("")
   const [reviewText,setReviewText] = React.useState("")
   const [contextOptions,setContextOptions] = React.useState([])
   const [contextAnswersValid,setContextAnswersValid] = React.useState(false)
@@ -318,6 +319,7 @@ const AddPost = () => {
     setSearchArray([])
     setInputFocus(false)
     setSearchText("")
+    setProductName("")
     setReviewText("")
     
   }
@@ -352,7 +354,7 @@ const AddPost = () => {
         "category_id": categoryId,
         "brand_id": brandId,
         "username": userName,
-        "product_name": searchText,
+        "product_name": productName,
         "brand": brand,
         "category_name": categoryName,
         "category_ques": categoryQuestions,
@@ -533,11 +535,13 @@ const AddPost = () => {
       setInputFocus(false)
       setProductSelected(true)
       setSearchText(item.product_name)
+      setProductName(item.product_name)
       setProductId(item.product_id)
     } else {
       setInputFocus(false)
       setProductSelected(true)
-      setSearchText(item.product_name)
+      setSearchText(searchText)
+      setProductName(searchText)
       setProductSelectedOther(true)
       setProductId(nanoid())
       setCategoryId(nanoid1())
@@ -567,7 +571,7 @@ const AddPost = () => {
 return(
 <View style = {addPost.container}>
     <View style = {header.headerView}>
-        <ModernHeader title="Add Review" titleStyle = {header.headerText1}
+        <ModernHeader title="Add Review" titleStyle = {header.headerText}
           backgroundColor= {background} leftIconColor = {borderColor}
           leftIconOnPress={() => {productSelected ? setProductSelected(false): navigation.goBack()}}
           rightDisable
@@ -602,7 +606,7 @@ return(
             </TouchableOpacity>
           ) : (
 					<View style = {addPost.productSearchBarActiveView}>
-            <Fontisto name = "search" size = {20} color = {theme} />
+            
 						<TextInput 
               style = {addPost.productSearchBarActiveTextInput}
 							placeholder = "Search for Product"
@@ -610,8 +614,15 @@ return(
 							onFocus = {()=>setInputFocus(true)}
               autoFocus
 						/>
+            <TouchableOpacity 
+              style = {{borderWidth : 1 , borderColor : "#DDDDDD" , padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
+              onPress = {()=>onClickSearchItem({product_name : "Other"})} >
+              <Fontisto name = "search" size = {24} color = {theme} />
+            </TouchableOpacity>
 					</View>
           )}
+
+
 					{inputFocus ?
 						<View>
             <FlatList data={searchArray} keyExtractor = {item => item.product_id.toString()} 
@@ -647,7 +658,7 @@ return(
 										/>))}/>}
 							</View>
 
-							{!existingReviewExists ? !categoryAnsExists ?
+							{!productSelectedOther ? !existingReviewExists ? !categoryAnsExists ?
 								<View style = {addPost.mainViewContextQuestionsContainer}>
 									{contextOptions.slice(0,3).map((item,index) => {
 										return <OptionsQuestions 
@@ -656,23 +667,11 @@ return(
                       selectedAnswer = {(question,answer)=>selectedAnswer(question,answer,index)}
                     />
 									})}
-								</View> : 
-								<CategoryAnsSummary /> : null
+								</View> :  
+								<CategoryAnsSummary /> : null : null
 							}
 
-              {
-                productSelectedOther ? 
-                <View>
-                  <TextInput 
-                    	placeholder = "Product Name "
-								      style = {addPost.mainViewReviewWritingInput}  
-								      autoFocus
-                      onChangeText = {(text)=> {setSearchText(text)}}
-                      value = {searchText}
-                  />
-                </View> : 
-                null
-              }
+             
 			
 							<View style = {addPost.mainViewDaysInputContainer}>
 								<View style ={addPost.mainViewDaysQuestionView} >

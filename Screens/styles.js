@@ -10,7 +10,7 @@ const TAB_SLIDER_HEIGHT = 2
 const TAB_SLIDER_COLOR = "#C51E3A"
 
 
-export const header = StyleSheet.create({
+export const header1 = StyleSheet.create({
     headerView : {
         height : HEADER_HEIGHT,
         paddingBottom : 10 ,
@@ -18,13 +18,15 @@ export const header = StyleSheet.create({
         alignItems : 'center'
     },
     headerText : {
+        fontWeight : 'bold',
         fontSize: HEADER_FONT , 
+        fontFamily : 'Roboto',
         color : theme,
         padding : 10
     },
 })
 
-export const header1 = StyleSheet.create({
+export const header = StyleSheet.create({
     headerView : {
         height : HEADER_HEIGHT,
         padding : 10 ,
@@ -34,6 +36,7 @@ export const header1 = StyleSheet.create({
     headerText :{
         fontWeight : 'bold',
         fontSize: HEADER_FONT , 
+        fontFamily : 'Roboto',
         color : borderColor,
         padding : 10
     }
@@ -54,7 +57,8 @@ export const home = StyleSheet.create({
     },
     userDetailsUserNameText : {
         fontWeight : 'bold',
-        textAlign : 'center'
+        textAlign : 'center',
+        fontFamily : 'Roboto'
 
     },
     userDetailsUserNameTextInput : {
@@ -68,6 +72,7 @@ export const home = StyleSheet.create({
         borderBottomWidth : 1,
         fontSize : 20,
         letterSpacing : 2,
+        fontFamily : 'Roboto',
     },
     userDetailsElementContainer : {
         flexDirection : 'row',
@@ -81,6 +86,7 @@ export const home = StyleSheet.create({
         margin : 10,
         flex : 1, 
         textAlign : 'center',
+        fontFamily : 'Roboto',
     },
     userDetailsElementTextInput : {
         flex : 1, 
@@ -88,7 +94,8 @@ export const home = StyleSheet.create({
         borderBottomWidth : 1,
         borderColor : '#AAA',
         textAlign : 'center',
-        width :width*0.5
+        width :width*0.5,
+        fontFamily : 'Roboto',
     },
     userDetailsGenderView : {
 
@@ -97,7 +104,8 @@ export const home = StyleSheet.create({
         fontSize : 14, 
         fontStyle : "italic" , 
         color : 'black' , 
-        margin : 10
+        margin : 10,
+        fontFamily : 'Roboto',
     },
     userDetailsGenderRadioContainerStyle : {
         justifyContent : 'center' , 
@@ -116,7 +124,8 @@ export const home = StyleSheet.create({
         width : 100
     },
     userDetailsGenderRadioButtonTextStyle: {
-        fontSize : 12
+        fontSize : 12,
+        fontFamily : 'Roboto',
     },
     userDetailsGenderRadioButtonContainerActiveStyle: {
         backgroundColor : theme
@@ -161,6 +170,7 @@ export const home = StyleSheet.create({
         color : theme,
         textAlign : 'center',
         fontSize : 16,
+        fontFamily : 'Roboto',
     },
     //ScrollableMainView
     mainViewScrollableContentContainer : {
@@ -191,6 +201,7 @@ export const home = StyleSheet.create({
         fontSize : 20,
         margin : 10,
         marginLeft : 20,
+        fontFamily : 'Roboto',
     },
     mainViewCarouselChild : {
         marginLeft : 0
@@ -232,7 +243,8 @@ export const home = StyleSheet.create({
         fontSize: 12,
         fontWeight: "400",
         textAlign: "center",
-        marginTop : 10
+        marginTop : 10,
+        fontFamily : 'Roboto',
     },
 
 
@@ -292,7 +304,9 @@ export const user = StyleSheet.create({
         padding : 8,
         textAlign : 'center',
         fontWeight : 'bold',
-        fontSize : 13},
+        fontSize : 13,
+        fontFamily : 'Roboto',
+    },
     mainViewDetailsSummaryContainer : {
         flex : 1 ,
         alignItems : 'center',
@@ -307,12 +321,14 @@ export const user = StyleSheet.create({
     },
     mainViewDetailsSummaryValue : {
         marginRight : 15,
-        fontWeight : 'bold'
+        fontWeight : 'bold',
+        fontFamily : 'Roboto',
     },
     mainViewDetailsSummaryName : {
         marginTop : 2,
         marginRight : 15,
-        fontSize : 12
+        fontSize : 12,
+        fontFamily : 'Roboto',
     },
     // referral code container
     mainViewReferralCodeView : {
@@ -347,6 +363,7 @@ export const user = StyleSheet.create({
     },
     mainViewEditProfileText : {
         fontWeight : 'bold',
+        fontFamily : 'Roboto',
         shadowOpacity : 2
     },
     // my posted reviews view
@@ -355,6 +372,7 @@ export const user = StyleSheet.create({
     },
     myPostedReviewsHeading : {
         fontWeight : 'bold',
+        fontFamily : 'Roboto',
         fontSize : 18,
         marginLeft : 20,
         margin : 5
@@ -364,6 +382,7 @@ export const user = StyleSheet.create({
     },
     myPostedReviewsEmptyText : {
         fontSize : 16,
+        fontFamily : 'Roboto',
         marginLeft : 10,
     },
     myPostedReviewsItemContainer : {
@@ -389,6 +408,7 @@ export const user = StyleSheet.create({
     myPostedReviewsItemText : {
         color: "white",
         fontSize: 15,
+        fontFamily : 'Roboto',
         fontWeight: "200",
         textAlign: "center",
         marginTop : width * 0.05,
@@ -457,6 +477,7 @@ export const login = StyleSheet.create({
     },
     loginViewPhoneNumberHeaderText : {
         fontSize : 16 , 
+        fontFamily : 'Roboto',
         color : borderColor, 
         fontWeight : 'bold'
     },
@@ -477,6 +498,7 @@ export const login = StyleSheet.create({
         marginTop : 11,
         textAlign : 'center',
         fontSize : 16,
+        fontFamily : 'Roboto',
     },
     loginViewPhoneNumberInputNumberInput : {
         height: 45 ,
@@ -486,6 +508,7 @@ export const login = StyleSheet.create({
         flex : 1,
         margin : 5 ,
         fontSize : 16, 
+        fontFamily : 'Roboto',
         padding : 10 , 
         textAlign : 'center',
         letterSpacing : 5,
@@ -531,6 +554,7 @@ export const login = StyleSheet.create({
         borderColor : 'black',
         textAlign : 'center',
         fontSize : 20,
+        fontFamily : 'Roboto',
         margin : 10,
         borderRadius : 5,
         padding : 5,
@@ -538,12 +562,14 @@ export const login = StyleSheet.create({
     },
     validationViewResendOTPInactiveText : {
         fontWeight : '500', 
+        fontFamily : 'Roboto',
     },
     validationViewResendOTPButton : {
         margin : 10
     },
     validationViewResendOTPActiveText : {
-        fontWeight : '500', 
+        fontWeight : '500',
+        fontFamily : 'Roboto', 
         color : 'blue'
     },
     validationViewResentOTPAttemptsText : {
@@ -566,7 +592,8 @@ export const login = StyleSheet.create({
     validationViewSubmitText : {
         color : '#FFF',
         textAlign : 'center', 
-        fontSize : 20
+        fontSize : 20,
+        fontFamily : 'Roboto',
     }
 
 
@@ -585,6 +612,7 @@ export const signout = StyleSheet.create({
     },
     signOutQuestion : {
         fontSize : 20 ,
+        fontFamily : 'Roboto',
     },
     yesButton : {
         backgroundColor : background,
@@ -596,6 +624,7 @@ export const signout = StyleSheet.create({
     },
     yesText : {
         fontSize : 15,
+        fontFamily : 'Roboto',
         color : theme
     },
     noButton : {
@@ -622,6 +651,7 @@ export const pins = StyleSheet.create({
     },
     mainViewSubContainerHeader : {
         fontWeight : 'bold',
+        fontFamily : 'Roboto',
         fontSize : 20,
         marginLeft : 20,
         margin : 10,
@@ -631,6 +661,7 @@ export const pins = StyleSheet.create({
     },
     mainViewSubContainerEmptyText : {
         fontSize : 16,
+        fontFamily : 'Roboto',
         marginLeft : 10
     },
     mainViewSubContainerItemContainer : {
@@ -657,6 +688,7 @@ export const pins = StyleSheet.create({
     mainViewSubContainerItemText : {
         color: "white",
         fontSize: 18,
+        fontFamily : 'Roboto',
         fontWeight: "200",
         textAlign: "center",
         marginTop : width * 0.05    
@@ -691,6 +723,7 @@ export const feed = StyleSheet.create({
         marginTop: 15,
         marginLeft: 15,
         fontSize:20,
+        fontFamily : 'Roboto',
         zIndex: 100
     },
     scrollableFeedItemTime : {
@@ -701,6 +734,7 @@ export const feed = StyleSheet.create({
         marginTop: 15,
         marginRight: 10,
         fontSize:14,
+        fontFamily : 'Roboto',
         zIndex: 100
     },
     scrollableFeedItemImagesCount : {
@@ -729,6 +763,7 @@ export const feed = StyleSheet.create({
          marginLeft : 5 ,
         color : 'white',
         fontSize:20,
+        fontFamily : 'Roboto',
         fontWeight:'bold'
     },
     scrollableFeedItemProductReview  : {
@@ -737,7 +772,8 @@ export const feed = StyleSheet.create({
          marginBottom : 10,
          marginLeft : 5 ,
         color : 'white',
-        fontSize:15
+        fontSize:15,
+        fontFamily : 'Roboto',
     },
     scrollableFeedItemHorizontalScrollContainer : {
 
@@ -784,10 +820,12 @@ export const postDetails = StyleSheet.create({
     reviewImageContainerUserNameText : {
         color : 'white',
         fontSize:20,
+        fontFamily : 'Roboto',
     },
     reviewImageContainerUserNameTime : {
         color : 'white',
         fontSize:15,
+        fontFamily : 'Roboto',
         marginLeft : 10
     },
     //Scrollable Image
@@ -827,6 +865,7 @@ export const postDetails = StyleSheet.create({
         marginBottom: 40,
         marginLeft: 10,
         fontSize:30,
+        fontFamily : 'Roboto',
         fontWeight:'bold'
     },
     //Heart View
@@ -837,6 +876,7 @@ export const postDetails = StyleSheet.create({
         marginTop: 100,
         marginLeft: width - 60,
         fontSize:20,
+        fontFamily : 'Roboto',
         zIndex: 100   
     },
     reviewImageContainerHeartImageButton : {
@@ -855,6 +895,7 @@ export const postDetails = StyleSheet.create({
     },
     reviewImageContainerHeartTextValue : {
         fontSize:20,
+        fontFamily : 'Roboto',
         fontWeight:'bold',
         color:'#fff',
     },
@@ -866,6 +907,7 @@ export const postDetails = StyleSheet.create({
         marginTop: 190,
         marginLeft: width - 48,
         fontSize:20,
+        fontFamily : 'Roboto',
         zIndex: 100
     },
     reviewImageContainerCommentImageButton : {},
@@ -878,6 +920,7 @@ export const postDetails = StyleSheet.create({
     },
     reviewImageContainerCommentTextValue : {
         fontSize:20,
+        fontFamily : 'Roboto',
         fontWeight:'bold',
         color: background,
     },
@@ -907,6 +950,7 @@ export const postDetails = StyleSheet.create({
     },
     reviewTabBarText : {
         fontSize: 13,
+        fontFamily : 'Roboto',
         color: borderColor
     },
     reviewTabBarSelectedButton : {
@@ -950,6 +994,7 @@ export const postDetails = StyleSheet.create({
         flex: 1,
         marginHorizontal: 10,
         fontSize : 16,
+        fontFamily : 'Roboto',
         color : 'black'
     },
     reviewCommentContainerSubmitContainer : {
@@ -979,6 +1024,7 @@ export const postDetails = StyleSheet.create({
     reviewCommentContainerReadCommentUserImage : {},
     reviewCommentContainerReadCommentUserName : {
         fontWeight : 'bold',
+        fontFamily : 'Roboto',
         marginLeft : 10,
         flex : 1
     },
@@ -1017,6 +1063,7 @@ export const addPost = StyleSheet.create({
         marginLeft : 10 , 
         marginTop : 10 , 
         fontSize : 18 , 
+        fontFamily : 'Roboto',
         fontWeight : 'bold' 
     },
     modalText : { 
@@ -1074,6 +1121,7 @@ export const addPost = StyleSheet.create({
     productSearchBarInactiveIcon : {},
     productSearchBarInactiveText : {
         fontWeight : 'bold', 
+        fontFamily : 'Roboto',
         padding : 5 , 
         color : borderColor , 
         flex : 1, 
@@ -1093,7 +1141,8 @@ export const addPost = StyleSheet.create({
         justifyContent : 'center'
     },
     productSearchResultsText : {
-        fontSize :14
+        fontSize :14,
+        fontFamily : 'Roboto',
     },
     //MainView
     mainViewAddImagesContainer : {
@@ -1134,6 +1183,7 @@ export const addPost = StyleSheet.create({
     },
     mainViewReviewExistsHeader : {
         fontWeight : 'bold' , 
+        fontFamily : 'Roboto',
         fontSize : 18, 
         textAlign : 'center'
     },
@@ -1159,6 +1209,7 @@ export const addPost = StyleSheet.create({
     },
     mainViewReviewExistsContextHeader : {
         fontWeight : 'bold' , 
+        fontFamily : 'Roboto',
     },
     mainViewReviewExistsContextText : {},
     mainViewReviewExistsImagesContainer : {
@@ -1198,7 +1249,8 @@ export const addPost = StyleSheet.create({
         flex : 1
     },
     mainViewContextExistsItemHeader : {
-        fontWeight : 'bold'
+        fontWeight : 'bold',
+        fontFamily : 'Roboto',
     },
     mainViewContextExistsItemText : {},
     //Context Questions Container
@@ -1217,12 +1269,14 @@ export const addPost = StyleSheet.create({
         marginLeft : 20,
         backgroundColor: background,
         fontWeight:'bold',
+        fontFamily : 'Roboto',
         marginBottom : 5, 
         flex : 1,
         justifyContent :'center'
     },
     mainViewContextQuestionsItemQuestionsText : {
         fontWeight:'bold',
+        fontFamily : 'Roboto',
         fontSize : 15,
     },
     mainViewContextQuestionsItemOptionsContainer : {
@@ -1248,7 +1302,8 @@ export const addPost = StyleSheet.create({
         borderColor : borderColor
     },
     mainViewContextQuestionsItemOptionsItemText : {
-        fontSize : 14
+        fontSize : 14,
+        fontFamily : 'Roboto',
     },
     //Days Used Container
     mainViewDaysInputContainer : {
@@ -1260,6 +1315,7 @@ export const addPost = StyleSheet.create({
         marginLeft : 20,
         backgroundColor: background,
         fontWeight:'bold',
+        fontFamily : 'Roboto',
         marginBottom : 5, 
         flex : 1,
         justifyContent :'center'
@@ -1267,6 +1323,7 @@ export const addPost = StyleSheet.create({
     mainViewDaysQuestionText : {
         fontWeight:'bold',
         fontSize : 15,
+        fontFamily : 'Roboto',
     },
     mainViewDaysTextInput : {
         borderWidth : 1, 
@@ -1289,6 +1346,7 @@ export const addPost = StyleSheet.create({
     },
     mainViewReviewWritingInput : {
         fontSize : 16,
+        fontFamily : 'Roboto',
         padding : 5,
     },
     //Submit Container
@@ -1306,6 +1364,7 @@ export const addPost = StyleSheet.create({
     mainViewSubmitReviewText : {
         fontSize : 16,
         fontWeight : 'bold',
+        fontFamily : 'Roboto',
         color : background
     },
     //Image Browser Container
@@ -1326,6 +1385,7 @@ export const addPost = StyleSheet.create({
     },
     imageBrowserBadgeCountText : {
         fontWeight: 'bold',
+        fontFamily : 'Roboto',
         alignSelf: 'center',
         padding: 'auto',
         color: '#ffffff',

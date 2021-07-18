@@ -7,6 +7,10 @@ import Navigator from './Screens/Navigator'
 import * as firebase from "firebase";
 import * as Sentry from 'sentry-expo';
 import * as Amplitude from 'expo-analytics-amplitude';
+// import * as Font from 'expo-font';
+// import { AppLoading } from 'expo';
+// import { useFonts } from 'expo-font';
+
 
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -44,6 +48,7 @@ const Loader = () => (
 
 const App = () => {
 
+  
     const [isLoading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
     const [responseData,setResponseData] = React.useState({})
@@ -55,7 +60,30 @@ const App = () => {
     const [userDetails,setUserDetails] = React.useState({})
     const [isLoggedIn,setLoggedIn] = React.useState(false)
 
+    const [fontLoaded,setFontLoaded] = React.useState(false)
+
+    // const [loaded] = useFonts({
+    //   'os-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    //   'os-italic': require('./assets/fonts/OpenSans-Italic.ttf'),
+    //   'os-regular': require('./assets/fonts/OpenSans-Regular.ttf'),
+    //   'os-boldItalic': require('./assets/fonts/OpenSans-BoldItalic.ttf'),
+    //   'os-extraBoldItalic': require('./assets/fonts/OpenSans-ExtraBoldItalic.ttf'),
+    //   'os-light': require('./assets/fonts/OpenSans-Light.ttf'),
+    //   'os-lightItalic': require('./assets/fonts/OpenSans-LightItalic.ttf'),
+    //   'os-semiBold': require('./assets/fonts/OpenSans-SemiBold.ttf'),
+    //   'os-semiBoldItalic': require('./assets/fonts/OpenSans-SemiBoldItalic.ttf')
+    // });
+    
+    // if (!loaded) {
+    //   return null;
+    // }
+  
+    
+
+
+
     React.useEffect( () => {
+
         
         const getData = async () => {
           firebase.auth().onAuthStateChanged(user => {

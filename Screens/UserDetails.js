@@ -7,7 +7,7 @@ import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
 import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor, AuthContext} from './exports'
 import {ImageLoader} from 'react-native-image-fallback';
-import { useNavigation , useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +24,7 @@ const UserDetails = () => {
 
     const navigation = useNavigation()
     const route = useRoute()
+    const focus = useIsFocused()
 
   //  const [data, setString] = useClipboard();
 
@@ -114,7 +115,7 @@ const UserDetails = () => {
       fetchPinsPost()
 
         
-    },[result]);
+    },[result, focus]);
     
     // const onReviewsClick = () => {
     //     setEnableFeed(true)
@@ -189,10 +190,10 @@ const UserDetails = () => {
                     <View style = {user.mainViewDisplayContainer}>
                         {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
                         <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
-                        userDetails.length && userDetails[0].username ? 
+                        userInfo.length && userInfo[0].username ? 
                                 <Avatar.Image 
                                 source={{
-                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userDetails[0].username.replace(' ','+') + '&size=512'
+                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo[0].username.replace(' ','+') + '&size=512'
                                 }} size={80}/> :
                                 <Avatar.Image 
                                 source={{
@@ -202,8 +203,8 @@ const UserDetails = () => {
                     <View style = {user.mainViewDetailsContainer}>
                    
                         <View style = {user.mainViewDetailsUserNameContainer}>
-                        {userDetails.length && userDetails[0].username ? 
-                            <Text style={user.mainViewDetailsUserNameText} >{userDetails[0].username}</Text> : null }
+                        {userInfo.length && userInfo[0].username ? 
+                            <Text style={user.mainViewDetailsUserNameText} >{userInfo[0].username}</Text> : null }
                         </View> 
                         <View style = {user.mainViewDetailsSummaryContainer}>
                         <View style = {user.mainViewDetailsSummaryButtonContainer}>

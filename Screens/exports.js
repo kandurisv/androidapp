@@ -95,7 +95,7 @@ export const LoadingPage = () => {
 }
 
 
-export const background = "#EEEEEE"
+export const background = "#FFFFFF"
 export const theme = "#D7354A"
 export const borderColor = "#222222"
 

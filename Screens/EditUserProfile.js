@@ -116,9 +116,9 @@ const EditUserProfile = () => {
       data: body
     })
   .then(res => {
-      ToastAndroid.show("Thanks for updating your details. It will be updated in 5 minutes", ToastAndroid.LONG)
+      ToastAndroid.show("Thanks for updating your details", ToastAndroid.SHORT)
       setTimeout(function(){
-        navigation.navigate("Home")
+        navigation.navigate("UserDetails")
       }, 500);
     }).catch((e) => console.log(e))
 
