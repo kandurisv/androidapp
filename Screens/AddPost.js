@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {View , FlatList, SafeAreaView,Image, Button,StatusBar, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid, RecyclerViewBackedScrollView } from "react-native";
 import { FlatGrid } from 'react-native-super-grid';
-import {AuthContext, background, borderColor, headerStyle, s3URL, theme, uploadImageOnS3, URL} from './exports'
+import {AuthContext, background, borderColor, s3URL, theme, uploadImageOnS3, URL} from './exports'
 import { useNavigation , useRoute , useIsFocused} from '@react-navigation/native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ImageBrowser } from 'expo-image-picker-multiple';

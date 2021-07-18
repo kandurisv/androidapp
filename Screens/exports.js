@@ -1,7 +1,6 @@
-const env = 1;
+const env = 2;
 
 const bucketname = "mish-fit-user-post-images"
-
 
 import axios from 'axios'
 import React,{useEffect , createContext} from 'react'
@@ -9,8 +8,6 @@ import { View , Text, ScrollView, TouchableOpacity, ToastAndroid , ActivityIndic
 import {S3} from 'aws-sdk'
 import {decode} from 'base64-arraybuffer'
 import * as fs from 'expo-file-system';
-
-
 
 export const AuthContext = createContext()
 export const UserContext = createContext()
@@ -30,18 +27,11 @@ export const s3bucket = new S3({
   signatureVersion: 'v4',
 });
 
-export const URL = env === 1 ? "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/dev" : "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/prod";
+export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/prod";
+//export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/dev" ;
+     
 
-export const FetchData = env === 1 ? async (urlAdd, params) => {
-    axios.get("https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/dev/" + urlAdd, {params:params})
-        .then(res => res.data).then(function(responseData) {return responseData})
-        .catch(function(error) {return error});
-} : async (urlAdd, params) => {
-    axios.get("https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/prod/" + urlAdd, {params:params})
-        .then(res => res.data).then(function(responseData) {return responseData})
-        .catch(function(error) {return error})}
 
-        
 export const uploadImageOnS3 = async (name,uri) => {
  //   console.log("Reached S3 function")
     let contentType = 'image/jpeg';

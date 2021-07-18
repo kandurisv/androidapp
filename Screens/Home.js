@@ -3,7 +3,7 @@ import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, 
 import { useNavigation , useRoute } from '@react-navigation/native';
 import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, firebaseConfig, AuthContext, headerStyle} from './exports'
+import {URL, LoadingPage,  background, theme, firebaseConfig, AuthContext} from './exports'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import RadioGroup from 'react-native-custom-radio-group';

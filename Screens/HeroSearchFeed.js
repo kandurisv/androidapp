@@ -3,7 +3,7 @@ import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, Acti
 import moment from 'moment';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import axios from 'axios'
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor} from './exports'
+import {URL, background,  borderColor} from './exports'
 import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 

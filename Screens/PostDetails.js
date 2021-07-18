@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid , ImageBackground} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background, theme, borderColor, headerStyle, AuthContext} from './exports'
+import {URL,  background, theme, borderColor, AuthContext} from './exports'
 import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
@@ -432,11 +432,11 @@ const PostDetails = (props) => {
                         {item.engagement_user_name ? 
                         <Avatar.Image 
                             source={{
-                                uri: 'https://ui-avatars.com/api/rounded=true&name='+ item.engagement_user_name + '&size=64'
+                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.engagement_user_name + '&size=64'
                             }} size={20}/> :
                         <Avatar.Image 
                             source={{
-                                uri: 'https://ui-avatars.com/api/rounded=true&background=random&size=64'
+                                uri: 'https://ui-avatars.com/api/?rounded=true&background=random&size=64'
                              }} size={20}/>}
                             <Text style = {postDetails.reviewCommentContainerReadCommentUserName}>{item.engagement_user_name}</Text>
                             <Text style = {postDetails.reviewCommentContainerReadCommentTime}>{moment(item.created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>

@@ -5,7 +5,7 @@ import {Avatar,Text} from 'react-native-paper';
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
-import {URL, LoadingPage, ErrorPage, TimeoutPage, background, headerStyle, borderColor, AuthContext} from './exports'
+import {URL, LoadingPage, ErrorPage,  background,  borderColor, AuthContext} from './exports'
 import {ImageLoader} from 'react-native-image-fallback';
 import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';

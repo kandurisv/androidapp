@@ -11,7 +11,6 @@ import Home from './Home'
 import Login from './Login'
 import Pins from './Pins'
 import Signout from './Signout'
-import TermsAndConditions from './TermsAndConditions'
 import UserDetails from './UserDetails'
 import PostDetails from './PostDetails'
 import { AuthContext, background, theme } from "./exports";
@@ -124,7 +123,6 @@ const HomeStack = ({navigation}) => {
         <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
           <Stack.Screen name="Home" component={Home}  /> 
           <Stack.Screen name="AddPost" component={AddPost} /> 
-          <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
           <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
           <Stack.Screen name="Feed" component={Feed} />  
           <Stack.Screen name="Pins" component={Pins} />  
@@ -142,7 +140,7 @@ const FeedStack = ({navigation}) => {
       <Stack.Navigator initialRouteName="Feed" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home}  /> 
         <Stack.Screen name="AddPost" component={AddPost} /> 
-        <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
+        
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
         <Stack.Screen name="Pins" component={Pins} />  
@@ -160,7 +158,7 @@ const AddPostStack = ({navigation}) => {
       <Stack.Navigator initialRouteName="AddPost" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home}  /> 
         <Stack.Screen name="AddPost" component={AddPost} /> 
-        <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
+        
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
         <Stack.Screen name="Pins" component={Pins} />  
@@ -178,7 +176,7 @@ const PinsStack = ({navigation}) => {
       <Stack.Navigator initialRouteName="Pins" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home}  /> 
         <Stack.Screen name="AddPost" component={AddPost} /> 
-        <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
+        
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
         <Stack.Screen name="Pins" component={Pins} />  
@@ -197,7 +195,7 @@ const UserDetailsStack = ({navigation}) => {
       <Stack.Navigator initialRouteName="UserDetails" screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home}  /> 
         <Stack.Screen name="AddPost" component={AddPost} /> 
-        <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} /> 
+        
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
         <Stack.Screen name="Feed" component={Feed} />  
         <Stack.Screen name="Pins" component={Pins} />  

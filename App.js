@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
 import {View,Text , TouchableOpacity} from 'react-native'
 import axios from 'axios'
-import {URL, FetchData , AuthProvider , firebaseConfig, LoadingPage} from './Screens/exports'
+import {URL , AuthProvider , firebaseConfig, LoadingPage} from './Screens/exports'
 import Navigator from './Screens/Navigator'
 import * as firebase from "firebase";
 import * as Sentry from 'sentry-expo';
