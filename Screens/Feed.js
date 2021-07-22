@@ -17,6 +17,7 @@ const height = width * 1.2
 const FeedItem = ({item}) => {
   const navigation = useNavigation()
   
+  
     var review = ""
     item.content.map((reviewItem,index) => {
       if(reviewItem.length > 0) {

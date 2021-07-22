@@ -7,7 +7,7 @@ import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { useNavigation } from '@react-navigation/native';
 
 import * as Amplitude from 'expo-analytics-amplitude';
-import { header, pins } from './styles';
+import { header, pins, user } from './styles';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 export default function Pins() {
@@ -91,7 +91,10 @@ export default function Pins() {
           rightDisable
           />
       </View>
-      <ScrollView style = {{}}>
+      <ScrollView 
+        contentContainerStyle = {user.mainViewContentContainer}
+        style = {user.mainViewContainer}
+      >
       <View style = {pins.mainViewItem}>
         <Text style={pins.mainViewSubContainerHeader}>My Pinned Posts</Text>
         {pinsPostEmpty ? 

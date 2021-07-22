@@ -200,7 +200,7 @@ export default function Login() {
       },).start();
       registerNotification()
     } catch (err) {
-      ToastAndroid.show("We couldn't log you in due to network error",ToastAndroid.SHORT )
+      ToastAndroid.show("Please wait or try again later !!",ToastAndroid.SHORT )
       setLoginClick(true)
     }
   }

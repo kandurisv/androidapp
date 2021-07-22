@@ -227,7 +227,9 @@ const EditUserProfile = () => {
 
     
     return (
-        <ScrollView style = {user.container} >
+        <ScrollView 
+          contentContainerStyle = {user.mainViewContentContainer}
+          style = {user.mainViewContainer} >
           <View style = {header.headerView}>
                     <ModernHeader 
                         title="Details"
@@ -262,7 +264,7 @@ const EditUserProfile = () => {
               <View style = {[home.userDetailsElementContainer,{borderWidth : 0, }]}>
                 <Text style = {[home.userDetailsElementText,{fontSize : 16, flex : 1, marginLeft : 0}]}>UserName:</Text>
                 <TextInput 
-                        placeholder = {userName ? userName : "arianagrande"}
+                        placeholder = {userName ? userName : "username"}
                         style = {[home.userDetailsElementTextInput,{flex : 2, paddingBottom : 0 , marginBottom : 0}]}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
@@ -271,15 +273,20 @@ const EditUserProfile = () => {
               <View style = {[home.userDetailsElementContainer,{borderWidth : 0, }]}>
                 <Text style = {[home.userDetailsElementText,{fontSize : 16, flex : 1, marginLeft : 0}]}>Instagram Username:</Text>
                 <TextInput 
-                        placeholder = {instagram ? instagram : "arianagrande"}
+                        placeholder = {instagram ? instagram : "username"}
                         style = {[home.userDetailsElementTextInput,{flex : 2, paddingBottom : 0 , marginBottom : 0}]}
                         onChangeText = {(text)=>setInstagram(text)}
                         value = {instagram}
                 />
               </View>
+
+
+              
+
+
               <View style = {user.dateView}>
                 <Text style = {{justifyContent : "center", flex : 1, fontSize : 16, marginLeft : 15}}> 
-                    Date of birth : { userDob ? userDob.replace('"','').substring(0,10) : ""} 
+                    Date of birth : { userDob && userDob != "0000-00-00" ? userDob.replace('"','').substring(0,10) : ""} 
                 </Text>
                 <TouchableOpacity style = {user.datepicker} onPress={showDatePicker}>
                     <EvilIcons name = "calendar" size = {24} color = {theme}/>

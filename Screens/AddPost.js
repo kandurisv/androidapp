@@ -5,7 +5,7 @@ import {AuthContext, background, borderColor, s3URL, theme, uploadImageOnS3, URL
 import { useNavigation , useRoute , useIsFocused} from '@react-navigation/native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ImageBrowser } from 'expo-image-picker-multiple';
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from 'axios'
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { ModernHeader } from "@freakycoder/react-native-header-view";
@@ -19,8 +19,17 @@ Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width,height} = Dimensions.get("screen")
 
-const ImageBrowserScreen = ({ onComplete }) => {
-  const [header, setHeader] = React.useState();
+const ImageBrowserScreen = ({ onComplete  , closeScreen }) => {
+
+  const [header, setHeader] = React.useState(
+    <View style = {addPost.imageBrowserDynamicHeaderContainer}>
+        <TouchableOpacity 
+          style = {addPost.imageBrowserDynamicHeaderDoneButton}
+          onPress={()=>closeScreen(true)}>
+          <Text style = {addPost.imageBrowserDynamicHeaderDoneText}>Done/Back</Text>
+        </TouchableOpacity>
+      </View>
+  );
 
   const _processImageAsync = async (uri) => {
     const file = await ImageManipulator.manipulateAsync(
@@ -74,7 +83,7 @@ const ImageBrowserScreen = ({ onComplete }) => {
   return (
     <View style = {addPost.imageBrowserMasterContainer}>
     {header}
-    <View style={addPost.imageBrowserContainer}>
+    <ScrollView style={addPost.imageBrowserContainer}>
       <ImageBrowser
         max={5}
         onChange={updateHandler}
@@ -82,7 +91,7 @@ const ImageBrowserScreen = ({ onComplete }) => {
         renderSelectedComponent={renderSelectedComponent}
         emptyStayComponent={emptyStayComponent}
       />
-    </View>
+    </ScrollView>
     </View>
   );
 };
@@ -187,6 +196,9 @@ const AddPost = () => {
 
   
   React.useEffect(()=>{
+
+    setIsOpen(false)
+
    // console.log(userId.slice(1,12))
     Amplitude.logEventWithPropertiesAsync('ADD_POST_VISIT',{"userId" : userId.slice(1,13) , "productId" : productId })
     const defaultSearch = () => {
@@ -196,6 +208,7 @@ const AddPost = () => {
         .then(res => res.data).then(function(responseData) {
             setSearchLoading(false)
             setSearchArray(responseData)
+            console.log(responseData)
       })
       .catch(function(error) {
             setSearchLoading(false)
@@ -278,7 +291,7 @@ const AddPost = () => {
     }
     
   
-  },[productSelected,productId,isFocused])
+  },[productSelected,productId,isFocused, categoryId , categoryAnsExists ])
   
   const onChangeDay = (text) => {
     let newText = '';
@@ -573,6 +586,7 @@ return(
     <View style = {header.headerView}>
         <ModernHeader title="Add Review" titleStyle = {header.headerText}
           backgroundColor= {background} leftIconColor = {borderColor}
+          leftDisable = {isOpen ? true : false}
           leftIconOnPress={() => {productSelected ? setProductSelected(false): navigation.goBack()}}
           rightDisable
           />
@@ -595,7 +609,7 @@ return(
         <View style={addPost.scrollableContainer}>
 			{isOpen ? (
 			
-				<ImageBrowserScreen onComplete={onComplete} />) : (
+				<ImageBrowserScreen onComplete={onComplete} closeScreen = {(value)=>setIsOpen(!value)} />) : (
 				
 				<View style={addPost.scrollableContainer}>
           {productSelected ? 
@@ -609,7 +623,7 @@ return(
             
 						<TextInput 
               style = {addPost.productSearchBarActiveTextInput}
-							placeholder = "Search for Product"
+							placeholder = "Search or Add Product "
 							onChangeText = {(text) => search(text)}
 							onFocus = {()=>setInputFocus(true)}
               autoFocus
@@ -617,7 +631,7 @@ return(
             <TouchableOpacity 
               style = {{borderWidth : 1 , borderColor : "#DDDDDD" , padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
               onPress = {()=>onClickSearchItem({product_name : "Other"})} >
-              <Fontisto name = "search" size = {24} color = {theme} />
+              <Entypo name = "add-to-list" size = {24} color = {theme} />
             </TouchableOpacity>
 					</View>
           )}
@@ -681,13 +695,13 @@ return(
                   placeholder = "01"
                   keyboardType = 'number-pad'
                   style = {addPost.mainViewDaysTextInput}
-                  onChangeText = {(text)=>{existingUser ? setDaysUsed(999) : setDaysUsed(text)}}
+                  onChangeText = {(text)=>{existingUser ? setDaysUsed(100) : setDaysUsed(text)}}
                   value = {existingUser ? "100+" : daysUsed}
                 />  
                 <TouchableOpacity 
                   onPress = {()=>{
                     setExistingUser(!existingUser)
-                    setDaysUsed(999)
+                    setDaysUsed(100)
                   }}
                   style = {{backgroundColor : existingUser ? theme : background , flex : 1, justifyContent : 'center', marginLeft : 10, marginRight : 10, borderRadius : 20, borderWidth : 1, borderColor : !existingUser ? theme : background }}>
                   <Text style = {{color : !existingUser ? theme : background , textAlign: 'center'}}>100+</Text>

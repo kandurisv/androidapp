@@ -451,7 +451,7 @@ return (
                 <View style = {home.userDetailsUserNameContainer}>
                     <Text style = {home.userDetailsUserNameText}>Select your username</Text>
                     <TextInput 
-                        placeholder = "arianagrande"
+                        placeholder = "username"
                         style = {home.userDetailsUserNameTextInput}
                         onChangeText = {(text)=>setUserName(text)}
                         value = {userName}
@@ -514,7 +514,7 @@ return (
                   <Text style = {{color : "#D7354A", marginLeft : 5, marginRight : 5}}> Search </Text>
                 </TouchableOpacity>
               </View>
-
+              {heroImage ?
               <View style = {home.mainViewHeroBannerContainer}>
                 <TouchableOpacity onPress = {() => heroBannerClick(heroLink)} disabled = {!heroLinkExists}>
                   <ImageLoader
@@ -524,7 +524,7 @@ return (
                   />
                 </TouchableOpacity>
               </View>
-
+              : null }
         {response.length > 0 && response.map((item,index) =>{
             return (
             <View key = {index} style = {home.mainViewCarouselContainer}>

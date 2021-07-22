@@ -643,7 +643,8 @@ export const signout = StyleSheet.create({
 export const pins = StyleSheet.create({
     container : {
         flex : 1, 
-        backgroundColor: background
+        backgroundColor: background,
+       
     },
     //Main View Sub Containers
     mainViewSubContainer : {
@@ -940,11 +941,11 @@ export const postDetails = StyleSheet.create({
         marginBottom: 20
     },
     reviewTabBarButton : {
-        width: width /5,
+        width: width/5,
         flexDirection: 'row',
         borderWidth: 0.5,
         borderColor: background,
-        padding: 10,
+        padding: 5,
         justifyContent: 'center',
         backgroundColor: background
     },
@@ -1400,12 +1401,14 @@ export const addPost = StyleSheet.create({
         marginRight : 10
     },
     imageBrowserDynamicHeaderDoneButton : {
-        margin : 5, 
+        margin : 2, 
         padding : 5 , 
         backgroundColor : theme , 
         alignItems : 'center' , 
         width : width * 0.4 , 
-        borderRadius : 20 ,
+        borderRadius : 5 ,
+        borderWidth : 1,
+        borderColor : theme
     },
     imageBrowserDynamicHeaderDoneText : {
         color : background

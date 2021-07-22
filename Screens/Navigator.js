@@ -26,7 +26,7 @@ const TAB_BAR_HEIGHT = 60
 const TAB_ICON_SIZE = 24
 const TAB_SLIDER_HEIGHT = 2
 // const TAB_SLIDER_COLOR = "#C51E3A"
-const TAB_SLIDER_COLOR = "#C51E3A"
+const TAB_SLIDER_COLOR = "#FFFFFF"
 const TAB_ACTIVE_COLOR = theme
 const TAB_INACTIVE_COLOR = "#888888"
 
@@ -156,7 +156,7 @@ const FeedStack = ({navigation}) => {
 const AddPostStack = ({navigation}) => {
   return (
       <Stack.Navigator initialRouteName="AddPost" screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Home" component={Home}  /> 
+        {/* <Stack.Screen name="Home" component={Home}  />  */}
         <Stack.Screen name="AddPost" component={AddPost} /> 
         
         <Stack.Screen name="EditUserProfile" component={EditUserProfile} /> 
@@ -302,7 +302,7 @@ export default Navigator;
 
   const tab2Options = {
   //  tabBarLabel: 'card-plus',
-    tabBarLabel: 'image-filter-tilt-shift',
+    tabBarLabel: 'book-open',
     title : "Feed",
     tabBarColor: 'purple'
   }
