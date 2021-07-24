@@ -1251,7 +1251,9 @@ export const addPost = StyleSheet.create({
         justifyContent : 'center' 
     },
     mainViewReviewExistsImagesCalendarText : {
-        color : borderColor
+        color : borderColor,
+        fontSize : 12,
+
     },
     //Only Context exists Container
     mainViewContextExistsContainer : {},
@@ -1299,7 +1301,7 @@ export const addPost = StyleSheet.create({
         backgroundColor: background
     },
     mainViewContextQuestionsItemOptionsContentContainer : {
-        justifyContent: 'space-evenly',
+        justifyContent: 'flex-start',
         flexDirection: 'row',
         width : width * 0.9,
         marginRight : 5 ,
@@ -1307,6 +1309,7 @@ export const addPost = StyleSheet.create({
     },
     mainViewContextQuestionsItemOptionsItemButton : {
          padding: 10,
+         marginRight : 15,
         // paddingVertical : 15,
         // marginHorizontal: 16, 
         height: 6,

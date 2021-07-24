@@ -86,7 +86,7 @@ const ImageBrowserScreen = ({ onComplete  , closeScreen }) => {
     <ScrollView style={addPost.imageBrowserContainer}>
       <ImageBrowser
         max={5}
-        loadCount = {1000}
+        loadCount = {250}
         onChange={updateHandler}
         callback={imagesCallback}
         renderSelectedComponent={renderSelectedComponent}
