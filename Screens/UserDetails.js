@@ -53,7 +53,7 @@ const UserDetails = () => {
      //       console.log(phoneNumber)
             axios.get(URL + "/user/summary", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log("USER Summary " , responseData)
+      //      console.log("USER Summary " , responseData)
       //      console.log("REached to response")
       
             setUserDetails(responseData)

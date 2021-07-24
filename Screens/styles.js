@@ -716,12 +716,20 @@ export const feed = StyleSheet.create({
         width,
         height : width * 1.2
     },
+    scrollableFeedItemUserNameHeaderView : {
+        position:'absolute',
+        width : width,
+        top:0,
+        backgroundColor : 'rgba(52, 52, 52, 0.5)',
+        zIndex : 102,
+        height : 38,
+    },
 
     scrollableFeedItemUserName : {
         position:'absolute',
         top:0,
         color : 'white',
-        marginTop: 15,
+        marginTop: 10,
         marginLeft: 15,
         fontSize:20,
         fontFamily : 'Roboto',
@@ -732,7 +740,7 @@ export const feed = StyleSheet.create({
         top:0,
         right : 0 ,
         color : 'white',
-        marginTop: 15,
+        marginTop: 10,
         marginRight: 10,
         fontSize:14,
         fontFamily : 'Roboto',
@@ -750,10 +758,8 @@ export const feed = StyleSheet.create({
     },
     scrollableFeedItemProductView : {
         position:'absolute',
-        width : width * 0.95,
+        width : width ,
         bottom:0,
-        marginLeft: 10,
-        marginRight : 10,
         backgroundColor : 'rgba(52, 52, 52, 0.5)',
         zIndex : 102,
     },
@@ -761,9 +767,10 @@ export const feed = StyleSheet.create({
         // position:'absolute',
         // bottom:0,
         marginTop : 5,
-         marginLeft : 5 ,
+        marginLeft: 10,
+        marginRight : 10,
         color : 'white',
-        fontSize:20,
+        fontSize:18,
         fontFamily : 'Roboto',
         fontWeight:'bold'
     },
@@ -771,7 +778,8 @@ export const feed = StyleSheet.create({
         // position:'absolute',
         // bottom:0,
          marginBottom : 10,
-         marginLeft : 5 ,
+         marginLeft : 10 ,
+         marginRight : 10,
         color : 'white',
         fontSize:15,
         fontFamily : 'Roboto',
@@ -812,8 +820,8 @@ export const postDetails = StyleSheet.create({
         position:'absolute',
         top:0,
         zIndex : 103,
-        marginTop: 15,
-        marginLeft: 15,
+        width ,
+        backgroundColor : 'rgba(52, 52, 52, 0.5)',
     },
     reviewImageContainerUserNameButton : {
         
@@ -822,6 +830,7 @@ export const postDetails = StyleSheet.create({
         color : 'white',
         fontSize:20,
         fontFamily : 'Roboto',
+        padding : 10
     },
     reviewImageContainerUserNameTime : {
         color : 'white',
@@ -857,17 +866,21 @@ export const postDetails = StyleSheet.create({
     reviewImageContainerCalendarText : {},
 
     //Product Name View
-    reviewImageContainerProductNameView : {},
-    reviewImageContainerProductNameButton : {},
-    reviewImageContainerProductNameText : {
+    reviewImageContainerProductNameView : {
         position:'absolute',
         bottom:0,
-        color : 'white',
-        marginBottom: 40,
-        marginLeft: 10,
-        fontSize:30,
+        backgroundColor : 'rgba(52, 52, 52, 0.5)',
+        zIndex : 102,
+        width 
+    },
+    reviewImageContainerProductNameButton : {},
+    reviewImageContainerProductNameText : {
+        fontSize:16,
         fontFamily : 'Roboto',
-        fontWeight:'bold'
+        fontWeight:'normal',
+        color : 'white',
+        marginBottom: 30,
+        padding : 5
     },
     //Heart View
     reviewImageContainerHeartContainer : { 
@@ -945,7 +958,7 @@ export const postDetails = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 0.5,
         borderColor: background,
-        padding: 5,
+        padding: 8,
         justifyContent: 'center',
         backgroundColor: background
     },
@@ -1286,14 +1299,16 @@ export const addPost = StyleSheet.create({
         backgroundColor: background
     },
     mainViewContextQuestionsItemOptionsContentContainer : {
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         flexDirection: 'row',
-        borderRadius : 10,
+        width : width * 0.9,
+        marginRight : 5 ,
+        marginLeft : 5,
     },
     mainViewContextQuestionsItemOptionsItemButton : {
-        padding: 20,
-        paddingVertical : 15,
-        marginHorizontal: 16, 
+         padding: 10,
+        // paddingVertical : 15,
+        // marginHorizontal: 16, 
         height: 6,
         backgroundColor:background,
         justifyContent: 'center',

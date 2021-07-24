@@ -86,6 +86,7 @@ const ImageBrowserScreen = ({ onComplete  , closeScreen }) => {
     <ScrollView style={addPost.imageBrowserContainer}>
       <ImageBrowser
         max={5}
+        loadCount = {1000}
         onChange={updateHandler}
         callback={imagesCallback}
         renderSelectedComponent={renderSelectedComponent}
@@ -204,11 +205,12 @@ const AddPost = () => {
     const defaultSearch = () => {
       setSearchLoading(true)
       
-      axios.get(URL + "/search/default", {timeout : 2})
+      axios.get(URL + "/search/default", {timeout : 2000})
         .then(res => res.data).then(function(responseData) {
             setSearchLoading(false)
+          //  console.log("default" , responseData)
             setSearchArray(responseData)
-            console.log(responseData)
+          //  console.log(responseData)
       })
       .catch(function(error) {
             setSearchLoading(false)
@@ -229,6 +231,8 @@ const AddPost = () => {
               setContextAnswersValid(true)
               setCategoryQuestions(responseData[0].category_ques)
               setCategoryAnswers(responseData[0].category_ans)
+            } else {
+              setContextAnswersValid(true)
             }
             setLoading(false) 
             
@@ -245,12 +249,15 @@ const AddPost = () => {
       const fetchPreviousUserCategory = () => {
         axios.get(URL + "/post/reviewcontext", {params:{category_id : categoryId, user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-            console.log("PreviousUserCategory", responseData)
+          //  console.log("PreviousUserCategory", responseData)
             if(responseData.length) {
               setCategoryAnsExists(true)
               setExistingCategoryInfo(responseData)
               setCategoryQuestions(responseData[0].category_ques_list)
               setCategoryAnswers(responseData[0].category_ans_list)
+              setContextAnswersValid(true)
+            }
+            else {
               setContextAnswersValid(true)
             }
             setLoading(false) 
@@ -272,7 +279,7 @@ const AddPost = () => {
           setBrandId(responseData[0].brand_id)
           setCategoryName(responseData[0].category_name)
           setBrand(responseData[0].brand)
-          setClaim(responseData[0].brand)
+          setClaim(responseData[0].claim)
           setContextOptions(responseData[0].category_ques)
           fetchPreviousUserCategory()
           setLoading(false) 
@@ -334,6 +341,9 @@ const AddPost = () => {
     setSearchText("")
     setProductName("")
     setReviewText("")
+    setClaim("")
+    setBrand("")
+    setBrandId("")
     
   }
 
@@ -467,7 +477,7 @@ const AddPost = () => {
         />
       : null}
       <View style = {addPost.mainViewReviewExistsContextContainer}>
-        <Text style = {addPost.mainViewReviewExistsContextHeader}>Contextual Information:</Text>
+        <Text style = {addPost.mainViewReviewExistsContextHeader}>Profile Information:</Text>
         <Text style = {addPost.mainViewReviewExistsContextText}>{context}</Text>
       </View>
       {existingReview.length && existingReview[0].image_list.length ?
@@ -527,9 +537,9 @@ const AddPost = () => {
     setSearchText(text)
     setSearchLoading(true)
     
-    axios.get(URL + "/search/product", {params:{str2Match : text }} , {timeout : 2})
+    axios.get(URL + "/search/product", {params:{str2Match : text }} , {timeout : 3000})
       .then(res => res.data).then(function(responseData) {
-      //    console.log("SearchArray",searchArray)
+          console.log("SearchArray",responseData)
           setSearchLoading(false)
           setSearchArray(responseData)
       //    console.log("Reached Here response")
@@ -542,8 +552,8 @@ const AddPost = () => {
   }
 
   const onClickSearchItem = (item) => {
-    const nanoid = customAlphabet('1234567890', 10)
-    const nanoid1 = customAlphabet('1234567890', 4)
+    const nanoid = customAlphabet('123456789', 10)
+    const nanoid1 = customAlphabet('123456789', 4)
     if(item.product_name != "Other") {
       setInputFocus(false)
       setProductSelected(true)
@@ -674,7 +684,7 @@ return(
 
 							{!productSelectedOther ? !existingReviewExists ? !categoryAnsExists ?
 								<View style = {addPost.mainViewContextQuestionsContainer}>
-									{contextOptions.slice(0,3).map((item,index) => {
+									{contextOptions.slice(0,4).map((item,index) => {
 										return <OptionsQuestions 
                       key = {item.id} 
                       questions = {contextOptions[index]} 

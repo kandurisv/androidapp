@@ -89,10 +89,10 @@ const radioGroupList = [{
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {home.mainViewCarouselScrollableItemButton} onPress = {() => {itemClick(item)}}>
                     <ImageBackground source = {{uri : item.image}} 
-                        style = {home.mainViewCarouselScrollableItemImageBackground} blurRadius = {3}>
+                        style = {home.mainViewCarouselScrollableItemImageBackground} blurRadius = {1}>
                     </ImageBackground>
                     <View style = {home.mainViewCarouselScrollableItemTextContainer}>
-                        <Text style={home.mainViewCarouselScrollableItemText}>{item.name}</Text>
+                        <Text style={home.mainViewCarouselScrollableItemText}>{item.name.substring(0,75)} ...</Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -183,7 +183,7 @@ const Home = () => {
             })
           }
           catch(e) {
-            console.log(e)
+          //  console.log(e)
           }
            } 
         else {
@@ -223,7 +223,7 @@ const Home = () => {
       } else {
         alert('Must use physical device for Push Notifications');
       }
-      console.log("token", token)
+     // console.log("token", token)
       return token;
     }
     
@@ -234,12 +234,12 @@ const Home = () => {
     React.useEffect(() => {
       const registerNotification = async () => {
         registerForExpoPushNotificationsAsync().then(token => {
-          console.log("expo token", token)
+        //  console.log("expo token", token)
           setExpoToken(token)
           AsyncStorage.setItem('expoToken', token )
         });
         registerForDevicePushNotificationsAsync().then(token => {
-          console.log("device token", token)
+        //  console.log("device token", token)
           setDeviceToken(token)
           AsyncStorage.setItem('deviceToken', token )
         });
@@ -366,9 +366,11 @@ const signout = () => {
 const onSearchHero = () => {
   axios.get(URL + "/search/review", {params:{str2Match : heroSearchText }} , {timeout:5000})
   .then(res => res.data).then(async (responseData) => {
-    console.log(responseData)
+  //  console.log(responseData)
     if (responseData.length) {
       navigation.navigate("HeroSearchFeed", {items : responseData})
+      Amplitude.logEventWithPropertiesAsync('HERO_SEARCH_FEED_VISIT_FROM_HOME',{"userId" : userId , "search" : heroSearchText })
+
     } else {
       ToastAndroid.show("Invalid Seach Query", ToastAndroid.SHORT)
     }
@@ -379,10 +381,10 @@ const onSearchHero = () => {
 }
 
 const onCouponValid = () => {
-  console.log("COUPON", coupon)
+ // console.log("COUPON", coupon)
   axios.get(URL + "/referral", {params:{existing_referral_code : coupon }} , {timeout:5000})
   .then(res => res.data).then(async (responseData) => {
-    console.log(responseData)
+  //  console.log(responseData)
     if (responseData[0].validation) {
       setCouponUserName(responseData[0].username)
       setCouponValid(true)
@@ -415,7 +417,7 @@ const submitUserDetails = () => {
       "existing_referral_code": coupon
     }
 
-    console.log(body)
+  //  console.log(body)
     axios({method: 'post',url: URL + '/user/info',data: body})
     .then(res => {
         ToastAndroid.show("Thanks for your details",ToastAndroid.SHORT)
@@ -423,7 +425,7 @@ const submitUserDetails = () => {
 
     axios({method: 'post',url: URL + '/referral',data: body1})
     .then(res => {
-      console.log("res")
+    //  console.log("res")
     }).catch((e) => console.log(e) )
 
     

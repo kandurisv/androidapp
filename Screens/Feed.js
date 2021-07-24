@@ -36,10 +36,10 @@ const FeedItem = ({item}) => {
 
     return(
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
-            
+            <View style ={feed.scrollableFeedItemUserNameHeaderView}>
             <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
             <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>  
-            
+            </View>
             <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
             {item.image_list.map((image , index) => (
               <View key = {index}>
@@ -112,7 +112,7 @@ const Feed = (props) => {
   .then(res => res.data)
   .then(function (responseData) {
      Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-       console.log("response",responseData)
+    //   console.log("response",responseData)
     // console.log(responseData.length)
     setItemsForFeed(responseData)
     setRefreshing(false);
@@ -124,7 +124,7 @@ const Feed = (props) => {
   
 
   useEffect(() => {
-    console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
+  //  console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
     setVarValue(route ? route.params ? route.params.varValue ? route.params.varValue : "time" : "time" : "time")
     setRequestValue(route ? route.params ? route.params.value ? route.params.value : null : null : null)
     setRequestId(route ? route.params ? route.params.id ? route.params.id : null :null : null)
@@ -142,13 +142,13 @@ const Feed = (props) => {
     .then(res => res.data)
     .then(function (responseData) {
         Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-           console.log("Response", responseData)
+        //   console.log("Response", responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
         })
     .catch(function (error) {
       setError(true);   
-      console.log("Error" , error)   
+    //  console.log("Error" , error)   
     });
   },[varValue,requestId,requestValue]);
 

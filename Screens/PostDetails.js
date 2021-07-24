@@ -37,11 +37,11 @@ const Cover = (props) => {
     const [commentCount,setCommentCount] = React.useState(props.comments)
     const navigation = useNavigation()
     const getFeedByUser = () => {
-        console.log("Username click")
+     //   console.log("Username click")
         axios.get(URL + "/user/instagram", {params:{username : props.username }} , {timeout : 5})
         .then(res => res.data)
         .then(async function(responseData) {
-            console.log(responseData)
+        //    console.log(responseData)
             if (responseData.length && responseData[0].instagram_username) {
                 let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+responseData[0].instagram_username+'/');
                 setResult(result);
@@ -121,8 +121,7 @@ const Cover = (props) => {
                 {/* <StatusBar height = {0} translucent backgroundColor='transparent'/> */}
                 <View style = {postDetails.reviewImageContainerUserNameView}>
                 <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
-                    <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text>
-                    <Text style = {postDetails.reviewImageContainerUserNameTime}>{props.category_name}</Text>  
+                    <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text> 
                 </TouchableOpacity>
                 </View>
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
@@ -143,7 +142,10 @@ const Cover = (props) => {
                         
                     })}
                 </ScrollView>
-                <Text style ={postDetails.reviewImageContainerProductNameText} >{props.productname}</Text>
+                <View style ={postDetails.reviewImageContainerProductNameView}>
+                    <Text style ={postDetails.reviewImageContainerProductNameText} >{props.productname}</Text>
+                </View>
+                
                 <View style = {postDetails.reviewImageContainerHeartContainer}>
                     <TouchableOpacity style = {postDetails.reviewImageContainerHeartImageButton} onPress = {likeClick} >
                     <LottieView
@@ -171,7 +173,7 @@ const Cover = (props) => {
 const listTab = [
     {status: 'Review'},
     {status: 'Claim'},
-    {status: 'Context'}
+    {status: 'Profile'}
 ]
 
 const Data = [{
@@ -182,7 +184,7 @@ const Data = [{
         content : 'Claim'
     }, {
         status: 'Context',
-        content : 'Context'
+        content : 'Profile'
     },
 ]
 
@@ -278,7 +280,7 @@ const PostDetails = (props) => {
         axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 500})
         .then(res => res.data).then(function(responseData) {
             Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
-            console.log("Like identifier ", responseData[0])
+          //  console.log("Like identifier ", responseData[0])
             setLikeIndicator(responseData[0].upvote === "1" ? true : false)
             setLoading(false)
             setResult(true)
@@ -358,7 +360,7 @@ const PostDetails = (props) => {
         }
         else {
             onSendPress()
-            
+            Amplitude.logEventWithPropertiesAsync('POST_DETAILS_COMMENT',{"userId" : route.params.details.user_id , "review_sum_id" : route.params.details.review_sum_id })
             setMessage("")
             ToastAndroid.show("Thanks for comment", ToastAndroid.SHORT);
             

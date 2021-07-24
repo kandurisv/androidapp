@@ -63,9 +63,11 @@ export default function Pins() {
   const onClickProduct = (product) => {
     axios.get(URL + "/search/review", {params:{str2Match : product }} , {timeout:5000})
     .then(res => res.data).then(async (responseData) => {
-      console.log(responseData)
+    //  console.log(responseData)
       if (responseData.length) {
         navigation.navigate("HeroSearchFeed", {items : responseData})
+        Amplitude.logEventWithPropertiesAsync('HERO_SEARCH_FEED_VISIT_FROM_PINS',{"userId" : userId , "search" : product })
+
       } else {
         ToastAndroid.show("Invalid Seach Query", ToastAndroid.SHORT)
       }
@@ -77,7 +79,8 @@ export default function Pins() {
 
   const onClickPost = (item,review,context) => {
     navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
-}
+    Amplitude.logEventWithPropertiesAsync('POST_DETAILS_VISIT_FROM_PINS',{"userId" : userId.slice(1,13) , "review_sum_id" : item.review_sum_id })
+  }
 
   return (
     <View style = {pins.container}>

@@ -108,7 +108,7 @@ const EditUserProfile = () => {
         
       }
 
-      console.log(body)
+    //  console.log(body)
 
     axios({
       method: 'post',
@@ -153,7 +153,7 @@ const EditUserProfile = () => {
             "profile_image" : s3URL + user_id + "/profile"
           }
     
-          console.log(body)
+        //  console.log(body)
     
         axios({
           method: 'post',
@@ -195,7 +195,7 @@ const EditUserProfile = () => {
             "cover_image" : s3URL + user_id + "/cover"
           }
     
-          console.log(body)
+        //  console.log(body)
     
         axios({
           method: 'post',
@@ -203,7 +203,7 @@ const EditUserProfile = () => {
           data: body
         })
         .then(res => {
-          console.log(res)
+        //  console.log(res)
         }).catch((e) => console.log(e))
     
         }
