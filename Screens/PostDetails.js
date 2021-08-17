@@ -1,20 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid , ImageBackground} from 'react-native';
+import {  StyleSheet, Text, View  ,Image, ScrollView ,Easing ,Animated, Dimensions, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, ToastAndroid , ImageBackground, Share} from 'react-native';
 import Fontisto from "react-native-vector-icons/Fontisto";
-import {URL,  background, theme, borderColor, AuthContext} from './exports'
+import {URL,  background, theme, borderColor, AuthContext, schema} from './exports'
 import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
-import {MaterialIcons} from '@expo/vector-icons';
+import {FontAwesome, MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as WebBrowser from 'expo-web-browser';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
+
 import * as Amplitude from 'expo-analytics-amplitude';
-import { header, postDetails } from './styles';
+import { header, header1, postDetails } from './styles';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("window");
@@ -29,16 +32,19 @@ const Cover = (props) => {
     const isFocused = useIsFocused()
 
     const progress = React.useRef(new Animated.Value(0)).current
+    const progress1 = React.useRef(new Animated.Value(0)).current
     const [liked,setLiked] = React.useState(props.likeIndicator)
+    const [bookmarked,setBookmarked] = React.useState(props.bookmarked)
     const [likeCount,setLikeCount] = React.useState(Math.max(props.upvotes,0))
 
     const [result, setResult] = useState(null);
     
     const [commentCount,setCommentCount] = React.useState(props.comments)
+
     const navigation = useNavigation()
     const getFeedByUser = () => {
      //   console.log("Username click")
-        axios.get(URL + "/user/instagram", {params:{username : props.username }} , {timeout : 5})
+        axios.get(URL + "/user/instagram", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data)
         .then(async function(responseData) {
         //    console.log(responseData)
@@ -56,6 +62,8 @@ const Cover = (props) => {
         
 
     React.useEffect(()=>{
+        console.log("Bookmarked", props.bookmarked)
+        setBookmarked(props.bookmarked)
         setLiked(props.likeIndicator)
         setLikeCount(props.upvotes+props.likeIndicator)
      //   console.log("Like", props.likeIndicator , "liked indictor ", liked)
@@ -67,6 +75,8 @@ const Cover = (props) => {
                 useNativeDriver : true
               },).start();  
         }
+
+
     },[props])
 
   
@@ -115,22 +125,71 @@ const Cover = (props) => {
         }
     
     
+    const onShareReview = async () => {
+        try {
+            const result = await Share.share({
+              message: 'Read my review on Candid App at ' + schema + "?id=" + props.details.review_sum_id,
+              url : props.imageList[0]
+            });
+            if (result.action === Share.sharedAction) {
+              if (result.activityType) {
+             //     console.log(result.activityType)
+                } 
+              else {
+            //  console.log(result)
+            }
+            } 
+            else if (result.action === Share.dismissedAction) {
+            //    console.log(result)
+            }
+          } catch (error) {
+            alert(error.message);
+          }
+    }
+
+    const onBookmark = () => {
+        setBookmarked(!bookmarked)
+        props.onClickBookmark()
+
+        const body = {
+            "review_sum_id": props.details.review_sum_id,
+            "user_id": props.userId,
+            "engagement_user_id": props.engagementUserId,
+            "product_id": props.details.product_id,
+            "category_id": props.details.category_id,
+            "brand_id" : props.details.brand_id,
+            "engagement_user_name": props.engagementUserName,
+            "bookmark": !bookmarked,
+        }
+        
+            console.log(body)
+            axios({
+                method: 'post',
+                url: URL + '/pins/post',
+                data: body
+              })
+            .then(res => {
+                    // console.log(res.data);
+          }).catch((e) => console.log(e))
+          
+    }
+
     return(
         <ScrollView>
             <View style = {postDetails.reviewImageContainerScrollableContainer}>
                 {/* <StatusBar height = {0} translucent backgroundColor='transparent'/> */}
-                <View style = {postDetails.reviewImageContainerUserNameView}>
+                {/* <View style = {postDetails.reviewImageContainerUserNameView}>
                 <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
                     <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text> 
                 </TouchableOpacity>
-                </View>
+                </View> */}
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
                     {props.imageList.map((image , index) => {
                         var pieces = image.split("/")
                         const calendarText = pieces[pieces.length-2]
                     return(
                         // <View style = {postDetails.reviewImageContainerScrollableImageCover}>
-                            <Image key = {index} source = {{uri: image}} style = {postDetails.reviewImageContainerScrollableImage}/>
+                            <Image key = {index} source = {{uri: image ? image : "none"}} style = {postDetails.reviewImageContainerScrollableImage}/>
                         //     <View style = {postDetails.reviewImageContainerCalendarView}>
                         //         <ImageBackground source = {{uri : image}} style = {postDetails.reviewImageContainerCalendarImage} blurRadius = {0}></ImageBackground>
                         //         <View style = {[postDetails.reviewImageContainerCalendarTextView, {marginTop : width * 0.15}]}>
@@ -148,20 +207,36 @@ const Cover = (props) => {
                 
                 <View style = {postDetails.reviewImageContainerHeartContainer}>
                     <TouchableOpacity style = {postDetails.reviewImageContainerHeartImageButton} onPress = {likeClick} >
-                    <LottieView
-                        ref={animation => animation}
-                        progress = {progress}
-                        style={postDetails.reviewImageContainerHeartImage}
-                        source={require('../assets/animation/like-icon5.json')}
-                    />
+                        <LottieView
+                            ref={animation => animation}
+                            progress = {progress}
+                            style={postDetails.reviewImageContainerHeartImage}
+                            source={require('../assets/animation/like-icon5.json')}
+                        />
                     </TouchableOpacity>
                 </View>
+
                 <View style = {postDetails.reviewImageContainerHeartTextView}>
                     <Text style = {postDetails.reviewImageContainerHeartTextValue}>{Math.max(likeCount,0)}</Text>
                 </View>
+                
+                <TouchableOpacity onPress = {onShareReview} style = {postDetails.reviewImageContainerShareContainer}>
+                    <Fontisto name = "share-a" size = {22} color =  {background} />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress = {onBookmark}
+                style = {postDetails.reviewImageContainerBookmarkContainer}>
+                    { props.bookmarked ? 
+                    <FontAwesome name = "bookmark-o" size = {30} color = {theme} />:
+                    <FontAwesome name = "bookmark-o" size = {30} color = {background} /> 
+                    }
+                   
+                </TouchableOpacity>
+                
                 <View style = {postDetails.reviewImageContainerCommentContainer}>
-                    <Fontisto name = "comment" size = {22} color = "#AAA" />
+                    <Fontisto name = "comment" size = {22} color = {background} />
                 </View>
+                
                 <View style = {postDetails.reviewImageContainerCommentTextView}>
                     <Text style = {postDetails.reviewImageContainerCommentTextValue}>{commentCount}</Text>
                 </View>
@@ -183,7 +258,7 @@ const Data = [{
         status: 'Claim',
         content : 'Claim'
     }, {
-        status: 'Context',
+        status: 'Profile',
         content : 'Profile'
     },
 ]
@@ -201,7 +276,7 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
             return(
                     <View style = {{}} key = {dayIndex}>
                         <Text style = {{fontWeight : 'bold' , marginTop : 10,}}>Day {dayArray[dayIndex]}</Text>
-                        <Text>{item}</Text>
+                        <Text style = {postDetails.reviewText}>{item}</Text>
                     </View>  
                    
             )
@@ -271,6 +346,8 @@ const PostDetails = (props) => {
     const [likeIndicator,setLikeIndicator] = React.useState(false)
     const [showComments,setShowComments] = React.useState(false)
     const [renderAgain,setRenderAgain] = useState(false)
+    const [bookmarked, setBookmarked] = React.useState(false)
+    const [instagramUsername, setInstagramUsername] = React.useState("")
 
     React.useEffect(() => {
   //  console.log("________________THIS IS A NEW RENDER _____________________")
@@ -295,6 +372,26 @@ const PostDetails = (props) => {
         });
     }
 
+    const getBookmark = () => {
+        console.log("user_id" , userId.slice(1,13) ," review_sum_id" , route.params.details.review_sum_id )
+        axios.get(URL + "/pins/indicator", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 500})
+        .then(res => res.data).then(function(responseData) {
+            console.log("bookmark indicator" , responseData)
+            setBookmarked(responseData[0].bookmark)
+            setLoading(false)
+            setResult(true)
+      //      console.log(responseData[0].upvote === "1" ? true : false)
+        })
+        .catch(function(error) {
+            // console.log("Reached to error")
+            // console.log(error)
+            setLoading(false)
+            setResult(true)
+            setError(true)
+        });
+    }
+
+
     const fetchComments = () => {
         axios.get(URL + "/post/comments", {params:{review_sum_id : route.params.details.review_sum_id }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
@@ -312,11 +409,31 @@ const PostDetails = (props) => {
             setError(true)
         });
     }
+
+    const getInstaUser = () => {
+        //   console.log("Username click")
+           axios.get(URL + "/user/instagram", {params:{user_id : userId.slice(1,13) }} , {timeout : 5000})
+           .then(res => res.data)
+           .then(async function(responseData) {
+           //    console.log(responseData)
+               if (responseData.length && responseData[0].instagram_username) {
+                   setInstagramUsername(result);
+               }
+           })
+           .catch(function(error) {
+             
+           });
+       }
+
+
+
       
         fetchComments()
         getData()
-
-    },[renderAgain,isFocused, likeIndicator])
+        getBookmark()
+        getInstaUser()
+       
+    },[renderAgain,isFocused, likeIndicator , bookmarked])
 
 
 
@@ -324,6 +441,18 @@ const PostDetails = (props) => {
     const [newAnswer,setNewAnswer] = useState(false)
   
     
+    const getFeedByUser = async () => {
+           console.log("Username click")
+            try {
+                let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+instagramUsername+'/');
+                setResult(result);
+            }    
+            catch {
+             
+            };
+       }
+
+
     const onMicrophonePress = () =>{
         ToastAndroid.show("Please add your comment", ToastAndroid.SHORT);
     }
@@ -371,16 +500,26 @@ const PostDetails = (props) => {
         setRenderAgain(!renderAgain)
     }
 
+    const onClickBookmark = () => {
+        setRenderAgain(!renderAgain)
+    }
+
   return (
       <ScrollView contentContainerStyle={postDetails.contentContainer}>
-        <View style = {header.headerView}>
+        <View style = {header1.headerView}>
         <ModernHeader 
-          title="Review"
+          title= {route.params.details.username}
           titleStyle = {header.headerText}
           backgroundColor= {background}
           leftIconColor = {borderColor}
           leftIconOnPress={() => navigation.goBack()} 
-          rightDisable
+          rightIconComponent = {
+            <TouchableOpacity onPress = {getFeedByUser}>
+            {instagramUsername && instagramUsername != "" ? 
+                    <Image source = {require("../assets/instagram.png")} style = {{width : 22, height : 22}} />
+             : null }      
+            </TouchableOpacity>
+          }
           />
         </View>
         <View style = {postDetails.reviewImageContainer}>
@@ -394,6 +533,8 @@ const PostDetails = (props) => {
             userId = {route.params.details.user_id}
             details = {route.params.details}
             likeIndicator = {likeIndicator}
+            bookmarked = {bookmarked}
+            onClickBookmark = {()=>onClickBookmark()}
             engagementUserId = {userDetails.user_id}
             engagementUserName = {userDetails.username}
             onClickLike = {()=>onClickLike()}

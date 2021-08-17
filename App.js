@@ -3,10 +3,14 @@ import React from 'react'
 import {View,Text , TouchableOpacity} from 'react-native'
 import axios from 'axios'
 import {URL , AuthProvider , firebaseConfig, LoadingPage} from './Screens/exports'
-import Navigator from './Screens/Navigator'
+import { MenuProvider } from 'react-native-popup-menu';
+import * as Linking from 'expo-linking';
+
 import * as firebase from "firebase";
 import * as Sentry from 'sentry-expo';
 import * as Amplitude from 'expo-analytics-amplitude';
+import Navigator from './Screens/Navigator'
+import Login from './Screens/Login'
 // import * as Font from 'expo-font';
 // import { AppLoading } from 'expo';
 // import { useFonts } from 'expo-font';
@@ -45,16 +49,34 @@ const Loader = () => (
     </View>
   );
 
+const prefix = Linking.createURL('/')
+
+const config = {
+  screens: {
+    HomeDrawer: {
+      screens: {
+        PostLink: 'post',
+      },
+    }
+  }
+}
+
+
 
 const App = () => {
 
-  
+    const linking = {
+      prefixes: [prefix], 
+      config
+    }
+
     const [isLoading,setLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
     const [responseData,setResponseData] = React.useState({})
     const [error,setError] = React.useState(false)
     const [secs,setSecs] = React.useState(0)
     const [refresh,setRefresh] = React.useState(false)
+    const [loadingTimeWait,setLoadingTimeWait] = React.useState(false)
 
     const [userId,setUserId] = React.useState("")
     const [userDetails,setUserDetails] = React.useState({})
@@ -89,6 +111,7 @@ const App = () => {
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
             //  console.log("fireabase",user)
+              
               setLoggedIn(true)
               setUserId(user.phoneNumber)
               Amplitude.setUserIdAsync(user.phoneNumber)
@@ -96,15 +119,23 @@ const App = () => {
             //  console.log('App User!' , user.phoneNumber);
 
               axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
-                .then(res => res.data).then(function(responseData) {
-              //    console.log("APP PAGE USER DETAILS", responseData)
+                .then(res => res.data)
+                .then(function(responseData) {
+                  setLoadingTimeWait(true)
                   setUserDetails(responseData[0])
                 })
                 .catch(function(error) {
-                  //
+                  console.log(error)
+                  setLoadingTimeWait(true)
                 });
             }  
-          })
+            else {
+              setLoadingTimeWait(true)
+            }
+          
+          }
+          
+          )
           setLoading(false)
         }
        
@@ -124,13 +155,20 @@ const App = () => {
     return (
       <View style = {{flex : 1}}>
       {isLoading ? <LoadingPage /> : 
-
+      loadingTimeWait ?
       (
-      <AuthProvider value = {[userId , userDetails, isLoggedIn]}>
-       <NavigationContainer>
-           <Navigator />
-       </NavigationContainer>
-      </AuthProvider>)
+        <MenuProvider>
+          <AuthProvider value = {[userId , userDetails, isLoggedIn]}>
+            <NavigationContainer linking={linking} fallback={<LoadingPage />}>
+                <Navigator />
+            </NavigationContainer>
+          </AuthProvider>
+      </MenuProvider>
+      ) : (
+        <View style = {{flex:1 , justifyContent : 'center', alignItems : 'center'}}>
+            <LoadingPage />
+        </View>
+      )
       
       }
     </View>

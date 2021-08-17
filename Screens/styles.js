@@ -12,33 +12,43 @@ const TAB_SLIDER_COLOR = "#C51E3A"
 
 export const header1 = StyleSheet.create({
     headerView : {
+        marginTop: 20,
         height : HEADER_HEIGHT,
-        paddingBottom : 10 ,
         justifyContent : 'center',
-        alignItems : 'center'
+        alignItems : 'center',
+        backgroundColor : background,
+        flexDirection : 'row',
+        
     },
     headerText : {
+        flex : 1 , 
         fontWeight : 'bold',
         fontSize: HEADER_FONT , 
         fontFamily : 'Roboto',
         color : theme,
-        padding : 10
+        alignSelf : 'center',
+        justifyContent : 'flex-start',
+        marginLeft : 60,
+        
     },
 })
 
 export const header = StyleSheet.create({
     headerView : {
+        marginTop: 20,
         height : HEADER_HEIGHT,
-        padding : 10 ,
+        flexDirection : 'row',
         justifyContent : 'center',
-        alignItems : 'center'
+        alignItems : 'center',
+        backgroundColor : background
     },
     headerText :{
         fontWeight : 'bold',
         fontSize: HEADER_FONT , 
         fontFamily : 'Roboto',
         color : borderColor,
-        padding : 10
+        justifyContent : 'center',
+       
     }
 })
 
@@ -47,6 +57,27 @@ export const home = StyleSheet.create({
         flex : 1 , 
         backgroundColor : background
     },
+    //ACTIVITY AND MODAL
+    modalContainer : {
+      flex : 1
+    },
+    modalView : {
+        flex: 1 , 
+        backgroundColor : background, 
+        width : width , 
+        height : height ,
+    },
+    modalHeading : {
+        fontSize : 18 , 
+        fontFamily : 'Roboto',
+        fontWeight : 'bold' 
+    },
+    modalText : { 
+        color : borderColor , 
+    },
+    
+
+
     //userDetails
     userDetailsContainer : {
 
@@ -71,7 +102,6 @@ export const home = StyleSheet.create({
         borderBottomColor : "#DDD",
         borderBottomWidth : 1,
         fontSize : 20,
-        letterSpacing : 2,
         fontFamily : 'Roboto',
     },
     userDetailsElementContainer : {
@@ -174,7 +204,7 @@ export const home = StyleSheet.create({
     },
     //ScrollableMainView
     mainViewScrollableContentContainer : {
-        justifyContent : 'center',
+        
         alignItems : 'center',
         marginBottom : TAB_BAR_HEIGHT,
     },
@@ -185,22 +215,26 @@ export const home = StyleSheet.create({
         backgroundColor : background,
         flex : 1,
         width : width,
-        height : width * 0.8,
+        height : Dimensions.get('screen').height*0.25,
     },
     mainViewHeroBannerImage : {
         width : width,
         height : width * 0.8,
     },
+    //CAROUSEL
     mainViewCarouselContainer : {
-        width,
-        margin : 10 , 
+        margin : 5,
         flex : 1,
+       // borderWidth : 2, 
+        //borderColor : "#AAA",
+       // borderRadius : 5, 
+    
     },
     mainViewCarouselTitle : {
         fontWeight : 'bold',
-        fontSize : 20,
-        margin : 10,
-        marginLeft : 20,
+        fontSize : 15,
+        color : theme,
+        marginLeft : 10,
         fontFamily : 'Roboto',
     },
     mainViewCarouselChild : {
@@ -211,16 +245,19 @@ export const home = StyleSheet.create({
     },
     mainViewCarouselScrollableItemContainer : {
         flex: 1,
-        height : 100,
-        width : 100,
         justifyContent : 'center',
         alignItems :'center',
         borderRadius : 10,
         marginLeft : 10, 
         marginTop : 5,
+        marginBottom : 10,
         backgroundColor : '#666',
-        opacity : 0.8,
-        position : 'relative'
+        // position : 'relative',
+        opacity : 1, 
+        height : 125 , 
+        width : 100, 
+        backgroundColor : background, 
+        elevation : 1, 
     },
     mainViewCarouselScrollableItemButton : {
 
@@ -256,11 +293,11 @@ export const user = StyleSheet.create({
     },
     //mainView
     mainViewContentContainer : {
-        marginBottom : TAB_BAR_HEIGHT
+        marginBottom : 5
     },
     mainViewContainer : {
         flex: 1,
-        marginBottom : TAB_BAR_HEIGHT
+        marginBottom : 5
     },
     //main view cover picture
     mainViewCoverContainer : {
@@ -415,6 +452,32 @@ export const user = StyleSheet.create({
         marginLeft : 5,
         marginRight : 5,
     },
+    updateReviewView : {
+        position : 'absolute',
+        top : 0,
+        right : 0,
+        backgroundColor : 'transparent',
+        marginTop : 4 ,
+        marginRight : 4,
+        // marginBottom : 5,
+        borderRadius : 5,
+        padding : 5,
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderWidth : 1,
+        borderColor : "#999",
+        shadowColor : "#aaa",
+        justifyContent : 'center',
+        alignItems : 'center'
+    },
+    updateReviewText : {
+        fontWeight : 'bold',
+        fontFamily : 'Roboto',
+        shadowOpacity : 2,
+        color : theme,
+    },
+
+
     // Edit User Details
     editUserDetailsDisplayContainer : {
         position : 'absolute',
@@ -511,7 +574,7 @@ export const login = StyleSheet.create({
         fontFamily : 'Roboto',
         padding : 10 , 
         textAlign : 'center',
-        letterSpacing : 5,
+        letterSpacing : 1,
     },
     loginViewFooterContainer : {
         backgroundColor : theme , 
@@ -654,8 +717,8 @@ export const pins = StyleSheet.create({
         fontWeight : 'bold',
         fontFamily : 'Roboto',
         fontSize : 20,
-        marginLeft : 20,
-        margin : 10,
+        margin : 5,
+        marginLeft : 10,
     },
     mainViewSubContainerEmptyView : {
 
@@ -670,29 +733,40 @@ export const pins = StyleSheet.create({
         alignItems : 'center',
         width : width * 0.45,
         height : width * 0.45,    
+        borderRadius : 10
     },
     mainViewSubContainerItemImageBackground : {
         flex: 1,
         width : width * 0.45,
         height : width * 0.45,
-        borderColor : "black",
+        borderColor : "#BBB",
         borderWidth : 1,
         resizeMode: "cover",
         justifyContent: "center",
         borderRadius : 10,
-        opacity : 0.4,
-        backgroundColor : 'black',
+        backgroundColor : background,
+       
     },
     mainViewSubContainerItemTextView : {
-        ...StyleSheet.absoluteFillObject,
+        position : 'absolute',
+        bottom : 0,
+        height : 28,
+        backgroundColor : '#666',
+        width : '100%',
+        borderBottomWidth : 1,
+        borderTopWidth : 0,
+        borderRadius : 5, 
+        borderColor : "#BBB",
+        justifyContent: 'center',
+        alignItems : 'center'
     },
     mainViewSubContainerItemText : {
         color: "white",
-        fontSize: 18,
+        fontSize: 15,
         fontFamily : 'Roboto',
         fontWeight: "200",
         textAlign: "center",
-        marginTop : width * 0.05    
+           
     },
 
     
@@ -702,36 +776,44 @@ export const pins = StyleSheet.create({
 
 export const feed = StyleSheet.create({
     container : {
-
+        backgroundColor : background,
+        flex : 1
     },
     // Main Container
     mainContainer : {
-        marginBottom : HEADER_HEIGHT + TAB_BAR_HEIGHT
-    },
+        width ,
+        height : height - 180
+        },
     scrollableFeedContainer : {
-        marginBottom : 10
+        marginBottom : 2,
+        marginLeft : 3,
+        marginRight : 3,
+        marginTop : 2,
     },
     scrollableFeedItemContainer : {
         marginBottom: 5,
-        width,
+      //  width,
         height : width * 1.2
     },
     scrollableFeedItemUserNameHeaderView : {
         position:'absolute',
-        width : width,
+        width : width*0.965,
         top:0,
-        backgroundColor : 'rgba(52, 52, 52, 0.5)',
+      //  backgroundColor : 'rgba(52, 52, 52, 0.5)',
+        backgroundColor : "#666",
         zIndex : 102,
         height : 38,
+        borderRadius : 5 ,
     },
 
     scrollableFeedItemUserName : {
         position:'absolute',
         top:0,
         color : 'white',
-        marginTop: 10,
-        marginLeft: 15,
-        fontSize:20,
+        marginTop: 6,
+        
+        marginLeft: 40,
+        fontSize:18,
         fontFamily : 'Roboto',
         zIndex: 100
     },
@@ -750,15 +832,15 @@ export const feed = StyleSheet.create({
         backgroundColor : 'transparent' , 
         position:'absolute', 
         top: 20, 
-        right : 0 ,
-        marginTop: 15, 
+        right : 10 ,
+        marginTop: 25, 
         marginRight: 10, 
         borderRadius : 10,
         zIndex: 100
     },
     scrollableFeedItemProductView : {
         position:'absolute',
-        width : width ,
+        width : width * 0.965 ,
         bottom:0,
         backgroundColor : 'rgba(52, 52, 52, 0.5)',
         zIndex : 102,
@@ -770,7 +852,7 @@ export const feed = StyleSheet.create({
         marginLeft: 10,
         marginRight : 10,
         color : 'white',
-        fontSize:18,
+        fontSize:16,
         fontFamily : 'Roboto',
         fontWeight:'bold'
     },
@@ -809,9 +891,11 @@ export const postDetails = StyleSheet.create({
         backgroundColor:'black'
     },
     reviewImageContainerScrollableMasterContentContainer : {},
-    reviewImageContainerScrollableMasterContainer : {},
+    reviewImageContainerScrollableMasterContainer : {
+        marginTop: 5,
+    },
     reviewImageContainerScrollableContainer : {
-        marginTop: 0,
+        marginTop: 5,
         width,
         height : width * 1.35,
     },
@@ -913,13 +997,19 @@ export const postDetails = StyleSheet.create({
         fontWeight:'bold',
         color:'#fff',
     },
+
+    reviewText : {
+        letterSpacing : 0.1,
+        lineHeight : 19,
+        color : "#444"
+    },
     //Comments View
         reviewImageContainerCommentContainer : {
         position:'absolute',
         top:0,
         color : 'rgba(255,255,255,0.2)',
-        marginTop: 190,
-        marginLeft: width - 48,
+        marginTop: 310,
+        marginLeft: width - 45,
         fontSize:20,
         fontFamily : 'Roboto',
         zIndex: 100
@@ -929,7 +1019,7 @@ export const postDetails = StyleSheet.create({
     reviewImageContainerCommentTextView : {
         position:'absolute',
         top:0,
-        marginTop: 212,
+        marginTop: 312,
         marginLeft: width - 42,
     },
     reviewImageContainerCommentTextValue : {
@@ -938,6 +1028,52 @@ export const postDetails = StyleSheet.create({
         fontWeight:'bold',
         color: background,
     },
+    //Share View
+    reviewImageContainerShareContainer : {
+        position:'absolute',
+        top:0,
+        color : 'rgba(255,255,255,0.2)',
+        marginTop: 250,
+        marginLeft: width - 45,
+        fontSize:20,
+        fontFamily : 'Roboto',
+        zIndex: 100
+    },
+    reviewImageContainerShareImageButton : {},
+    reviewImageContainerShareImage : {},
+    reviewImageContainerShareTextView : {
+        position:'absolute',
+        top:0,
+        marginTop: 262,
+        marginLeft: width - 42,
+    },
+    reviewImageContainerShareTextValue : {
+        fontSize:20,
+        fontFamily : 'Roboto',
+        fontWeight:'bold',
+        color: background,
+    },
+    //Bookmark View
+    reviewImageContainerBookmarkContainer : {
+        position:'absolute',
+        top:0,
+        color : 'rgba(255,255,255,0.2)',
+        marginTop: 190,
+        marginLeft: width - 45,
+        fontSize:20,
+        fontFamily : 'Roboto',
+        zIndex: 100,
+        height : 50,
+        width : 50,
+    },
+    reviewImageContainerBookmarkImageButton : {},
+    reviewImageContainerBookmarkImage : {
+      
+        width: 50,
+        height: 50,
+        backgroundColor: 'transparent',
+    },
+   
     //Review Tab Container 
     reviewTabContainer : {
         marginTop:-23,
@@ -1043,7 +1179,7 @@ export const postDetails = StyleSheet.create({
         flex : 1
     },
     reviewCommentContainerReadCommentTime : {
-
+        fontSize : 10,
     },
     reviewCommentContainerReadCommentUserComment : {
         marginTop : 10

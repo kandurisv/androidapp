@@ -304,7 +304,8 @@ export default function Login() {
       await firebase.auth().signInWithCredential(credential);
       navigation.navigate("Home" , {userId : phoneNumber, expoToken : expoToken , deviceToken : deviceToken})
     } catch (err) {
-      ToastAndroid.show("Error sigining in",ToastAndroid.SHORT )
+
+     // ToastAndroid.show("Error signing in",ToastAndroid.SHORT )
     }
   }
 

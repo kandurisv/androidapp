@@ -1,11 +1,14 @@
 import React from 'react'
-import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid, Platform , Share} from 'react-native'
+import { StatusBar } from 'expo-status-bar';
+import {Avatar} from 'react-native-paper';
+import Modal from 'react-native-modal';
+import { Text, View , FlatList , Dimensions, ImageBackground, TouchableOpacity, Animated, ScrollView, Alert, TextInput, ToastAndroid, Platform , Share, Image, Pressable} from 'react-native'
 import { useNavigation , useRoute } from '@react-navigation/native';
 import {ImageLoader} from 'react-native-image-fallback';
 import axios from 'axios';
-import {URL, LoadingPage,  background, theme, firebaseConfig, AuthContext} from './exports'
+import {URL, LoadingPage,  background, theme, firebaseConfig, AuthContext, borderColor} from './exports'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome, Fontisto, Ionicons } from '@expo/vector-icons';
 import RadioGroup from 'react-native-custom-radio-group';
 import { header1, home } from './styles';
 //import SpInAppUpdates, {NeedsUpdateResponse, IAUUpdateKind, StartUpdateOptions} from 'sp-react-native-in-app-updates';
@@ -19,7 +22,7 @@ import Constants from 'expo-constants';
 
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
-
+import { SliderBox } from "react-native-image-slider-box";
 
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -33,25 +36,6 @@ try {
 const {width, height} = Dimensions.get("window")
 const CAROUSEL_ITEM_SQUARE_SIZE = 100
 const CAROUSEL_ITEM_SPACING = 5
-
-
-
-// const inAppUpdates = new SpInAppUpdates(
-//     true
-//      // isDebug
-//   );
-
-const radioGroupList = [{
-    label: 'Male',
-    value: 'Male'
-  }, {
-    label: 'Female',
-    value: 'Female'
-  }, {
-    label: 'Others',
-    value: 'Others'
-  }];
-
 
   const Carousel = ({DATA , onClickItem , varValue}) => {
     const [data,setData] = React.useState([...DATA])
@@ -88,11 +72,11 @@ const radioGroupList = [{
         return(
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {home.mainViewCarouselScrollableItemButton} onPress = {() => {itemClick(item)}}>
-                    <ImageBackground source = {{uri : item.image}} 
+                    <ImageBackground source = {{uri : item.image ? item.image : "No Image"}} 
                         style = {home.mainViewCarouselScrollableItemImageBackground} blurRadius = {1}>
                     </ImageBackground>
                     <View style = {home.mainViewCarouselScrollableItemTextContainer}>
-                        <Text style={home.mainViewCarouselScrollableItemText}>{item.name.substring(0,75)} ...</Text>
+                        <Text style={home.mainViewCarouselScrollableItemText}>{item.name.length > 75 ? item.name.substring(0,75) + "..." : item.name} </Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -116,6 +100,74 @@ const radioGroupList = [{
     )
 }
 
+
+const UpdatedCarousel = ({DATA , onClickItem , varValue}) => {
+  const [data,setData] = React.useState([...DATA])
+  const scrollX = React.useRef(new Animated.Value(0)).current
+  const ITEM_SIZE = CAROUSEL_ITEM_SQUARE_SIZE + CAROUSEL_ITEM_SPACING 
+  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
+  
+  const renderItem = ({item , index}) => {
+      const itemClick = (item) => {
+          onClickItem(item.name , item.id, varValue)
+      }
+     
+      const inputRange = [
+          ITEM_SIZE*(index-3),
+          ITEM_SIZE*index,
+          ITEM_SIZE*(index+1),
+          ITEM_SIZE*(index+2),   
+      ]
+      const opacityInputRange = [
+          -1,
+          0,
+          ITEM_SIZE*index,
+          ITEM_SIZE*(index+1),   
+      ]
+      const scale = scrollX.interpolate({
+          inputRange,
+          outputRange : [1,1,0.5,0]
+      })
+      const opacity = scrollX.interpolate({
+          inputRange : opacityInputRange,
+          outputRange : [1,1,1,0]
+      })
+
+      return(
+          <Animated.View style={[home.mainViewCarouselScrollableItemContainer  , {transform : [{scale}]}]}>
+              <TouchableOpacity style = {home.mainViewCarouselScrollableItemButton} onPress = {() => {itemClick(item)}}>
+                  <View style = {{flex: 1  , width : 100, backgroundColor : background}}>
+                    <Image source = {{uri : item.image ? item.image : "No Image"}} 
+                        style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 5 , width : 80, height : 80 , marginLeft : 10} ]} />
+                  </View>
+                  <View style = {{backgroundColor : "#FFF" , height : 45 , borderRadius : 5, }}>
+                      <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.name.length > 30 ? item.name.substring(0,30) + "..." : item.name}</Text>
+                  </View>
+              </TouchableOpacity>
+          </Animated.View>
+      )
+  }
+
+  return (  
+          <Animated.FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          horizontal = {true}
+          style = {{width : Dimensions.get('screen').width*0.94}}
+          contentContainerStyle = {home.mainViewCarouselScrollableItem}
+          onScroll = {Animated.event(
+              [{nativeEvent :  {contentOffset : {x : scrollX}}}],
+              {useNativeDriver : true}
+          )}
+          snapToInterval = {ITEM_SIZE+5}
+          showsHorizontalScrollIndicator = {false}
+          />
+  )
+}
+
+
+
 const Home = () => {
 
     const [userId,userDetails, isLoggedIn] = React.useContext(AuthContext)
@@ -125,7 +177,7 @@ const Home = () => {
     const route = useRoute()
 
     const [response, setResponse] = React.useState([])
-    const [userResponse, setUserResponse] = React.useState([])
+    const [userResponse, setUserResponse] = React.useState({})
     const [homeLoading,setHomeLoading] = React.useState(true)
     const [infoLoading,setInfoLoading] = React.useState(true)
     const [timed,setTimed] = React.useState(false)
@@ -133,9 +185,10 @@ const Home = () => {
     const [secs,setSecs] = React.useState(0)
     const [refresh,setRefresh] = React.useState(false)
     const [result,setResult] = React.useState(false)
-    const [heroImage,setHeroImage] = React.useState("")
-    const [heroLink,setHeroLink] = React.useState("https://play.google.com/store/apps/details?id=com.candid.app")
-    const [heroLinkExists,setHeroLinkExists] = React.useState(false)
+   
+    const [heroImage,setHeroImage] = React.useState([])
+    const [heroLink,setHeroLink] = React.useState([])
+    const [heroLinkExists,setHeroLinkExists] = React.useState([])
 
     const [updateAvailable,setUpdateAvailable] = React.useState(false)
     const [updateApp, setUpdateApp] = React.useState(false)
@@ -155,7 +208,20 @@ const Home = () => {
     const [couponPoints,setCouponPoints] = React.useState(0)
     const [myCouponCode,setMyCouponCode] = React.useState(nanoid(5))
 
+    const [activityModal, setActivityModal] = React.useState(false)
+    const [activityCount, setActivityCount] = React.useState(0)
+
     const [heroSearchText,setHeroSearchText] = React.useState("")
+
+    const [brandCarousel,setBrandCarousel] = React.useState([])
+
+
+    const [sliderImages,setSliderImages] = React.useState([
+      "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/1.jpg",
+      "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/2.jpg",
+      "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/3.jpg",  
+    ])
+
   
     const goToProductFeed = (name, idValue, value) => {
         navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
@@ -250,7 +316,7 @@ const Home = () => {
                 const getData =  () => {
                     axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                     .then(res => res.data).then(async (responseData) => {
-                    //    console.log("HOME USER RESPONSE",responseData)
+                        console.log("HOME USER RESPONSE",responseData)
                         setUserResponse(responseData[0])
                         setInfoLoading(false)
                         if(responseData.length && responseData[0].username) {
@@ -268,11 +334,10 @@ const Home = () => {
                     });
                 axios.get(URL + "/home", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    
+                    console.log(responseData)
                     setResponse(responseData)
                     setHomeLoading(false)
                     setResult(true)
-                    
                 })
                 .catch(function(error) {
                     setInfoLoading(false)
@@ -282,10 +347,15 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                //    console.log(responseData)
                     setHeroImage(responseData[0].image)
                     setHeroLink(responseData[0].clickable_link)
                     setHeroLinkExists(responseData[0].clickable)
+                })
+                .catch(function(error) {   });
+                axios.get(URL + "/notifications/newcount",{params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout : 5000})
+                .then(res => res.data).then(function(responseData) {
+                    console.log(responseData)
+                    setActivityCount(responseData[0].new_notification_indicator)
                 })
                 .catch(function(error) {
                   
@@ -322,7 +392,8 @@ const Home = () => {
 
 
 const heroBannerClick = (link) => {
-    WebBrowser.openBrowserAsync(link);
+  console.log(link)
+  //  WebBrowser.openBrowserAsync(link);
   };
 
 
@@ -434,18 +505,105 @@ const submitUserDetails = () => {
 
 return (
     <View style = {home.container}>  
-        <View style = {header1.headerView}>
-            <ModernHeader 
-                title="Candid"
+        <StatusBar style="dark" />
+        <View style = {[header1.headerView,{backgroundColor : 'white'}]}>
+            {/* <ModernHeader 
+              
                 titleStyle = {header1.headerText}
-                backgroundColor= {background}
-                leftDisable
-                rightIconComponent = {
-                    <AntDesign name = "sharealt" size = {20} color = "black" />
+                title = {userResponse ? userResponse.username ? "Hola " + userResponse.username + "!" : "Hola!" : "Hola!"}
+                backgroundColor= {'white'}
+                height = {50}
+                leftIconComponent = {
+                  <View style = {{flex : 1 }}>
+                    <Image style={{height : 30 , width : 30}}
+                          source={require('../assets/NameLogoColorWhiteSolid.png')}
+                      />
+                  </View>
                 }
-                rightIconOnPress = {share}
-                />
+                rightIconComponent = {
+                  <View style = {{flexDirection : 'row'}}>
+                    <TouchableOpacity style = {{marginRight : 15}} onPress = {() => {
+                      //setActivityModal(!activityModal)
+                      setActivityCount(0)
+                      navigation.navigate("ActivityNotification")
+                    }}>
+                      { activityModal ?
+                      null : activityCount ?
+                      <View style = {{backgroundColor : 'orange' , borderRadius : 12 , position : 'absolute' , top : 0 , right : 0 , width : 12, height : 12 , justifyContent : 'center', alignItems : 'center' , zIndex : 101}}>
+                        <Text style = {{fontSize : 10 , color : 'black'}}>{activityCount}</Text>
+                      </View> : null
+                      }
+                      { activityModal ?
+                        <Entypo name = "bell" size = {20} color = {theme} /> :
+                        <FontAwesome name = "bell" size = {20} color = {theme} />
+                      }
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {{marginRight : 5}} onPress = {share}>
+                      <AntDesign name = "sharealt" size = {20} color = {theme} />
+                    </TouchableOpacity>
+                  </View>   
+                }
+                /> */}
+            <TouchableOpacity 
+              onPress = {()=>navigation.openDrawer()}
+              style = {{ justifyContent : 'center' , alignItems : 'center' , marginLeft : 10 , marginRight : 5 , borderColor : theme, borderWidth : 1, borderRadius : 30}}>
+                { userResponse  && userResponse.profile_image && userResponse.profile_image != "None" && userResponse.profile_image != "" ?
+                        <Image source = {{uri : userResponse.profile_image}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
+                        userResponse.length && userResponse.username ? 
+                                <Avatar.Image 
+                                source={{
+                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userResponse.username.replace(' ','+') + '&size=512&background=D7354A&color=fff&bold=true'
+                                }} size={30}/> :
+                                <Avatar.Image 
+                                source={{
+                                uri: 'https://ui-avatars.com/api/?rounded=true&size=512&background=D7354A&color=fff&bold=true'
+                                }} size={30}/>}
+                    </TouchableOpacity>
+            <View style = {{flex : 1 , justifyContent : 'center', alignItems : 'center', backgroundColor : 'white' , }}>
+              <Image style={{height : 40 , width : 40 }}
+                          source={require('../assets/LogoTransparentSolidColorLine.png')}
+              />          
+            </View>
+            <View>
+            <View style = {{flexDirection : 'row', marginRight : 15}}>
+                    <TouchableOpacity style = {{}} onPress = {() => {
+                      //setActivityModal(!activityModal)
+                      setActivityCount(0)
+                      navigation.navigate("ActivityNotification", {userId : userId.slice(1,13)})
+                    }}>
+                      { activityModal ?
+                      null : activityCount && activityCount > 0 ?
+                      <View style = {{backgroundColor : theme , borderRadius : 12 , position : 'absolute' , top : 0 , right : 0 , width : 14, height : 14 , justifyContent : 'center', alignItems : 'center' , zIndex : 101}}>
+                        <Text style = {{fontSize : 10 , color : 'white'}}>{activityCount}</Text>
+                      </View> : null
+                      }
+                      { activityModal ?
+                        <Entypo name = "bell" size = {24} color = {'#555'} /> :
+                        <FontAwesome name = "bell" size = {24} color = {'#555'} />
+                      }
+                    </TouchableOpacity>
+                  </View>   
+
+            </View>
+
         </View>
+
+        {/* <Modal 
+          isVisible={activityModal}
+          deviceWidth={Dimensions.get('screen').width}
+          deviceHeight={Dimensions.get('screen').height}
+          onBackdropPress={() => setActivityModal(false)}
+          onSwipeComplete={() => setActivityModal(false)}
+          swipeDirection="left"
+          style = {home.modalContainer}
+        >
+          <View style={home.modalView}>
+            <Text style = {home.modalHeading}>Review:</Text>
+            <Text style = {home.modalText}>This is test</Text>
+          </View>
+        </Modal> */}
+
+
 
         {(infoLoading || homeLoading) ? <LoadingPage /> : 
         !userDetailsAvailable ? (
@@ -502,38 +660,50 @@ return (
             contentContainerStyle = {home.mainViewScrollableContentContainer}
             style = {home.mainViewScrollableContainer}
             >
-              <View style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#111', padding : 5, margin : 5}}>
+              <View
+                style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#bbb', backgroundColor : '#EEE' ,
+                borderRadius : 2, padding : 5, margin : 5 , height : 50, justifyContent: 'center', 
+                alignItems:'center'}}>
                 <TextInput 
-                  style = {{flex : 1 , fontSize : 16}}
-                  placeholder = "Ask Questions, Search Products"
+                  style = {{flex : 1 , fontSize : 14}}
+                  placeholder = "Search categories, brands or products"
                   onChangeText = {(text)=>setHeroSearchText(text)}
                   value = {heroSearchText}
                 />
+                {/* <Text 
+                  style = {{flex : 1 , fontSize : 14 , paddingLeft : 10, color : "#888"}} >
+                    Search categories, brands or products
+                </Text> */}
                 <TouchableOpacity 
-                  style = {{borderColor : "#D7354A" , paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 , borderWidth : 1}}
+                  style = {{ paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 }}
                   onPress = {onSearchHero}
                 >
-                  <Text style = {{color : "#D7354A", marginLeft : 5, marginRight : 5}}> Search </Text>
+                  <Fontisto name = "search" size = {20} color = {theme} />
                 </TouchableOpacity>
               </View>
-              {heroImage ?
+              {heroImage.length > 0 ?
               <View style = {home.mainViewHeroBannerContainer}>
-                <TouchableOpacity onPress = {() => heroBannerClick(heroLink)} disabled = {!heroLinkExists}>
-                  <ImageLoader
-                        source={heroImage}
-                        fallback={require('../assets/hero.png')}
-                        style = {home.mainViewHeroBannerImage}
+                
+                  <SliderBox 
+                    images={heroImage} 
+                    onCurrentImagePressed =  {index => heroBannerClick(heroLink[index]) }
+                    sliderBoxHeight= {Dimensions.get('screen').height*0.25}
+                    dotColor="#DDDDDD"
+                    inactiveDotColor="#EEEEEE"
+                    circleLoop
+                    autoPlay
                   />
-                </TouchableOpacity>
+                
               </View>
               : null }
+
         {response.length > 0 && response.map((item,index) =>{
             return (
-            <View key = {index} style = {home.mainViewCarouselContainer}>
-                <Text style = {home.mainViewCarouselTitle}>{item.header}</Text>
-                <View style = {home.mainViewCarouselChild}>
-                    <Carousel DATA = {item.data} onClickItem = {goToProductFeed} varValue = {item.var}/>
-                </View>
+            <View key = {index} style = {[home.mainViewCarouselContainer,{marginTop : 0, paddingRight : 10 , elevation:1 , shadowRadius : 2, shadowColor : theme  , backgroundColor : background  }]}>
+              <Text style = {[home.mainViewCarouselTitle,{marginTop : 5}]}>{item.header}</Text>
+              <View style = {home.mainViewCarouselChild}>
+                <UpdatedCarousel DATA = {item.data} onClickItem = {goToProductFeed} varValue = {item.var}/>
+              </View>
             </View> )
         })}
     </ScrollView> )

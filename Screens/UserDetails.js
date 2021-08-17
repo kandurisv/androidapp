@@ -1,22 +1,29 @@
 
 import React,{useEffect} from 'react'
-import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions, Image} from 'react-native'
+import { View , ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, Dimensions, Image, Alert} from 'react-native'
 import {Avatar,Text} from 'react-native-paper';
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
-import {URL, LoadingPage, ErrorPage,  background,  borderColor, AuthContext} from './exports'
+import {URL, LoadingPage, ErrorPage,  background,  borderColor, AuthContext, theme} from './exports'
 import {ImageLoader} from 'react-native-image-fallback';
 import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 const {width,height} = Dimensions.get('screen')
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //import * as Clipboard from 'expo-clipboard';
 //import Clipboard from '@react-native-community/clipboard';
 //import { useClipboard } from '@react-native-community/clipboard';
 
+import {
+    Menu,
+    MenuOptions,
+    MenuOption,
+    MenuTrigger,
+  } from 'react-native-popup-menu';
+
 import * as Amplitude from 'expo-analytics-amplitude';
-import { header , user } from './styles';
+import { header , header1, user } from './styles';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -25,10 +32,12 @@ const UserDetails = () => {
     const navigation = useNavigation()
     const route = useRoute()
     const focus = useIsFocused()
+    
 
   //  const [data, setString] = useClipboard();
 
     const [userId,isLoggedIn] = React.useContext(AuthContext)
+    const [firstLoad,setFirstLoad] = React.useState(false)
 
     const [userDetails, setUserDetails] = React.useState([])
     const [userInfo,setUserInfo] = React.useState([])
@@ -52,11 +61,12 @@ const UserDetails = () => {
             const phoneNumber = await AsyncStorage.getItem("phoneNumber")
      //       console.log(phoneNumber)
             axios.get(URL + "/user/summary", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5})
-        .then(res => res.data).then(function(responseData) {
+            .then(res => res.data).then(function(responseData) {
       //      console.log("USER Summary " , responseData)
       //      console.log("REached to response")
       
             setUserDetails(responseData)
+            setFirstLoad(true)
             setLoading(false)
             setResult(true)
       //      console.log(responseData)
@@ -115,7 +125,7 @@ const UserDetails = () => {
       fetchPinsPost()
 
         
-    },[result, focus]);
+    },[result, focus , refresh]);
     
     // const onReviewsClick = () => {
     //     setEnableFeed(true)
@@ -155,24 +165,60 @@ const UserDetails = () => {
         navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
     }
 
+    const deletePost = ({review_sum_id}) => {
+        Alert.alert(
+            "Delete Review !!",
+            "Do you want to delete this review permanently ?",
+            [
+                {
+                    text: "No",
+                    onPress: () => ToastAndroid.show("You can edit the post instead", ToastAndroid.SHORT),
+                    style: "cancel"
+                },
+                { 
+                    text: "OK", 
+                    onPress: () => {
+                        axios.get(URL + "/post/delete", {params:{review_sum_id : review_sum_id }} , {timeout:5000})
+                        .then(res => {
+                            if(res == null) {
+                                ToastAndroid.show("Review delete succesfully !!", ToastAndroid.SHORT)
+                            }
+                            setRefresh((!refresh))
+                        })
+                        .catch(function(error) {
+                            ToastAndroid.show("Error deleting review. Please try later", ToastAndroid.SHORT)
+                        });
+                    }
+                }
+            ]
+        );
+    }
+
+    const editPost = ({item}) => {
+        navigation.navigate("UpdatePost", {item : item})
+    }
+
     return (   
         error ? (<ErrorPage />) :
         loading ? (<LoadingPage />) :
         (
             <View style = {user.container}>
-                <View style = {header.headerView}>
+                <View style = {header1.headerView}>
                     <ModernHeader 
-                        title="Details"
-                        titleStyle = {header.headerText}
-                        backgroundColor= {background}
+                        title="User"
+                        titleStyle = {header1.headerText}
+                        backgroundColor= {'white'}
+                        height = {50}
                         leftIconColor = {borderColor}
                         leftIconOnPress={() => navigation.goBack()}
-                        rightIconComponent = {<AntDesign name = "logout" size = {20} color = "black"/>}
-                        rightIconOnPress = {()=> {
-                            Amplitude.logEventAsync('SIGNOUT_FROM_USER')
-                            navigation.navigate("Signout")
-                            }
+                        leftIconComponent = {
+                            <View>
+                                <Image style={{height : 30 , width : 30}}
+                                    source={require('../assets/LogoTransparentSolidColorLine.png')}
+                                />
+                            </View>
                         }
+                        rightDisable
                         />
                 </View>   
                 <ScrollView 
@@ -248,15 +294,31 @@ const UserDetails = () => {
                             })
 
                             return(
-                                <TouchableOpacity 
-                                    style = {user.myPostedReviewsItemContainer}
-                                    onPress = {()=>onMyReviewClick(item,review,context)}    
-                                >
-                                    <ImageBackground source = {{uri : item.image_list[0]}} style = {user.myPostedReviewsItemImageBackground} blurRadius = {2}></ImageBackground>
-                                        <View style = {user.myPostedReviewsItemTextView}>
-                                            <Text style={user.myPostedReviewsItemText}>{item.product_name}</Text>
-                                        </View>
-                                </TouchableOpacity>)}
+                                <View>
+                                    <TouchableOpacity 
+                                        style = {user.myPostedReviewsItemContainer}
+                                        onPress = {()=>onMyReviewClick(item,review,context)}    
+                                    >
+                                        <ImageBackground source = {{uri : item.image_list[0] ? item.image_list[0] : "No Image" }} style = {user.myPostedReviewsItemImageBackground} blurRadius = {2}></ImageBackground>
+                                            <View style = {user.myPostedReviewsItemTextView}>
+                                                <Text style={user.myPostedReviewsItemText}>{item.product_name}</Text>
+                                            </View>
+                                    </TouchableOpacity>
+                                    <Menu style = {user.updateReviewView}>
+                                        <MenuTrigger>
+                                            <Entypo name = "dots-three-vertical" size = {20} color = 'white'/>
+                                        </MenuTrigger>
+                                        <MenuOptions style = {{}}>
+                                            <MenuOption onSelect = {()=>editPost(item)}>
+                                                <Text>Edit</Text>
+                                            </MenuOption>
+                                            <MenuOption onSelect = {()=>deletePost(item.review_sum_id)}>
+                                                <Text>Delete</Text>
+                                            </MenuOption>
+                                        </MenuOptions>
+                                    </Menu>
+                                </View>
+                                )}
                             }
                         />}
                     </View>

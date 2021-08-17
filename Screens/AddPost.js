@@ -15,6 +15,7 @@ import { nanoid , customAlphabet  } from 'nanoid'
 
 import * as Amplitude from 'expo-analytics-amplitude';
 import { addPost, header, header1 } from "./styles";
+import { MediaTypeOptions } from "expo-image-picker";
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width,height} = Dimensions.get("screen")
@@ -91,6 +92,7 @@ const ImageBrowserScreen = ({ onComplete  , closeScreen }) => {
         callback={imagesCallback}
         renderSelectedComponent={renderSelectedComponent}
         emptyStayComponent={emptyStayComponent}
+        MediaType = {["photo","video"]} 
       />
     </ScrollView>
     </View>
@@ -166,6 +168,8 @@ const AddPost = () => {
   const [existingCategoryInfo,setExistingCategoryInfo] = React.useState([])
   const [existingUser,setExistingUser] = React.useState(false)
   const [daysUsed,setDaysUsed] = React.useState(1)
+  const [submitClicked,setSubmitClicked] = React.useState(false)
+
   
   const [productId,setProductId] = React.useState('')
   const [categoryId,setCategoryId] = React.useState('')
@@ -300,20 +304,6 @@ const AddPost = () => {
   
   },[productSelected,productId,isFocused, categoryId , categoryAnsExists ])
   
-  const onChangeDay = (text) => {
-    let newText = '';
-    let numbers = '0123456789';
-
-    for (var i=0; i < text.length; i++) {
-        if(numbers.indexOf(text[i]) > -1 ) {
-            newText = newText + text[i];
-        }
-        else {
-            ToastAndroid.show("Please enter numbers only",ToastAndroid.SHORT);
-        }
-    }
-    //setDayValue(newText)
-  }
 
   const refresh = () => {
     setImageURLArray([])
@@ -344,7 +334,7 @@ const AddPost = () => {
     setClaim("")
     setBrand("")
     setBrandId("")
-    
+    setSubmitClicked(false)
   }
 
 
@@ -356,6 +346,7 @@ const AddPost = () => {
       ToastAndroid.show("Please answer the contextual questions !! " , ToastAndroid.SHORT)
     }
     else {
+      setSubmitClicked(true)
     Amplitude.logEventWithPropertiesAsync('POST_SUBMIT',{"userId" : userId , "productId" : productId })
   //  console.log("Review Submit")
     const array = []
@@ -401,7 +392,7 @@ const AddPost = () => {
         refresh()
         setTimeout(function(){
           navigation.navigate("Home")
-        }, 500);
+        }, 300);
        
   }).catch((e) => console.log(e))
   } 
@@ -593,11 +584,13 @@ const AddPost = () => {
 
 return(
 <View style = {addPost.container}>
-    <View style = {header.headerView}>
-        <ModernHeader title="Add Review" titleStyle = {header.headerText}
-          backgroundColor= {background} leftIconColor = {borderColor}
+    <View style = {header1.headerView}>
+        <ModernHeader title="Add Review" titleStyle = {header1.headerText}
+          backgroundColor= {'white'} leftIconColor = {borderColor} height = {50}
           leftDisable = {isOpen ? true : false}
+        
           leftIconOnPress={() => {productSelected ? setProductSelected(false): navigation.goBack()}}
+          
           rightDisable
           />
     </View>
@@ -735,7 +728,11 @@ return(
 								/>
 							</View>
 
-							<TouchableOpacity style = {addPost.mainViewSubmitReviewButton} onPress = {onSubmitReview}>
+							<TouchableOpacity style = {[addPost.mainViewSubmitReviewButton,{
+                backgroundColor : submitClicked ? `rgba(215, 53, 74, 0.5)` : theme
+              }]} 
+              disabled = {submitClicked}
+              onPress = {onSubmitReview}>
 							  <Text style = {addPost.mainViewSubmitReviewText}>Submit</Text>
 							</TouchableOpacity>
 						</View>) : null

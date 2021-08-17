@@ -4,10 +4,11 @@ const bucketname = "mish-fit-user-post-images"
 
 import axios from 'axios'
 import React,{useEffect , createContext} from 'react'
-import { View , Text, ScrollView, TouchableOpacity, ToastAndroid , ActivityIndicator, StyleSheet} from 'react-native'
+import { View , Text, ScrollView, Dimensions, TouchableOpacity, ToastAndroid , ActivityIndicator, StyleSheet, Animated, Easing} from 'react-native'
 import {S3} from 'aws-sdk'
 import {decode} from 'base64-arraybuffer'
 import * as fs from 'expo-file-system';
+import LottieView from 'lottie-react-native';
 
 export const AuthContext = createContext()
 export const UserContext = createContext()
@@ -27,8 +28,10 @@ export const s3bucket = new S3({
   signatureVersion: 'v4',
 });
 
-export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/prod";
-//export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/dev" ;
+//export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/prod";
+export const schema = 'com.candid.app/'
+export const URL = "https://5k8l5ao5b5.execute-api.ap-south-1.amazonaws.com/dev" ;
+//export const schema = 'exp://192.168.43.31:19000/'
      
 
 
@@ -55,37 +58,79 @@ export const uploadImageOnS3 = async (name,uri) => {
     });
 };
 
+export const width = Dimensions.get('screen').width
+export const height = Dimensions.get('screen').height
 
-
-export const ErrorPage = () => {
-
+export const ErrorPage = ({duration}) => {
+    const progress = React.useRef(new Animated.Value(0)).current
+    React.useEffect(()=>{
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: duration,
+            easing: Easing.linear,
+            useNativeDriver : true
+          },).start();
+    },[])
     return (
-        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
-            <Text>Network Error </Text>
+        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center', width : Dimensions.get('screen').width , height : Dimensions.get('screen').height }}>
+          <LottieView
+              ref={animation => animation}
+              progress = {progress}
+              style={{ width: 200, height: 200, backgroundColor: 'transparent',}}
+              source={require('../assets/animation/error.json')}
+          />
         </View>
     )
 }
 
-export const TimeoutPage = () => {
-
-    return (
-        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
-            <Text>404 Not found </Text>
-        </View>
-    )
+export const TimeoutPage = ({duration}) => {
+        const progress = React.useRef(new Animated.Value(0)).current
+        React.useEffect(()=>{
+            Animated.timing(progress, {
+                toValue: 1,
+                duration: duration,
+                easing: Easing.linear,
+                useNativeDriver : true
+              },).start();
+        },[])
+        return (
+            <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center', width : Dimensions.get('screen').width , height : Dimensions.get('screen').height }}>
+              <LottieView
+                  ref={animation => animation}
+                  progress = {progress}
+                  style={{ width: 200, height: 200, backgroundColor: 'transparent',}}
+                  source={require('../assets/animation/error.json')}
+              />
+            </View>
+        )
 }
 
-export const LoadingPage = () => {
-
-    return (
-        <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
-            <ActivityIndicator size="large" color="#888888" />
-        </View>
-    )
+export const LoadingPage = ({duration}) => {
+    const progress = React.useRef(new Animated.Value(0)).current
+        React.useEffect(()=>{
+            Animated.loop(
+                Animated.timing(progress, {
+                    toValue: 1,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver : true
+                  },)
+            ).start();
+        },[])
+        return (
+            <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center', width : Dimensions.get('screen').width , height : Dimensions.get('screen').height }}>
+              <LottieView
+                  ref={animation => animation}
+                  progress = {progress}
+                  style={{ width: 200, height: 200, backgroundColor: 'transparent',}}
+                  source={require('../assets/animation/loading.json')}
+              />
+            </View>
+        )
 }
 
 
-export const background = "#FFFFFF"
+export const background = "#fafbf5"
 export const theme = "#D7354A"
 export const borderColor = "#222222"
 
@@ -106,4 +151,6 @@ export const headerStyle = StyleSheet.create({
     },
     headerText1 :{fontWeight : 'bold',fontSize: 18 , color : borderColor}
 })
+
+
 

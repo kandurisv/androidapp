@@ -1,14 +1,19 @@
 import React, { useState , useEffect, useContext} from 'react'
-import { View, Text , ScrollView ,RefreshControl , ToastAndroid , FlatList, ActivityIndicator, StyleSheet, Image , Dimensions} from 'react-native'
+import { View, Text , ScrollView ,RefreshControl ,Animated, Easing, ToastAndroid ,  FlatList, ActivityIndicator, StyleSheet, Image , Dimensions} from 'react-native'
 import moment from 'moment';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import axios from 'axios'
-import {URL,  background, borderColor} from './exports'
+import {URL,  background, borderColor , theme, fitem, LoadingPage} from './exports'
 import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler'
 import { ModernHeader } from "@freakycoder/react-native-header-view";
+import {Avatar} from 'react-native-paper'
+import LottieView from 'lottie-react-native';
+// import Video from 'react-native-video';
 
 import * as Amplitude from 'expo-analytics-amplitude';
-import { feed, header } from './styles';
+import { feed, header, header1, postDetails } from './styles';
+import { Ionicons } from '@expo/vector-icons';
+
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("screen");
@@ -36,23 +41,37 @@ const FeedItem = ({item}) => {
 
     return(
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
-            <View style ={feed.scrollableFeedItemUserNameHeaderView}>
-            <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
-            <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>  
+            <View style ={[feed.scrollableFeedItemUserNameHeaderView,{borderRadius:5}]}>
+            {  item.profile_image && item.profile_image != "None" && item.profile_image != "" ?
+                        <Image source = {{uri : item.profile_image}} style = {{width : 28, height : 28 , borderRadius : 28 , marginTop : 5 , marginLeft : 5  }}/> :
+              <Avatar.Image
+                style = {{marginTop : 5 , marginLeft : 5 , }}
+                source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.username + '&size=64&background=D7354A&color=fff&bold=true'
+                            }} 
+                size={28}
+              /> }
+              <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
+              <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>  
             </View>
-            <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
+            <ScrollView 
+              // pagingEnabled 
+              horizontal 
+              showsHorizontalScrollIndicator = {false} 
+              contentContainerStyle = {{}}
+              snapToInterval = {width}
+            >
             {item.image_list.map((image , index) => (
               <View key = {index}>
-                <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image}}/>
+                <Image key = {index} style = {[feed.scrollableFeedItemHorizontalScrollImage,{borderRadius:5 , width : Dimensions.get('screen').width*0.965}]} source = {{uri: image ? image : "No Image"}}/>
                 <View style = {feed.scrollableFeedItemImagesCount}>
-                <Text style = {{fontSize:14, color : '#BBBBBB'}} >{index+1}/{item.image_list.length}</Text>
+                  <Text style = {{fontSize:14, color : theme}} >{index+1}/{item.image_list.length}</Text>
                 </View>
               </View>  
             ))} 
             </ScrollView>
-            <View style ={feed.scrollableFeedItemProductView}>
+            <View style ={[feed.scrollableFeedItemProductView,,{borderRadius:5}]}>
               <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
-              <Text style ={feed.scrollableFeedItemProductReview} > {review.substring(0,40)} ...</Text>
+              <Text style ={feed.scrollableFeedItemProductReview} > {review.length > 40 ? review.substring(0,40) + "..." : review} </Text>
             </View>
         </TouchableWithoutFeedback>
     );
@@ -63,6 +82,10 @@ const Feed = (props) => {
   const route = useRoute()
   const navigation = useNavigation()
 
+  const progress = React.useRef(new Animated.Value(0)).current
+
+  const [firstLoad,setFirstLoad] = React.useState(false)
+
   const [refreshing, setRefreshing] = useState(false);
   const [itemsForFeed,setItemsForFeed] = useState([])
   const [error, setError] = useState(false);
@@ -72,47 +95,60 @@ const Feed = (props) => {
   const [requestValue,setRequestValue] = useState(route ? route.params ? route.params.value ? route.params.value : null :null : null)
   const [requestId,setRequestId] = useState(route ? route.params ? route.params.id ? route.params.id : null :null : null)
  // const [parameter, setParameter] = useState(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
-  
-  // const fetchMoreItems = async() => {
-  //   axios.get(URL + "/post/feed", {
-  //     params: {
-  //       var : varValue,
-  //       value : requestValue
-  //     }
-  //   })
-  // .then(res => res.data)
-  // .then(function (responseData) {
-  //     setItemsForFeed([...itemsForFeed,...responseData])
-  //     if(responseData.length > 0) {
-  //       setPageNumber(pageNumber + 1)
-  //     }
-  //     console.log("*****************LOAD MORE***************")
-  //     console.log(pageNumber)
-  //     setLoadingMore(false)})
-  // .catch(function (error) {
-  //   console.log(error);
-  //   setError(true);      
-  // });
-  // }
+  const [reachedEnd,setReachedEnd] = React.useState(false) 
 
-  // const loadMoreItems = () => {
-  //   console.log(pageNumber)
-  //   setLoadingMore(true)
-  // //  fetchMoreItems()
-  // };
+
+  const fetchMoreItems = async() => {
+    axios.get(URL + "/post/feed", {
+      params: {
+        var : varValue,
+        value : requestValue,
+        page : pageNumber
+      }
+    })
+  .then(res => res.data)
+  .then(function (responseData) {
+      setItemsForFeed([...itemsForFeed,...responseData])
+      if(responseData.length > 0) {
+        setPageNumber(pageNumber + 1)
+      }
+      else {
+        setReachedEnd(true)
+      }
+      console.log("*****************LOAD MORE***************")
+      console.log(pageNumber)
+      setLoadingMore(false)})
+  .catch(function (error) {
+    console.log(error);
+    setError(true);      
+  });
+  }
+
+  const loadMoreItems = () => {
+    console.log(pageNumber)
+
+    if(!reachedEnd)
+    {
+      setLoadingMore(true)
+      fetchMoreItems()
+    }
+   
+  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    progress.setValue(0)
     axios.get(URL + "/post/feed", {
       params: {
          var : varValue,
-         value : requestId
+         value : requestId,
+         page : 0
        }
    })
   .then(res => res.data)
   .then(function (responseData) {
      Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-    //   console.log("response",responseData)
+       console.log("response",responseData)
     // console.log(responseData.length)
     setItemsForFeed(responseData)
     setRefreshing(false);
@@ -124,6 +160,12 @@ const Feed = (props) => {
   
 
   useEffect(() => {
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.linear,
+      useNativeDriver : true
+    },).start();
   //  console.log("feed ", "VarValue:" ,varValue, "requestId:" , requestId , "requestValue:" , requestValue )
     setVarValue(route ? route.params ? route.params.varValue ? route.params.varValue : "time" : "time" : "time")
     setRequestValue(route ? route.params ? route.params.value ? route.params.value : null : null : null)
@@ -136,15 +178,17 @@ const Feed = (props) => {
     axios.get(URL + "/post/feed", {
          params: {
             var : varValue,
-            value : requestId
+            value : requestId ,
+            page : 0
           }
       })
     .then(res => res.data)
     .then(function (responseData) {
         Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-        //   console.log("Response", responseData)
+         console.log("Response", responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
+        setFirstLoad(true)
         })
     .catch(function (error) {
       setError(true);   
@@ -158,36 +202,73 @@ const Feed = (props) => {
             <FeedItem key = {index} item = {item}/> 
           </View> : null
         )
+
+  const refreshPage = () => {
+    onRefresh()
+    
+    
+        
+      }
+
+    const Loader = () => (
+        <View style={{ minHeight: 230, padding: 20 }}>
+          <ActivityIndicator
+            color="#000"
+            size="large"
+            style={{ alignSelf: "center" }}
+          />
+        </View>
+      );
  
   return (
     <View style = {feed.container}>
-     <View style = {header.headerView}>
+      <View style = {header1.headerView}>
             <ModernHeader 
                 title="Feed"
-                titleStyle = {header.headerText}
-                backgroundColor= {background}
+                height = {50}
+                titleStyle = {header1.headerText}
+                backgroundColor= {'white'}
                 leftIconColor = {borderColor}
-                leftIconOnPress={() => navigation.goBack()}
+                leftIconOnPress={() => navigation.popToTop()}
+                leftIconComponent = {
+                  <View>
+                    <Image style={{height : 30 , width : 30}}
+                          source={require('../assets/LogoTransparentSolidColorLine.png')}
+                      />
+                  </View>
+                }
                 rightDisable
                 />
       </View>
       <View style = {feed.mainContainer}>
         {error ? 
         <View><Text>Error while loading data 😢</Text></View> : 
+        firstLoad ? 
         <FlatList 
-        keyExtractor={item => item.item_id} 
+        keyExtractor={item => item.review_sum_id} 
         style = {feed.scrollableFeedContainer}
+        contentContainerStyle = {{}}
+        showsVerticalScrollIndicator={false}
         data = {itemsForFeed}            
         renderItem = {items}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    //    ListFooterComponent={loadingMore && <Loader />}
-    //    onEndReachedThreshold={0.01}
-    //    onEndReached={loadMoreItems}
+        ListFooterComponent={loadingMore && <Loader />}
+        onEndReachedThreshold={0.001}
+        onEndReached={loadMoreItems}
         // ListEmptyComponent = {<View style = {{alignItems : 'center' , justifyContent : 'center'}}>
         //   <Text style = {{fontSize : 20, fontStyle : 'italic'}}> Loading ... Please wait !</Text>
         //   </View>
         //   }
-        />
+        /> : 
+        <LoadingPage />
+        // <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center', backgroundColor : 'pink'}}>
+        //   <LottieView
+        //       ref={animation => animation}
+        //       progress = {progress}
+        //       style={{ width: 200, height: 200, backgroundColor: 'transparent',}}
+        //       source={require('../assets/animation/loading.json')}
+        //   />
+        // </View>
       }
       </View> 
     </View>

@@ -13,7 +13,7 @@ import {Picker} from '@react-native-picker/picker';
 import { useNavigation , useRoute } from '@react-navigation/native';
 import { AuthContext, background, borderColor, theme, uploadImageOnS3, URL , s3URL } from './exports';
 import { editUserDetails, home, user ,header } from './styles';
-import { AntDesign, EvilIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo, EvilIcons } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
@@ -153,7 +153,7 @@ const EditUserProfile = () => {
             "profile_image" : s3URL + user_id + "/profile"
           }
     
-        //  console.log(body)
+          console.log(body)
     
         axios({
           method: 'post',
@@ -195,7 +195,7 @@ const EditUserProfile = () => {
             "cover_image" : s3URL + user_id + "/cover"
           }
     
-        //  console.log(body)
+          console.log(body)
     
         axios({
           method: 'post',
@@ -250,6 +250,9 @@ const EditUserProfile = () => {
                 <ImageBackground source = {coverImage && coverImage != "None" ? {uri : coverImage} :require('../assets/defaultCover.png')} 
                         style = {user.mainViewCoverImage} >
                 </ImageBackground>
+                <View style = {{position: 'absolute' , backgroundColor : theme , padding : 5, borderRadius : 20 , bottom : 0 , right : 0 , margin : 10}}>
+                <Entypo name = "edit" size = {15} color = 'white' />
+                </View>
               </TouchableOpacity>
             </View>
             <View style = {user.editUserDetailsDisplayContainer}>
@@ -257,6 +260,9 @@ const EditUserProfile = () => {
                 <ImageBackground source = {image && image != "None"? {uri : image} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
                         style = {user.editUserDetailsDisplayImage} >
                 </ImageBackground>
+                <View style = {{position: 'absolute' , backgroundColor : theme , padding : 3, borderRadius : 20 , top : 0 , right : 0 , margin : 15 , zIndex : 150}}>
+                <Entypo name = "edit" size = {10} color = 'white' />
+                </View>
               </TouchableOpacity>
             </View>
             
