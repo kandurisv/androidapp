@@ -111,11 +111,12 @@ const UserDetails = () => {
       const fetchPinsPost = () => {
         axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-      //      console.log("A", responseData)
-            if(responseData.length) {
+           console.log("A", responseData)
+            if(responseData.length > 0) {
               setMyPostsEmpty(false)
+              setUserPosts(responseData)
             }
-            setUserPosts(responseData)
+            
             
         })
         .catch(function(error) {
@@ -165,7 +166,8 @@ const UserDetails = () => {
         navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
     }
 
-    const deletePost = ({review_sum_id}) => {
+    const deletePost = (review_sum_id) => {
+        console.log(review_sum_id)
         Alert.alert(
             "Delete Review !!",
             "Do you want to delete this review permanently ?",
@@ -183,6 +185,9 @@ const UserDetails = () => {
                             if(res == null) {
                                 ToastAndroid.show("Review delete succesfully !!", ToastAndroid.SHORT)
                             }
+                            else {
+                                console.log("RES",res)
+                            }
                             setRefresh((!refresh))
                         })
                         .catch(function(error) {
@@ -194,7 +199,8 @@ const UserDetails = () => {
         );
     }
 
-    const editPost = ({item}) => {
+    const editPost = (item) => {
+        console.log("Item", item)
         navigation.navigate("UpdatePost", {item : item})
     }
 
@@ -281,7 +287,7 @@ const UserDetails = () => {
                         <View style = {user.myPostedReviewsEmptyContainer}>
                             <Text style = {user.myPostedReviewsEmptyText}>Please start posting reviews</Text>
                         </View> :
-                        <FlatGrid itemDimension={width*0.45} data={userPosts} renderItem={({item}, i) => {
+                        <FlatGrid itemDimension={width*0.45} data={userPosts} renderItem={({item}, index) => {
                             var review = ""
                             item.content.map((reviewItem,index) => {
                                 if(reviewItem.length > 0) {

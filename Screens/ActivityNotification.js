@@ -46,6 +46,26 @@ const ActivityNotification = () => {
                 });
             }
         getNotifications()
+
+        const addNotificationVisit = () => {
+            const body = 
+            {
+                "user_id": userId.slice(1,13),
+            }
+            
+            axios({
+                method: 'post',
+                url: URL + '/notifications/lastvisit',
+                data: body
+              })
+            .then(res => {
+                console.log("I am happy")
+            }).catch((e) => console.log(e))
+           
+            }
+        
+            addNotificationVisit()
+
     },[focussed , refreshEvents])
 
     const onRefresh = () => {

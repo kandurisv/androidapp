@@ -103,6 +103,7 @@ const UpdatePost = () => {
 
   const navigation = useNavigation()
   const route = useRoute()
+  const {item} = route.params
   const isFocused = useIsFocused();
   const [userId] = React.useContext(AuthContext)
   
@@ -147,22 +148,21 @@ const UpdatePost = () => {
 
   
   React.useEffect(()=>{
-
     setIsOpen(false)
    // console.log(userId.slice(1,12))
     Amplitude.logEventWithPropertiesAsync('UPDATE_POST_VISIT',{"userId" : userId.slice(1,13) , "productId" : productId })
-    console.log("UPDATE POST ITEM " , route.params.item)  
-    setBrand(route.params.item.brand)
-    setBrandId(route.params.item.brand_id)
-    setCategoryAnswers(route.params.item.category_ans)
+    console.log("UPDATE POST ITEM " , item)  
+    setBrand(item.brand)
+    setBrandId(item.brand_id)
+    setCategoryAnswers(item.category_ans)
     setCategoryAnsExists(true)
-    setCategoryId(route.params.item.category_id)
-    setCategoryName(route.params.item.category_name)
-    setCategoryQuestions(route.params.item.category_ques)
-    setClaim(route.params.item.claim)
-    setUserName(route.params.item.username)
-    setProductId(route.params.item.product_id)
-    setProductName(route.params.item.product_name)
+    setCategoryId(item.category_id)
+    setCategoryName(item.category_name)
+    setCategoryQuestions(item.category_ques)
+    setClaim(item.claim)
+    setUserName(item.username)
+    setProductId(item.product_id)
+    setProductName(item.product_name)
     
 
 },[isFocused])
@@ -272,7 +272,7 @@ const UpdatePost = () => {
     var context = ""
     if(existingReview.length) {
       categoryQuestions.map((item,index)=>{
-      context = context + "\n" + item + " : " + route.params.item.category_ans[index]  
+      context = context + "\n" + item + " : " + categoryAnswers[index]  
       })
     }
       
@@ -308,9 +308,9 @@ const UpdatePost = () => {
     <View style = {addPost.mainViewReviewExistsContainer}>
       <Text style = {addPost.mainViewReviewExistsHeader}>Existing Review</Text>
 
-      {route.params.item.day_product_used_content.length ?
+      {route.params?.item.day_product_used_content.length ?
         <FlatList
-        data={route.params.item.day_product_used_content}
+        data={item.day_product_used_content}
         renderItem={renderModalButton}
         keyExtractor={item => item}
         horizontal = {true}
@@ -322,9 +322,9 @@ const UpdatePost = () => {
         <Text style = {addPost.mainViewReviewExistsContextHeader}>Profile Information:</Text>
         <Text style = {addPost.mainViewReviewExistsContextText}>{context}</Text>
       </View>
-      {route.params.item.image_list.length ?
+      {item.image_list.length ?
         <FlatList
-        data={route.params.item.image_list}
+        data={item.image_list}
         renderItem={renderItem}
         keyExtractor={item => item}
         horizontal = {true}
@@ -341,7 +341,7 @@ const UpdatePost = () => {
   const CategoryAnsSummary = () => {
     var context = ""
     categoryQuestions.map((item,index)=>{
-      context = context + "\n" + item + " : " + route.params.item.category_ans[index]  
+      context = context + "\n" + item + " : " + categoryAnswers[index]  
     })
    
     return(

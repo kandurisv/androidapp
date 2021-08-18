@@ -224,7 +224,7 @@ const Home = () => {
 
   
     const goToProductFeed = (name, idValue, value) => {
-        navigation.navigate("Feed", {varValue : value , id : idValue, value : name } )
+        navigation.navigate("FeedSearch", {varValue : value , id : idValue, value : name } )
     }
 
 

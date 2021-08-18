@@ -108,9 +108,10 @@ const Feed = (props) => {
     })
   .then(res => res.data)
   .then(function (responseData) {
-      setItemsForFeed([...itemsForFeed,...responseData])
+      console.log(responseData)
       if(responseData.length > 0) {
         setPageNumber(pageNumber + 1)
+        setItemsForFeed([...itemsForFeed,...responseData])
       }
       else {
         setReachedEnd(true)
@@ -194,7 +195,7 @@ const Feed = (props) => {
       setError(true);   
     //  console.log("Error" , error)   
     });
-  },[varValue,requestId,requestValue]);
+  },[route.params, varValue,requestId,requestValue]);
 
   const items = ({item,index}) => (
         (item.image_list && item.username) ?

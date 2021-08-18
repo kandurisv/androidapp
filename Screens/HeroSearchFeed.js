@@ -8,7 +8,7 @@ import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-h
 import { ModernHeader } from "@freakycoder/react-native-header-view";
 
 import * as Amplitude from 'expo-analytics-amplitude';
-import { feed, header } from './styles';
+import { feed, header, header1 } from './styles';
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
 const {width} = Dimensions.get("screen");
@@ -76,16 +76,17 @@ const HeroSearchFeed = (props) => {
   return (
     <View style = {feed.container}>
      <View style = {header.headerView}>
-            <ModernHeader 
-                title="Feed"
-                titleStyle = {header.headerText}
-                backgroundColor= {background}
-                leftIconColor = {borderColor}
-                leftIconOnPress={() => navigation.goBack()}
-                rightDisable
-                />
+        <ModernHeader 
+          title={"Feed"}
+          height = {50}
+          titleStyle = {[header1.headerText,{fontSize : 18}]}
+          backgroundColor= {'white'}
+          leftIconColor = {borderColor}
+          leftIconOnPress={() => navigation.goBack()}
+          rightDisable
+        />
       </View>
-      <View style = {feed.mainContainer}>
+      <View style = {[feed.mainContainer,{height : Dimensions.get('screen').height - 120}]}>
         {error ? 
         <View><Text>Error while loading data 😢</Text></View> : 
         <FlatList 
