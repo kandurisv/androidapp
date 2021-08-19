@@ -2,8 +2,8 @@ import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import React from 'react'
-import { FlatList, StyleSheet, Text, View , RefreshControl, TouchableOpacity, Image, Pressable} from 'react-native'
-import { AuthContext, background, theme , URL } from './exports'
+import { FlatList, StyleSheet, Text, View , RefreshControl, TouchableOpacity, Image, Pressable, ToastAndroid} from 'react-native'
+import { AuthContext, background, ErrorPage, LoadingPage, theme , URL } from './exports'
 import {Avatar} from 'react-native-paper';
 
 const ActivityNotification = () => {
@@ -13,36 +13,23 @@ const ActivityNotification = () => {
     const [notificationsData,setNotificationsData] = React.useState([])
     const [refreshing,setRefreshing] = React.useState(false)
     const [refreshEvents,setRefreshEvents] = React.useState(false)
+    const [loading,setLoading] = React.useState(false)
+    const [error,setError] = React.useState(false)
 
-    const DATA = [
-        {
-            id : "dfadfsafsa",
-            username : "bbbbbbbbb",
-            action : "like",
-            product : "yyyyyyyyyy",
-            userphoto : "https://mish-fit-user-post-images.s3.amazonaws.com/918420968131/profile",
-            new : true
-        },
-        {
-            id : "zzzzzzzzzzz",
-            username : "ffffffff",
-            action : "like",
-            product : "qqqqq",
-            userphoto : "https://mish-fit-user-post-images.s3.amazonaws.com/918420968131/profile",
-            new : false
-        },
-    ]
+
 
     React.useEffect(() => {
+        setLoading(true)
         console.log("Reached here")
         const getNotifications = () => {
             axios.get(URL + "/notifications/allnotifications",{params:{user_id : userId.slice(1,13) }} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
                     console.log("ALL NOTIFICATIONS",responseData)
+                    setLoading(false)
                     setNotificationsData(responseData)
                 })
                 .catch(function(error) {
-                  
+                    setError(true)
                 });
             }
         getNotifications()
@@ -94,6 +81,10 @@ const ActivityNotification = () => {
     }
 
 
+    const onClickNotification = (review_sum_id) => {
+        navigation.navigate("PostLink", {id : review_sum_id})
+    }
+
 
     const items = ({item,index}) => (
         item && item.engagement_user_name && item.product_name ?
@@ -106,11 +97,12 @@ const ActivityNotification = () => {
                         marginRight : 10, 
                         marginLeft : 0,
                     }}
+                    onPress = {()=>onClickNotification(item.review_sum_id)}
                 >
                     <View style = {{marginRight : 10}}>
                      { item  && item.engagement_profile_image && item.engagement_profile_image != "None" && item.engagement_profile_image != "" ?
                         <Image 
-                            source = {{uri: item.engagement_profile_image}} 
+                            source = {{uri: item.engagement_profile_image + "?" + new Date()}} 
                             style = {{width :30, height : 30 , borderRadius : 30  }} /> :
                         item.length && item.engagement_user_name ? 
                                 <Avatar.Image 
@@ -134,6 +126,7 @@ const ActivityNotification = () => {
 
 
     return (
+        
         <View style = {{flex : 1 , marginTop : 25 , backgroundColor : background }}>
             <View style = {{
                 backgroundColor : background, 
@@ -158,6 +151,7 @@ const ActivityNotification = () => {
                     <Entypo name = "bell" size = {24} color = {'#555'} />
                 </View>
             </View>
+            {error ? <ErrorPage /> : loading ? <LoadingPage /> :
             <FlatList 
                 keyExtractor={item => item.engagement_id.toString()} 
                 style = {{paddingRight : 5}}
@@ -166,7 +160,7 @@ const ActivityNotification = () => {
                 data = {notificationsData}            
                 renderItem = {items}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            />
+            />}
         </View>
     )
 }

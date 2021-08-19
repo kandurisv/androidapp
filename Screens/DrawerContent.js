@@ -66,7 +66,7 @@ export default function DrawerContent(props) {
                     <View style={styles.userInfoSection}>
                         <View style={{flexDirection:'row',marginTop: 15}}>
                             { userImage && userImage != "None" && userImage != "" ?
-                             <Image source = {{uri : userImage}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
+                             <Image source = {{uri : userImage + "?" + new Date()}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
                             userName ? 
                             <Avatar.Image 
                                 source={{

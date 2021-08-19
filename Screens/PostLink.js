@@ -299,6 +299,7 @@ const PostLink = () => {
     const [newAnswer,setNewAnswer] = useState(false)
     const [reviewLoading,setReviewLoading] = React.useState(true)
     const [userLoading,setUserLoading] = React.useState(true)
+    const [bookmarked, setBookmarked] = React.useState(false)
 
     const [id,setId] = React.useState(route.params.id ? route.params.id : "")
 

@@ -7,7 +7,7 @@ import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
-import {FontAwesome, MaterialIcons} from '@expo/vector-icons';
+import {AntDesign, FontAwesome, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -128,7 +128,7 @@ const Cover = (props) => {
     const onShareReview = async () => {
         try {
             const result = await Share.share({
-              message: 'Read my review on Candid App at ' + schema + "?id=" + props.details.review_sum_id,
+              message: 'Read my review on Candid App at ' + schema + "post?id=" + props.details.review_sum_id,
               url : props.imageList[0]
             });
             if (result.action === Share.sharedAction) {
@@ -226,7 +226,7 @@ const Cover = (props) => {
 
                 <TouchableOpacity onPress = {onBookmark}
                 style = {postDetails.reviewImageContainerBookmarkContainer}>
-                    { props.bookmarked ? 
+                    { bookmarked ? 
                     <FontAwesome name = "bookmark-o" size = {30} color = {theme} />:
                     <FontAwesome name = "bookmark-o" size = {30} color = {background} /> 
                     }
@@ -325,7 +325,6 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
                 keyExtractor = {(item,index) =>index.toString() }
                 renderItem = {renderItem}
             />
-
         </SafeAreaView>
     );
 };
@@ -412,12 +411,12 @@ const PostDetails = (props) => {
 
     const getInstaUser = () => {
         //   console.log("Username click")
-           axios.get(URL + "/user/instagram", {params:{user_id : userId.slice(1,13) }} , {timeout : 5000})
+           axios.get(URL + "/user/instagram", {params:{user_id : route.params.details.user_id }} , {timeout : 5000})
            .then(res => res.data)
            .then(async function(responseData) {
-           //    console.log(responseData)
+               console.log("INSTA USER ", responseData)
                if (responseData.length && responseData[0].instagram_username) {
-                   setInstagramUsername(result);
+                   setInstagramUsername(responseData[0].instagram_username);
                }
            })
            .catch(function(error) {
@@ -432,6 +431,7 @@ const PostDetails = (props) => {
         getData()
         getBookmark()
         getInstaUser()
+        console.log("user id ",route.params.details.user_id)
        
     },[renderAgain,isFocused, likeIndicator , bookmarked])
 
@@ -506,8 +506,8 @@ const PostDetails = (props) => {
 
   return (
       <ScrollView contentContainerStyle={postDetails.contentContainer}>
-        <View style = {header1.headerView}>
-        <ModernHeader 
+        <View style = {[header1.headerView, {height : 40 , backgroundColor: background , justifyContent : 'flex-start' , alignItems : 'center', marginLeft : 10}]}>
+        {/* <ModernHeader 
           title= {route.params.details.username}
           titleStyle = {header.headerText}
           backgroundColor= {background}
@@ -520,7 +520,20 @@ const PostDetails = (props) => {
              : null }      
             </TouchableOpacity>
           }
-          />
+          /> */}
+         
+          <View style = {{flexDirection : 'row'}}>
+                <TouchableOpacity style = {{}} onPress = {()=>navigation.goBack()}>
+                    <MaterialCommunityIcons name = "keyboard-backspace" size = {25} color = {"#222"} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress = {getFeedByUser}
+                    style = {{flex:1 , flexDirection : 'row',justifyContent : 'center' , alignItems : 'center' , marginRight : 20}}>
+                    <AntDesign name = "instagram" size = {20} color = {theme} />
+                    <Text style = {{marginLeft : 5, fontWeight : 'bold', fontSize : 16}}>{route.params.details.username}</Text>
+                </TouchableOpacity>
+            </View>
+        
         </View>
         <View style = {postDetails.reviewImageContainer}>
           <Cover 

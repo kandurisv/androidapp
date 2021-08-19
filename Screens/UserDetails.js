@@ -111,7 +111,7 @@ const UserDetails = () => {
       const fetchPinsPost = () => {
         axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-           console.log("A", responseData)
+           console.log("Fetch Posts in User", responseData)
             if(responseData.length > 0) {
               setMyPostsEmpty(false)
               setUserPosts(responseData)
@@ -163,7 +163,7 @@ const UserDetails = () => {
     }
 
     const onMyReviewClick = (item,review,context) => {
-        navigation.navigate("PostDetails", {details : item , reviewDetails : review , contextDetails : context})
+        navigation.navigate("UserPostDetails", {details : item , reviewDetails : review , contextDetails : context})
     }
 
     const deletePost = (review_sum_id) => {
@@ -200,7 +200,7 @@ const UserDetails = () => {
     }
 
     const editPost = (item) => {
-        console.log("Item", item)
+     //   console.log("Item", item)
         navigation.navigate("UpdatePost", {item : item})
     }
 
@@ -208,7 +208,7 @@ const UserDetails = () => {
         error ? (<ErrorPage />) :
         loading ? (<LoadingPage />) :
         (
-            <View style = {user.container}>
+            <View style = {[user.container,{marginBottom : 10}]}>
                 <View style = {header1.headerView}>
                     <ModernHeader 
                         title="User"
@@ -216,14 +216,14 @@ const UserDetails = () => {
                         backgroundColor= {'white'}
                         height = {50}
                         leftIconColor = {borderColor}
-                        leftIconOnPress={() => navigation.goBack()}
-                        leftIconComponent = {
-                            <View>
-                                <Image style={{height : 30 , width : 30}}
-                                    source={require('../assets/LogoTransparentSolidColorLine.png')}
-                                />
-                            </View>
-                        }
+                        leftIconOnPress={() => navigation.navigate("Home")}
+                        // leftIconComponent = {
+                        //     <View>
+                        //         <Image style={{height : 30 , width : 30}}
+                        //             source={require('../assets/LogoTransparentSolidColorLine.png')}
+                        //         />
+                        //     </View>
+                        // }
                         rightDisable
                         />
                 </View>   
@@ -233,7 +233,7 @@ const UserDetails = () => {
                     {userInfo.length && userInfo[0].cover_image ?
                     <View style = {user.mainViewCoverContainer}>
                      <ImageLoader 
-                        source = {userInfo[0].cover_image} 
+                        source = {userInfo[0].cover_image + "?" + new Date()} 
                         style = {{width : width, height : 180 }}
                         fallback = {require("../assets/defaultCover.png")}
                         />
@@ -241,7 +241,7 @@ const UserDetails = () => {
                     }
                     <View style = {user.mainViewDisplayContainer}>
                         {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
-                        <Image source = {{uri : userInfo[0].profile_image}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
+                        <Image source = {{uri : userInfo[0].profile_image + "?" + new Date()}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
                         userInfo.length && userInfo[0].username ? 
                                 <Avatar.Image 
                                 source={{

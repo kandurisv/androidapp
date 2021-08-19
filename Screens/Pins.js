@@ -160,7 +160,7 @@ export default function Pins() {
       </View>
       <ScrollView 
         contentContainerStyle = {user.mainViewContentContainer}
-        style = {user.mainViewContainer}
+        style = {[user.mainViewContainer,{marginBottom : 60}]}
         showsVerticalScrollIndicator = {false}
         refreshControl={
           <RefreshControl
@@ -205,7 +205,7 @@ export default function Pins() {
         <FlatGrid itemDimension={width*0.45} data={pinsProduct} renderItem={({item}, i) => (
           <TouchableOpacity 
             style = {pins.mainViewSubContainerItemContainer}
-            onPress = {() => onClickProduct(item.product_name) }
+           // onPress = {() => onClickProduct(item.product_name) }
           >
             <ImageBackground source = {{uri : item.image ? item.image : "None"}} style = {pins.mainViewSubContainerItemImageBackground} blurRadius = {0}></ImageBackground>
             <View style = {[pins.mainViewSubContainerItemTextView, {marginTop : width * 0.05 , height : '40%' , backgroundColor : 'rgba(52, 52, 52, 0.6)'}]}>

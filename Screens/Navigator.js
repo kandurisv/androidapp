@@ -24,6 +24,7 @@ import DrawerContent from "./DrawerContent";
 import BrandsPage from "./BrandsPage";
 import PostLink from "./PostLink";
 import FeedSearch from "./FeedSearch";
+import UserPostDetails from "./UserPostDetails";
 
 
 
@@ -269,6 +270,7 @@ const TabNavigator = () => {
         <Stack.Screen name="Signout" component ={Signout} />
         <Stack.Screen name="PostDetails" component ={PostDetails} />
         <Stack.Screen name="PostLink" component ={PostLink} />
+        <Stack.Screen name="UserPostDetails" component ={UserPostDetails} />
         <Stack.Screen name="UpdatePost" component={UpdatePost} /> 
         <Stack.Screen name="HeroSearchFeed" component ={HeroSearchFeed} />
         <Stack.Screen name="Search" component ={Search} />

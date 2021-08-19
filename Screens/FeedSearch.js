@@ -184,7 +184,7 @@ const FeedSearch = (props) => {
   //  setParameter(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
    
 
-   
+   console.log(varValue , requestId)
 
     axios.get(URL + "/post/feed", {
          params: {

@@ -23,6 +23,8 @@ import Constants from 'expo-constants';
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
 import { SliderBox } from "react-native-image-slider-box";
+import ImageSlider from 'react-native-image-slider';
+import Swiper from 'react-native-swiper'
 
 Amplitude.initializeAsync("af380775c59ead50c4c02536befef5e5");
 
@@ -548,7 +550,7 @@ return (
               onPress = {()=>navigation.openDrawer()}
               style = {{ justifyContent : 'center' , alignItems : 'center' , marginLeft : 10 , marginRight : 5 , borderColor : theme, borderWidth : 1, borderRadius : 30}}>
                 { userResponse  && userResponse.profile_image && userResponse.profile_image != "None" && userResponse.profile_image != "" ?
-                        <Image source = {{uri : userResponse.profile_image}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
+                        <Image source = {{uri : userResponse.profile_image + "?" + new Date()}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
                         userResponse.length && userResponse.username ? 
                                 <Avatar.Image 
                                 source={{
@@ -684,15 +686,45 @@ return (
               {heroImage.length > 0 ?
               <View style = {home.mainViewHeroBannerContainer}>
                 
-                  <SliderBox 
+                  {/* <SliderBox 
                     images={heroImage} 
+                    autoPlay = {true}
+                    circleLoop = {true}
+                    autoplayInterval={1000}
                     onCurrentImagePressed =  {index => heroBannerClick(heroLink[index]) }
                     sliderBoxHeight= {Dimensions.get('screen').height*0.25}
                     dotColor="#DDDDDD"
                     inactiveDotColor="#EEEEEE"
-                    circleLoop
-                    autoPlay
-                  />
+                   
+                    
+                  /> */}
+
+            {/* <ImageSlider
+              loop
+              autoPlayWithInterval={5000}
+              images={heroImage}
+              style = {{height : Dimensions.get('screen').height*0.25}}
+            /> */}
+
+              <Swiper 
+                  horizontal
+                  loop
+                  autoplay
+                  autoplayTimeout = {8}
+                  activeDotColor = "#DDDDDD"
+                  dotColor = {background}
+                  dot = {<View style = {{ backgroundColor: "#DDDDD" , height : 6, width : 6 ,marginBottom  : 0, borderRadius: 4 , marginLeft : 10}} />}
+                  activeDot = {<View style = {{ backgroundColor: background , height : 8, width : 8, marginBottom : 0, borderRadius: 4 , marginLeft : 10}} />}
+                  showsButtons = {false}
+                  style={{justifyContent : 'center', marginLeft : 5 , marginRight : 5,}} 
+                  >
+               { heroImage.map((item,index)=>{
+                    return(<Image 
+                      key = {index}
+                      source = {{uri:item}} 
+                      style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 }}/>)
+                  })}  
+              </Swiper>
                 
               </View>
               : null }

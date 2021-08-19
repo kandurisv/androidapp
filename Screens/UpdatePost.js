@@ -137,6 +137,7 @@ const UpdatePost = () => {
   const [contextAnswersValid,setContextAnswersValid] = React.useState(false)
   const [reviewTextValid,setReviewTextValid] = React.useState(false)
   const [productSelectedOther,setProductSelectedOther] = React.useState(false)
+  const [onSubmitClick,setOnSubmitClick] = React.useState(false)
 
   const [brandId,setBrandId] = React.useState("")
   const [brand,setBrand] = React.useState("")
@@ -202,13 +203,12 @@ const UpdatePost = () => {
 
 
   const onSubmitReview = () => {
+    setOnSubmitClick(true)
     if(!reviewTextValid) {
       ToastAndroid.show("Please add your review !! " , ToastAndroid.SHORT)
     }
-    else if ( !contextAnswersValid) {
-      ToastAndroid.show("Please answer the contextual questions !! " , ToastAndroid.SHORT)
-    }
     else {
+      console.log("Clicked on submit")
     Amplitude.logEventWithPropertiesAsync('UPDATEPOST_SUBMIT',{"userId" : userId , "productId" : productId })
   //  console.log("Review Submit")
     const array = []
@@ -241,7 +241,7 @@ const UpdatePost = () => {
         "image": array
     }
 
-  //  console.log(body)
+    console.log(body)
 
     axios({
         method: 'post',
@@ -249,14 +249,18 @@ const UpdatePost = () => {
         data: body
       })
     .then(res => {
-     //   console.log("reached to post feed")
-        ToastAndroid.show("Thanks for adding review", ToastAndroid.LONG)
+        console.log("reached to post feed")
+        ToastAndroid.show("Thanks for adding review", ToastAndroid.SHORT)
         refresh()
         setTimeout(function(){
           navigation.navigate("UserDetails")
         }, 500);
        
-  }).catch((e) => console.log(e))
+  }).catch((e) => {
+    ToastAndroid.show("Error submitting. Please try again !", ToastAndroid.SHORT)
+    setOnSubmitClick(false)
+  }
+  )
   } 
 }
 
@@ -306,7 +310,7 @@ const UpdatePost = () => {
 
       return (  
     <View style = {addPost.mainViewReviewExistsContainer}>
-      <Text style = {addPost.mainViewReviewExistsHeader}>Existing Review</Text>
+      <Text style = {[addPost.mainViewReviewExistsHeader,{fontSize : 14}]}>Existing Review</Text>
 
       {route.params?.item.day_product_used_content.length ?
         <FlatList
@@ -340,26 +344,30 @@ const UpdatePost = () => {
 
   const CategoryAnsSummary = () => {
     var context = ""
-    categoryQuestions.map((item,index)=>{
-      context = context + "\n" + item + " : " + categoryAnswers[index]  
-    })
+    if(categoryQuestions.length>0) {
+      categoryQuestions.map((item,index)=>{
+        context = context + "\n" + item + " : " + categoryAnswers[index]  
+      })
+    }
+   
    
     return(
+      context == "" ?
       <View style = {addPost.mainViewContextExistsItemContainer}>
         <Text style = {addPost.mainViewContextExistsItemHeader}>Contextual Information</Text>
         <Text style = {addPost.mainViewContextExistsItemText}>{context}</Text>
-      </View>
+      </View> : null 
     )
   }
 
 
 return(
-<View style = {addPost.container}>
+<View style = {[addPost.container,{}]}>
     <View style = {header.headerView}>
         <ModernHeader title="Update Review" titleStyle = {header.headerText}
           backgroundColor= {background} leftIconColor = {borderColor}
           leftDisable = {isOpen ? true : false}
-          leftIconOnPress={() => navigation.goBack()}
+          leftIconOnPress={() => navigation.navigate("UserDetails")}
           rightDisable
           />
     </View>
@@ -377,12 +385,12 @@ return(
           <Text style = {addPost.modalText}>{modalContent}</Text>
         </View>
     </Modal>
-    <ScrollView contentContainerStyle = {addPost.scrollableMasterContentContainer} style = {addPost.scrollableMasterContainer}>
+    <ScrollView contentContainerStyle = {[addPost.scrollableMasterContentContainer,{marginBottom:70}]} style = {[addPost.scrollableMasterContainer,{marginBottom:70}]}>
         <View style={addPost.scrollableContainer}>
 			{isOpen ? (
 			<ImageBrowserScreen onComplete={onComplete} closeScreen = {(value)=>setIsOpen(!value)} />) : (
 			<View style={addPost.scrollableContainer}>
-                <Text style = {addPost.productSearchBarInactiveText}>{productName}</Text>
+                <Text style = {[addPost.productSearchBarInactiveText,{fontSize : 15, marginLeft : 20, color : theme}]}>{productName}</Text>
 			    <ReviewSummary /> 
 			    <View style = {addPost.mainViewAddImagesContainer}>
 					<TouchableOpacity style = {addPost.mainViewAddImagesButton} onPress={() => setIsOpen(true)}>
@@ -431,7 +439,15 @@ return(
                         value = {reviewText}
 					/>
 				</View>
-				<TouchableOpacity style = {addPost.mainViewSubmitReviewButton} onPress = {onSubmitReview}>
+				<TouchableOpacity style = {addPost.mainViewSubmitReviewButton} 
+          onPress = {()=>{
+
+            onSubmitReview()
+            }
+          }
+          disabled = {onSubmitClick}
+          >
+          
 					<Text style = {addPost.mainViewSubmitReviewText}>Submit</Text>
 				</TouchableOpacity>
 			</View> 
