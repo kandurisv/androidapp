@@ -321,13 +321,17 @@ export default function Login() {
         firebaseConfig={firebaseConfig}
       />
       <View style = {login.loginViewCoverContainer}>
-        <SliderBox 
+        <Image
+          source = {require("../assets/A500T.png")}
+          style = {{width : 300 , height : 300}}
+          />
+        {/* <SliderBox 
           images={sliderImages} 
           sliderBoxHeight= {Dimensions.get('screen').height*0.75}
           dotColor="#DDDDDD"
           inactiveDotColor="#EEEEEE"
           circleLoop
-         />
+         /> */}
       {/* <LottieView
           ref={animation => animation}
           progress = {progress}

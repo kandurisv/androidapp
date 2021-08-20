@@ -88,7 +88,7 @@ const Brands = () => {
                     </View>
                     <View style = {{marginRight : 10 , flex : 1 }}>
                         <Text style = {{fontWeight : 'bold'}}>{item.brand_name ? item.brand_name : ""}</Text> 
-                        <Text>{item.content.length > 50 ? item.content.slice(0,50) + "..." : item.content}</Text>
+                        <Text>{item && item.content && item.content.length > 50 ? item.content.slice(0,50) + "..." : item.content}</Text>
                     </View>
                     <TouchableOpacity 
                         onPress = {()=>{
@@ -139,8 +139,8 @@ const Brands = () => {
                 firstLoaded ? 
                 <FlatList 
                     keyExtractor={item => item.brand_id.toString()} 
-                    style = {{}}
-                    contentContainerStyle = {{paddingRight : 5 , paddingLeft : 5,}}
+                    style = {{marginBottom : 180}}
+                    contentContainerStyle = {{paddingRight : 5 , paddingLeft : 5, marginBottom : 180}}
                     showsVerticalScrollIndicator={false}
                     data = {brandsData}            
                     renderItem = {items}

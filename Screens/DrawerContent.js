@@ -114,12 +114,12 @@ export default function DrawerContent(props) {
                             onPress={() => Linking.openURL('https://www.getcandid.app')}
                         />
                     </Drawer.Section>
-                    <Drawer.Section style={styles.bottomDrawerSection}>
+                    {brandStories.length > 0 ? <Drawer.Section style={styles.bottomDrawerSection}>
                         <View style = {styles.headerView}>
                             <Text style = {styles.header}> Brand Stories </Text>
                         </View>
                         
-                        {brandStories.map((item,index)=>{
+                       {brandStories.map((item,index)=>{
                             return(
                                 <DrawerItem 
                                 key = {index}
@@ -130,8 +130,8 @@ export default function DrawerContent(props) {
                                 onPress={() => Linking.openURL('https://www.getcandid.app')}
                             />
                         )
-                        })}
-                    </Drawer.Section>
+                        }) }
+                    </Drawer.Section> : null}
                     <Drawer.Section style={styles.bottomDrawerSection}>
                         <View style = {styles.headerView}>
                             <Text style = {styles.header}>Follow Candid on Social Media </Text>

@@ -1019,8 +1019,8 @@ export const postDetails = StyleSheet.create({
     reviewImageContainerCommentTextView : {
         position:'absolute',
         top:0,
-        marginTop: 312,
-        marginLeft: width - 42,
+        marginTop: 335,
+        marginLeft: width - 40,
     },
     reviewImageContainerCommentTextValue : {
         fontSize:20,

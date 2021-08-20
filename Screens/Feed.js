@@ -230,7 +230,7 @@ const Feed = (props) => {
                 titleStyle = {header1.headerText}
                 backgroundColor= {'white'}
                 leftIconColor = {borderColor}
-                leftIconOnPress={() => navigation.popToTop()}
+                leftIconOnPress={() => navigation.goBack()}
                 leftIconComponent = {
                   <View>
                     <Image style={{height : 30 , width : 30}}

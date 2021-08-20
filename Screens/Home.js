@@ -349,6 +349,7 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
+                    console.log(responseData)
                     setHeroImage(responseData[0].image)
                     setHeroLink(responseData[0].clickable_link)
                     setHeroLinkExists(responseData[0].clickable)
@@ -395,7 +396,10 @@ const Home = () => {
 
 const heroBannerClick = (link) => {
   console.log(link)
-  //  WebBrowser.openBrowserAsync(link);
+  if(link.slice(0,4) == "http") {
+    WebBrowser.openBrowserAsync(link);
+  }
+  
   };
 
 
@@ -713,16 +717,23 @@ return (
                   autoplayTimeout = {8}
                   activeDotColor = "#DDDDDD"
                   dotColor = {background}
-                  dot = {<View style = {{ backgroundColor: "#DDDDD" , height : 6, width : 6 ,marginBottom  : 0, borderRadius: 4 , marginLeft : 10}} />}
-                  activeDot = {<View style = {{ backgroundColor: background , height : 8, width : 8, marginBottom : 0, borderRadius: 4 , marginLeft : 10}} />}
+                  dot = {<View style = {{ backgroundColor: "#AAAAAA" , height : 6, width : 6 ,marginBottom  : 0, borderRadius: 20 , marginLeft : 10}} />}
+                  activeDot = {<View style = {{ backgroundColor: background , height : 8, width : 8, marginBottom : 0, borderRadius: 20 , marginLeft : 10}} />}
                   showsButtons = {false}
                   style={{justifyContent : 'center', marginLeft : 5 , marginRight : 5,}} 
                   >
                { heroImage.map((item,index)=>{
-                    return(<Image 
+                    return(
+                    <TouchableOpacity 
+                    disabled = {!heroLinkExists[index]} 
+                    onPress = {()=>heroBannerClick(heroLink[index])} 
+                    >
+                      <Image 
                       key = {index}
                       source = {{uri:item}} 
-                      style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 }}/>)
+                      style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 }}/>
+                    </TouchableOpacity>  
+                      )
                   })}  
               </Swiper>
                 

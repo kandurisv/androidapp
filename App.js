@@ -65,8 +65,9 @@ const config = {
 
 const App = () => {
 
+
     const linking = {
-      prefixes: [prefix], 
+      prefixes: ['https://www.getcandid.app/', 'exp://192.168.43.31:19000/', 'https://*.getcandid.app'], 
       config
     }
 
@@ -101,9 +102,6 @@ const App = () => {
     // }
   
     
-
-
-
     React.useEffect( () => {
 
         

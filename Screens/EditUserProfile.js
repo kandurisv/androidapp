@@ -59,6 +59,7 @@ const EditUserProfile = () => {
     const [userId, userDetails, isLoggedIn] = React.useContext(AuthContext)
     const [user_id,setuser_id] = React.useState(route.params.userInfo.user_id)
     const [userInfo,setUserInfo] = React.useState([])
+    const [submitted,setSubmitted] = React.useState(false)
 
     const [userDob,setUserDob] = useState(route?.params?.userInfo.dob ? route.params.userInfo.dob :"")
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -91,6 +92,7 @@ const EditUserProfile = () => {
 
 
     const submit = () => {
+      setSubmitted(true)
       var expoToken = AsyncStorage.getItem('expoToken')
       var deviceToken = AsyncStorage.getItem('deviceToken')
       const body = {
@@ -120,7 +122,10 @@ const EditUserProfile = () => {
       setTimeout(function(){
         navigation.navigate("UserDetails")
       }, 500);
-    }).catch((e) => console.log(e))
+    }).catch((e) => {
+      ToastAndroid.show("Error updating details. Please try later")
+      setSubmitted(false)
+    })
 
     }
 
@@ -247,7 +252,7 @@ const EditUserProfile = () => {
                 </View>
             <View style = {user.mainViewCoverContainer}>
               <TouchableOpacity onPress = {pickCoverPhoto}>
-                <ImageBackground source = {coverImage && coverImage != "None" ? {uri : coverImage} :require('../assets/defaultCover.png')} 
+                <ImageBackground source = {coverImage && coverImage != "None" ? {uri : coverImage + "?" + new Date()} :require('../assets/defaultCover.png')} 
                         style = {user.mainViewCoverImage} >
                 </ImageBackground>
                 <View style = {{position: 'absolute' , backgroundColor : theme , padding : 5, borderRadius : 20 , bottom : 0 , right : 0 , margin : 10}}>
@@ -257,7 +262,7 @@ const EditUserProfile = () => {
             </View>
             <View style = {user.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {user.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image && image != "None"? {uri : image} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
+                <ImageBackground source = {image && image != "None"? {uri : image + "?" + new Date()} : {uri : 'https://ui-avatars.com/api/?rounded=true&name='+ userName.replace(' ','+') + '&size=512'}} 
                         style = {user.editUserDetailsDisplayImage} >
                 </ImageBackground>
                 <View style = {{position: 'absolute' , backgroundColor : theme , padding : 3, borderRadius : 20 , top : 0 , right : 0 , margin : 15 , zIndex : 150}}>
@@ -321,6 +326,7 @@ const EditUserProfile = () => {
               <View style = {home.userDetailsSubmitContainer}>
                 <TouchableOpacity 
                         onPress = {submit}
+                        disabled = {submitted}
                         style = {home.userDetailsSubmitButton}>
                   <Text style = {home.userDetailsSubmitText}>Submit</Text>
                 </TouchableOpacity>

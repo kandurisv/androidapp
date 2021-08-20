@@ -113,7 +113,7 @@ const Cover = (props) => {
             "comment": null
         }
         
-         //   console.log(body)
+            console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',

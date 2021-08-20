@@ -269,7 +269,7 @@ const UserDetails = () => {
                         </View>
                         <View style = {user.mainViewDetailsSummaryButtonContainer}>
                             <Text style={user.mainViewDetailsSummaryValue}>{userDetails.length && userDetails[0].number_of_upvotes ?  userDetails[0].number_of_upvotes : 0}</Text>
-                            <Text style={user.mainViewDetailsSummaryName}>Pins</Text>
+                            <Text style={user.mainViewDetailsSummaryName}>Likes</Text>
                         </View>   
                         </View>   
                     </View>
