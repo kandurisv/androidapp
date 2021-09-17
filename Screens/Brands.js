@@ -32,7 +32,7 @@ const Brands = () => {
             setFirstLoaded(true)
         })
         .catch(function (error) {
-          console.log(error);
+    //      console.log(error);
           setError(true);      
         })
     }
@@ -57,7 +57,7 @@ const Brands = () => {
             "follow": following ? 1 : 0 
           }
     
-          console.log("BODY" , body)
+        //  console.log("BODY" , body)
     
         axios({
           method: 'post',
@@ -77,28 +77,38 @@ const Brands = () => {
         return ( 
                 <TouchableOpacity 
                     style = {{ 
-                        flexDirection : 'row' , alignItems : 'center',padding : 10,
+                        flexDirection : 'row' , alignItems : 'center',padding : 5,
                         marginLeft : 0, elevation : 1, borderColor : "#666"
                     
                     }}
                     onPress = {()=> navigation.navigate("FeedSearch",{varValue : "brand_id" , id : item.brand_id, value : item.brand_name  })} >
-                    <View style = {{marginRight : 10 , width :50, height : 50 , backgroundColor : '#EEE'}}>
+                    
+                    <View style = {{marginRight : 10 , width :100, height : 100 , backgroundColor : '#EEE'}}>
                     {item && item.brand_image && item.brand_image != "None" && item.brand_image != "" ?
-                        <Image source = {{uri: item.brand_image ? item.brand_image : "None"}} style = {{width :50, height : 50  }} /> : null}
+                        <Image source = {{uri: item.brand_image ? item.brand_image : "None"}} style = {{width :100, height : 100  }} /> : null}
                     </View>
-                    <View style = {{marginRight : 10 , flex : 1 }}>
-                        <Text style = {{fontWeight : 'bold'}}>{item.brand_name ? item.brand_name : ""}</Text> 
-                        <Text>{item && item.content && item.content.length > 50 ? item.content.slice(0,50) + "..." : item.content}</Text>
+                    
+                    <View style = {{flex : 1 }}>
+                        <View style = {{marginRight : 5 , flexDirection : 'row' , justifyContent : 'space-between', alignItems : 'center' }}>
+                            <Text style = {{fontWeight : 'bold' , fontSize : 14}}>{item.brand_name ? item.brand_name : ""}</Text> 
+                            <TouchableOpacity 
+                            onPress = {()=>{
+                                setBrandFollowing(!brandFollowing)
+                                onFollow(item, !brandFollowing)}}
+                            // disabled = {clicked || item.following}
+                            style = {{borderRadius : 2 , padding : 3, borderRadius : 5, paddingHorizontal : 10,
+                            backgroundColor : brandFollowing ? background : theme,}}>
+                            <Text style = {{color : brandFollowing ? "#666" : "#FFF"}}>{brandFollowing ? "Unfollow" : "Follow"}</Text> 
+                            </TouchableOpacity>
+                            
+                        </View>
+                        
+                        <View style = {{marginTop : 5}}>
+                            <Text style = {{fontSize : 12 , color : '#666' ,}}>{item && item.content && item.content.length > 150 ? item.content.slice(0,150) + "..." : item.content}</Text>
+                        </View>
+
                     </View>
-                    <TouchableOpacity 
-                        onPress = {()=>{
-                            setBrandFollowing(!brandFollowing)
-                            onFollow(item, !brandFollowing)}}
-                        // disabled = {clicked || item.following}
-                        style = {{borderRadius : 2 , padding : 5, borderRadius : 5, paddingHorizontal : 15,
-                        backgroundColor : brandFollowing ? background : theme,}}>
-                        <Text style = {{color : brandFollowing ? "#666" : "#FFF"}}>{brandFollowing ? "Unfollow" : "Follow"}</Text> 
-                    </TouchableOpacity>
+                    
                 </TouchableOpacity>
         )
     }
@@ -125,7 +135,7 @@ const Brands = () => {
                         leftIconColor = {borderColor}
                         leftIconOnPress={() => navigation.popToTop()}
                         leftIconComponent = {
-                        <View>
+                        <View style = {{marginLeft : -10}}>
                             <Image style={{height : 30 , width : 30}}
                                 source={require('../assets/LogoTransparentSolidColorLine.png')}
                             />

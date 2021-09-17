@@ -152,7 +152,7 @@ const UpdatePost = () => {
     setIsOpen(false)
    // console.log(userId.slice(1,12))
     Amplitude.logEventWithPropertiesAsync('UPDATE_POST_VISIT',{"userId" : userId.slice(1,13) , "productId" : productId })
-    console.log("UPDATE POST ITEM " , item)  
+  //  console.log("UPDATE POST ITEM " , item)  
     setBrand(item.brand)
     setBrandId(item.brand_id)
     setCategoryAnswers(item.category_ans)
@@ -208,7 +208,7 @@ const UpdatePost = () => {
       ToastAndroid.show("Please add your review !! " , ToastAndroid.SHORT)
     }
     else {
-      console.log("Clicked on submit")
+  //    console.log("Clicked on submit")
     Amplitude.logEventWithPropertiesAsync('UPDATEPOST_SUBMIT',{"userId" : userId , "productId" : productId })
   //  console.log("Review Submit")
     const array = []
@@ -241,7 +241,7 @@ const UpdatePost = () => {
         "image": array
     }
 
-    console.log(body)
+  //  console.log(body)
 
     axios({
         method: 'post',
@@ -249,7 +249,7 @@ const UpdatePost = () => {
         data: body
       })
     .then(res => {
-        console.log("reached to post feed")
+    //    console.log("reached to post feed")
         ToastAndroid.show("Thanks for adding review", ToastAndroid.SHORT)
         refresh()
         setTimeout(function(){

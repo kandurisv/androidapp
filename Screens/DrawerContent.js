@@ -18,17 +18,18 @@ export default function DrawerContent(props) {
     const [error,setError] = React.useState(false)
     const [userName,setUserName] = React.useState("")
     const [userImage,setUserImage] = React.useState("")
+    const [isEditProfileChanged,setEditProfileChanged] = React.useState("")
 
     React.useEffect(() => {
         const fetchData = async () => {
             axios.get(URL + "/drawer/brandstories" , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("Brand Stroies", responseData)
+            //    console.log("Brand Stroies", responseData)
                 setBrandStories(responseData)
                 setFirstLoad(true)
             })
             .catch(function(error) {
-                console.log(error)
+            //    console.log(error)
                 setError(true)
             });
         }
@@ -39,18 +40,27 @@ export default function DrawerContent(props) {
         const fetchUser = async () => {
             axios.get(URL + "/user/info" , {params : {user_id : userId.slice(1,13)}}, {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("user id ", userId)
-                console.log("Name" , userName)
+            //    console.log("user id ", userId)
+            //    console.log("Name" , userName)
               
                 setUserName(responseData[0].username)
                 setUserImage(responseData[0].profile_image)
                 
                
-                console.log("responseData",responseData)
+            //    console.log("responseData",responseData)
             })
             .catch(function(error) {
-                console.log(error)
+            //    console.log(error)
                 setUserName("Error getting name")
+            });
+
+            axios.get(URL + "/visit/cache",{params:{user_id : userId.slice(1,13) }} , {timeout : 5000})
+            .then(res => res.data).then(function(responseData) {
+            //    console.log(responseData)
+                setEditProfileChanged(responseData[0].indicator ? "?"+new Date() : "")
+            })
+            .catch(function(error) {
+              
             });
         }
         
@@ -66,7 +76,7 @@ export default function DrawerContent(props) {
                     <View style={styles.userInfoSection}>
                         <View style={{flexDirection:'row',marginTop: 15}}>
                             { userImage && userImage != "None" && userImage != "" ?
-                             <Image source = {{uri : userImage + "?" + new Date()}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
+                             <Image source = {{uri : userImage + isEditProfileChanged}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
                             userName ? 
                             <Avatar.Image 
                                 source={{
@@ -110,8 +120,8 @@ export default function DrawerContent(props) {
                                 size={size}
                                 />
                             )}
-                            label="Help"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            label="About Us"
+                            onPress={() => Linking.openURL('https://www.getcandid.app/aboutus')}
                         />
                     </Drawer.Section>
                     {brandStories.length > 0 ? <Drawer.Section style={styles.bottomDrawerSection}>
@@ -124,10 +134,10 @@ export default function DrawerContent(props) {
                                 <DrawerItem 
                                 key = {index}
                                 icon={({color, size}) => (
-                                    <Image source = {{url:item.brand_image}} style = {{width : 22, height : 22}} />
+                                    <Image source = {{uri:item.brand_image + "?" + new Date()}} style = {{width : 22, height : 22 , borderRadius : 5}} />
                                 )}
                                 label={item.title}
-                                onPress={() => Linking.openURL('https://www.getcandid.app')}
+                                onPress={() => Linking.openURL(item.link)}
                             />
                         )
                         }) }
@@ -142,21 +152,21 @@ export default function DrawerContent(props) {
                                 <Image source = {require("../assets/instagram.png")} style = {{width : 22, height : 22}} />
                             )}
                             label="Instagram"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.instagram.com/getcandidapp/')}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <AntDesign name = 'facebook-square' size = {22} color = {'#4267B2'} />
                             )}
                             label="Facebook"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.facebook.com/getcandidapp/')}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <AntDesign name = 'twitter' size = {22} color = {'#1DA1F2'} />
                             )}
                             label="Twitter"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.twitter.com/getcandidapp/')}
                         />
                     </Drawer.Section>
                 </View>

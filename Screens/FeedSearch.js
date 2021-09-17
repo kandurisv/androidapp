@@ -41,7 +41,7 @@ const FeedItem = ({item}) => {
 
     return(
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
-            <View style ={[feed.scrollableFeedItemUserNameHeaderView,{borderRadius:5}]}>
+            <View style ={feed.scrollableFeedItemUserNameHeaderView}>
             {  item.profile_image && item.profile_image != "None" && item.profile_image != "" ?
                         <Image source = {{uri : item.profile_image}} style = {{width : 28, height : 28 , borderRadius : 28 , marginTop : 5 , marginLeft : 5  }}/> :
               <Avatar.Image
@@ -58,20 +58,22 @@ const FeedItem = ({item}) => {
               horizontal 
               showsHorizontalScrollIndicator = {false} 
               contentContainerStyle = {{}}
-              snapToInterval = {width}
+              snapToInterval = {width-40}
             >
             {item.image_list.map((image , index) => (
               <View key = {index}>
-                <Image key = {index} style = {[feed.scrollableFeedItemHorizontalScrollImage,{borderRadius:5 , width : Dimensions.get('screen').width*0.965}]} source = {{uri: image ? image : "No Image"}}/>
+                <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image ? image : "No Image"}}/>
                 <View style = {feed.scrollableFeedItemImagesCount}>
-                  <Text style = {{fontSize:14, color : theme}} >{index+1}/{item.image_list.length}</Text>
+                  <Text style = {{fontSize:10, color : 'white'}} >{index+1}/{item.image_list.length}</Text>
                 </View>
               </View>  
             ))} 
             </ScrollView>
-            <View style ={[feed.scrollableFeedItemProductView,,{borderRadius:5}]}>
+            <View style ={feed.scrollableFeedItemProductView}>
               <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
-              <Text style ={feed.scrollableFeedItemProductReview} > {review.length > 40 ? review.substring(0,40) + "..." : review} </Text>
+              { item.description ?
+              <Text style ={feed.scrollableFeedItemProductReview} > {item.description} </Text> : null
+              }
             </View>
         </TouchableWithoutFeedback>
     );
@@ -105,14 +107,14 @@ const FeedSearch = (props) => {
       page : pageNumber
     }
 
-    console.log("page Number" , params)
+  //  console.log("page Number" , params)
 
     axios.get(URL + "/post/feed", {params : params}).then(res => res.data)
     .then(responseData => {
-      console.log("LOAD MORE ", responseData)
+  //    console.log("LOAD MORE ", responseData)
       if(responseData.length > 0) {
         setPageNumber(pageNumber + 1)
-        setItemsForFeed([...itemsForFeed,responseData])
+        setItemsForFeed(itemsForFeed => [...itemsForFeed, ...responseData])
         if(responseData.length < 50) {
           setReachedEnd(true)
         }
@@ -120,18 +122,18 @@ const FeedSearch = (props) => {
       else {
         setReachedEnd(true)
       }
-      console.log("*****************LOAD MORE***************")
-      console.log(pageNumber)
+  //    console.log("*****************LOAD MORE***************")
+  //    console.log(pageNumber)
       setLoadingMore(false)
     })
     .catch(function (error) {
-    console.log(error);
+  //  console.log(error);
     setError(true);      
   });
   }
 
   const loadMoreItems = () => {
-    console.log(pageNumber)
+  //  console.log(pageNumber)
 
     if(!reachedEnd)
     {
@@ -143,6 +145,7 @@ const FeedSearch = (props) => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    setReachedEnd(false)
     progress.setValue(0)
     axios.get(URL + "/post/feed", {
       params: {
@@ -154,7 +157,7 @@ const FeedSearch = (props) => {
   .then(res => res.data)
   .then(function (responseData) {
      Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-       console.log("response",responseData)
+    //   console.log("response",responseData)
     // console.log(responseData.length)
     setItemsForFeed(responseData)
     setRefreshing(false);
@@ -184,7 +187,7 @@ const FeedSearch = (props) => {
   //  setParameter(route ? route.params ? route.params.varValue ? {var : varValue,value : requestId} : {var : "time"} : {var : "time"} : {var : "time"})
    
 
-   console.log(varValue , requestId)
+  // console.log(varValue , requestId)
 
     axios.get(URL + "/post/feed", {
          params: {
@@ -196,7 +199,7 @@ const FeedSearch = (props) => {
     .then(res => res.data)
     .then(function (responseData) {
         Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-         console.log("Response", responseData)
+      //   console.log("Response", responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
         setFirstLoad(true)

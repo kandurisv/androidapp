@@ -53,6 +53,8 @@ const UserDetails = () => {
 
     const [testpoints,setpoints] = React.useState(500)
     const [testcode,setcode] = React.useState("ABCDE")
+
+    const [isEditProfileChanged,setEditProfileChanged] = React.useState("")
  
     React.useEffect(() => {
      //   console.log("timed " , timed, "Result", result , "Response Data" , userDetails )
@@ -88,7 +90,7 @@ const UserDetails = () => {
  //       console.log(phoneNumber)
         axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-        console.log("USER DETAILS " , responseData)
+ //       console.log("USER DETAILS " , responseData)
   //      console.log("REached to response")
   
         setUserInfo(responseData)
@@ -103,6 +105,17 @@ const UserDetails = () => {
         setResult(true)
         setError(true)
     });
+
+    axios.get(URL + "/visit/cache",{params:{user_id : phoneNumber.slice(1,13) }} , {timeout : 5000})
+    .then(res => res.data).then(function(responseData) {
+    //    console.log(responseData)
+        setEditProfileChanged(responseData[0].indicator ? "?"+new Date() : "")
+    })
+    .catch(function(error) {
+      
+    });
+
+
 }
 
         getUserInfo()
@@ -111,7 +124,7 @@ const UserDetails = () => {
       const fetchPinsPost = () => {
         axios.get(URL + "/user/items", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
         .then(res => res.data).then(function(responseData) {
-           console.log("Fetch Posts in User", responseData)
+        //   console.log("Fetch Posts in User", responseData)
             if(responseData.length > 0) {
               setMyPostsEmpty(false)
               setUserPosts(responseData)
@@ -167,7 +180,7 @@ const UserDetails = () => {
     }
 
     const deletePost = (review_sum_id) => {
-        console.log(review_sum_id)
+     //   console.log(review_sum_id)
         Alert.alert(
             "Delete Review !!",
             "Do you want to delete this review permanently ?",
@@ -186,7 +199,7 @@ const UserDetails = () => {
                                 ToastAndroid.show("Review delete succesfully !!", ToastAndroid.SHORT)
                             }
                             else {
-                                console.log("RES",res)
+                 //               console.log("RES",res)
                             }
                             setRefresh((!refresh))
                         })
@@ -233,7 +246,7 @@ const UserDetails = () => {
                     {userInfo.length && userInfo[0].cover_image ?
                     <View style = {user.mainViewCoverContainer}>
                      <ImageLoader 
-                        source = {userInfo[0].cover_image + "?" + new Date()} 
+                        source = {userInfo[0].cover_image + isEditProfileChanged} 
                         style = {{width : width, height : 180 }}
                         fallback = {require("../assets/defaultCover.png")}
                         />
@@ -241,7 +254,7 @@ const UserDetails = () => {
                     }
                     <View style = {user.mainViewDisplayContainer}>
                         {  userInfo[0] && userInfo[0].profile_image && userInfo[0].profile_image != "None" && userInfo[0].profile_image != "" ?
-                        <Image source = {{uri : userInfo[0].profile_image + "?" + new Date()}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
+                        <Image source = {{uri : userInfo[0].profile_image + isEditProfileChanged}} style = {{width : 100, height : 100 , borderRadius : 50 , }}/> :
                         userInfo.length && userInfo[0].username ? 
                                 <Avatar.Image 
                                 source={{

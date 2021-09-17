@@ -73,6 +73,20 @@ const EditUserProfile = () => {
 
 
     useEffect(() => {
+
+      const body = { 
+        "user_id": user_id
+      }
+
+      axios({
+        method: 'post',
+        url: URL + '/visit/useredit',
+        data: body
+      })
+      .then(res => {
+        // console.log(res.data);
+      }).catch((e) => console.log(e))
+
     //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
        const getUserInfo = () => {
         axios.get(URL + "/user/info", {params:{user_id : user_id }} , {timeout:5000})
@@ -200,7 +214,7 @@ const EditUserProfile = () => {
             "cover_image" : s3URL + user_id + "/cover"
           }
     
-          console.log(body)
+        //  console.log(body)
     
         axios({
           method: 'post',

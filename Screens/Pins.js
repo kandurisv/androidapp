@@ -147,9 +147,9 @@ export default function Pins() {
                 titleStyle = {header1.headerText}
                 backgroundColor= {'white'}
                 leftIconColor = {borderColor}
-                leftIconOnPress={() => navigation.popToTop()}
+                leftIconOnPress={() => navigation.goBack()}
                 leftIconComponent = {
-                  <View>
+                  <View style = {{marginLeft : -10}}>
                     <Image style={{height : 30 , width : 30}}
                           source={require('../assets/LogoTransparentSolidColorLine.png')}
                       />
@@ -169,7 +169,7 @@ export default function Pins() {
           />}
       >
       <View style = {pins.mainViewItem}>
-        <Text style={pins.mainViewSubContainerHeader}>My Pinned Posts</Text>
+        <Text style={pins.mainViewSubContainerHeader}>Reviews</Text>
         {pinsPostEmpty ? 
         <View style={pins.mainViewSubContainerEmptyView}>
           <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts to save it here</Text>
@@ -197,7 +197,7 @@ export default function Pins() {
         />}
       </View>
       <View style = {pins.mainViewItem}>
-        <Text style={pins.mainViewSubContainerHeader}>My Pinned Product</Text>
+        <Text style={pins.mainViewSubContainerHeader}>Products</Text>
         {pinsProductEmpty ? 
           <View style={pins.mainViewSubContainerEmptyView}>
             <Text style = {pins.mainViewSubContainerEmptyText}>No Pinned Posts yet. Please engage on posts and get your favourite products here</Text>

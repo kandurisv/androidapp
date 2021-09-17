@@ -75,19 +75,36 @@ const ActivityNotification = () => {
         <View>
             <Text style = {{flexDirection : 'row' , fontSize : 15}}>
                 <Text style = {{fontWeight : 'bold'}}>{username}</Text>
-                <Text>{' commented on your post'}</Text>
+                <Text>{' commented on your review'}</Text>
+            </Text>
+        </View>)
+    }
+
+    const BrandNotification = ({brandname, newreviews}) => {
+        return(
+        <View>
+            <Text style = {{flexDirection : 'row' , fontSize : 15}}>
+                <Text style = {{fontWeight : 'bold'}}>{newreviews}</Text>
+                <Text>{' new reviews are posted on your followed brand '}</Text>
+                <Text style = {{fontWeight : 'bold'}}>{brandname}</Text>
             </Text>
         </View>)
     }
 
 
-    const onClickNotification = (review_sum_id) => {
-        navigation.navigate("PostLink", {id : review_sum_id})
+    const onClickNotification = (indicator,review_sum_id, brand_id, brand_name) => {
+        if(indicator == 1) {
+            navigation.navigate("FeedSearch", {varValue : "brand_id" , id : brand_id, value : brand_name } )
+        } 
+        else {
+            navigation.navigate("PostLink", {id : review_sum_id})
+        }
+        
     }
 
 
     const items = ({item,index}) => (
-        item && item.engagement_user_name && item.product_name ?
+        item ?
                 <TouchableOpacity 
                     style = {{
                         flexDirection : 'row' , 
@@ -97,26 +114,29 @@ const ActivityNotification = () => {
                         marginRight : 10, 
                         marginLeft : 0,
                     }}
-                    onPress = {()=>onClickNotification(item.review_sum_id)}
+                    onPress = {()=>onClickNotification(item.indicator, item.review_sum_id , item.brand_id, item.brand_name)}
                 >
                     <View style = {{marginRight : 10}}>
-                     { item  && item.engagement_profile_image && item.engagement_profile_image != "None" && item.engagement_profile_image != "" ?
-                        <Image 
-                            source = {{uri: item.engagement_profile_image + "?" + new Date()}} 
-                            style = {{width :30, height : 30 , borderRadius : 30  }} /> :
-                        item.length && item.engagement_user_name ? 
-                                <Avatar.Image 
-                                source={{
-                                uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.engagement_user_name.replace(' ','+') + '&size=512&background=D7354A&color=fff&bold=true'
-                                }} size={30}/> :
-                                <Avatar.Image 
-                                source={{
-                                uri: 'https://ui-avatars.com/api/?rounded=true&size=512&background=D7354A&color=fff&bold=true'
-                                }} size={30}/>}
+                     { 
+                    item  && item.engagement_profile_image && item.engagement_profile_image != "None" && item.engagement_profile_image != "" ?
+                    <Image 
+                        source = {{uri: item.engagement_profile_image + "?" + new Date()}} 
+                        style = {{width :30, height : 30 , borderRadius : 30  }} /> : 
+                    item.length && item.engagement_user_name ? 
+                    <Avatar.Image 
+                        source={{
+                        uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.engagement_user_name.replace(' ','+') + '&size=512&background=D7354A&color=fff&bold=true'
+                        }} size={30}/> :
+                    <Avatar.Image 
+                        source={{
+                        uri: 'https://ui-avatars.com/api/?rounded=true&size=512&background=D7354A&color=fff&bold=true'
+                        }} size={30}/>}
                     </View>
 
                     <View style = {{marginRight : 10}}>
-                        { item.upvote == 1 ?
+                        { item.indicator == 1 ? 
+                        <BrandNotification brandname = {item.brand_name} newreviews = {item.new_reviews} /> :
+                        item.upvote == 1 && item.engagement_user_name && item.product_name?
                             <LikeNotification username = {item.engagement_user_name} product = {item.product_name} /> :
                             <CommentNotification username = {item.engagement_user_name} />
                         }

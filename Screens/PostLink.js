@@ -7,7 +7,7 @@ import { useIsFocused, useNavigation , useRoute } from '@react-navigation/native
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
-import {MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
+import {AntDesign, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import {Avatar} from 'react-native-paper';
 import { ModernHeader, ProfileHeader } from "@freakycoder/react-native-header-view";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -42,22 +42,45 @@ try {
     
     const [commentCount,setCommentCount] = React.useState(props.comments)
     const navigation = useNavigation()
-    const getFeedByUser = () => {
-     //   console.log("Username click")
-        axios.get(URL + "/user/instagram", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
-        .then(res => res.data)
-        .then(async function(responseData) {
-        //    console.log(responseData)
-            if (responseData.length && responseData[0].instagram_username) {
-                let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+responseData[0].instagram_username+'/');
-                setResult(result);
-            }
-        })
-        .catch(function(error) {
+    // const getFeedByUser = () => {
+    //  //   console.log("Username click")
+    //     axios.get(URL + "/user/instagram", {params:{user_id : userId.slice(1,13) }} , {timeout : 5})
+    //     .then(res => res.data)
+    //     .then(async function(responseData) {
+    //     //    console.log(responseData)
+    //         if (responseData.length && responseData[0].instagram_username) {
+    //             let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+responseData[0].instagram_username+'/');
+    //             setResult(result);
+    //         }
+    //     })
+    //     .catch(function(error) {
           
-        });
-    }
+    //     });
+    // }
 
+    const decrypt = (id) => {
+        const decry = {}
+        decry['B'] = 'u'
+        decry['c'] = 'p'
+        decry['Z'] = '0'
+        decry['Q'] = '1'
+        decry['y'] = '2'
+        decry['e'] = '3'
+        decry['f'] = '4'
+        decry['g'] = '5'
+        decry['L'] = '6'
+        decry['v'] = '7'
+        decry['W'] = '8'
+        decry['k'] = '9'
+        decry['M'] = '+'
+        let review_sum_id = ""
+        for (let i in id) {
+            review_sum_id = review_sum_id + decry[id[i]]
+        }
+   
+       return review_sum_id
+        
+    }
 
         
 
@@ -109,7 +132,7 @@ try {
             "comment": null
         }
         
-            console.log(body)
+        //    console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',
@@ -119,17 +142,19 @@ try {
                     // console.log(res.data);
           }).catch((e) => console.log(e))
         }
+
+
     
     
     return(
         <ScrollView>
             <View style = {postDetails.reviewImageContainerScrollableContainer}>
                 {/* <StatusBar height = {0} translucent backgroundColor='transparent'/> */}
-                <View style = {postDetails.reviewImageContainerUserNameView}>
-                <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
-                    <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text> 
-                </TouchableOpacity>
-                </View>
+                {/* <View style = {postDetails.reviewImageContainerUserNameView}>
+                    <TouchableOpacity style ={postDetails.reviewImageContainerUserNameButton} onPress = {getFeedByUser}>
+                        <Text style ={postDetails.reviewImageContainerUserNameText} >{props.username}</Text> 
+                    </TouchableOpacity>
+                </View> */}
                 <ScrollView pagingEnabled horizontal showsHorizontalScrollIndicator = {false}>
                     {props.imageList.map((image , index) => {
                         var pieces = image.split("/")
@@ -194,7 +219,7 @@ const Data = [{
     },
 ]
 
-const Tab = ({reviewArray, dayArray, review,claim,context}) => {
+const Tab = ({reviewArray, dayArray, review,claim,context, description}) => {
     const [status, setStatus] = useState('Review');
     const [dataList , setDataList] = useState ([listTab[0]]);
     const setStatusFilter = status => {
@@ -237,7 +262,10 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
         const ContextItem = () => {
             return(
                 <View>
-                    <Text>{contextContent}</Text>
+                    { description ? 
+                        <Text>{description}</Text> : 
+                        <Text> No Context Information Available. ( Example Contexts : Dry Skin, Straight Hair etc. )</Text>
+                    }
                 </View>
             )
         }
@@ -304,8 +332,8 @@ const PostLink = () => {
     const [id,setId] = React.useState(route.params.id ? route.params.id : "")
 
     React.useEffect(()=>{
-        console.log("EFFECT IS RUn")
-        console.log("u+" + id.slice(2,))
+    //    console.log("EFFECT IS RUn")
+    //    console.log("u+" + id.slice(2,))
         firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
                 setUserId(user.phoneNumber.slice(1,13))
@@ -313,17 +341,17 @@ const PostLink = () => {
                 
                 axios.get(URL + "/post/getreviewbyid", {
                     params: {
-                      id : "u+" + id.slice(2,),
+                      id : id,
                     }
                   })
                 .then(res => res.data)
                 .then(function (responseData) {
-                    console.log('REVIEW',responseData)
+            //        console.log('REVIEW',responseData)
                     setReview(responseData[0])
                     setReviewLoading(false)
                   })
                 .catch(function (error) {
-                  console.log(error);
+            //      console.log(error);
                   setError("REVIEW ERROR",true);      
                 });
 
@@ -331,7 +359,7 @@ const PostLink = () => {
                 .then(res => res.data).then(function(responseData) {
                     if(responseData.length) {
                         setUserDetails(responseData[0])
-                        console.log("responseData",responseData)
+            //            console.log("responseData",responseData)
                         setUserLoading(false)
                     }
                     else {
@@ -339,10 +367,10 @@ const PostLink = () => {
                     }
                 })
                 .catch(function(error) {
-                    console.log("USER INFO ERROR",error)
+            //        console.log("USER INFO ERROR",error)
                 });
 
-                axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : id}} , {timeout : 500})
+                axios.get(URL + "/activity/user", {params:{user_id : userId.slice(1,13) , review_sum_id : decrypt(id)}} , {timeout : 500})
                 .then(res => res.data).then(function(responseData) {
                     setLikeIndicator(responseData[0].upvote === "1" ? true : false)
                     setLoading(false)
@@ -354,7 +382,7 @@ const PostLink = () => {
                     setError("ACTIVITY ERROR",true)
                 });
 
-                axios.get(URL + "/post/comments", {params:{review_sum_id : id }} , {timeout : 5})
+                axios.get(URL + "/post/comments", {params:{review_sum_id : decrypt(id) }} , {timeout : 5})
                 .then(res => res.data).then(function(responseData) {
                     setShowComments(true)
                     setComments(responseData)
@@ -371,7 +399,7 @@ const PostLink = () => {
                 navigation.navigate("Auth")
             }
         })
-        console.log("Firebase Error")
+    //    console.log("Firebase Error")
     },[id])
 
     const onMicrophonePress = () =>{
@@ -381,7 +409,7 @@ const PostLink = () => {
     const onSendPress =  () =>{
         const body = 
             {
-                "review_sum_id":id,
+                "review_sum_id":decrypt(id),
                 "user_id":review.user_id,
                 "engagement_user_id": userDetails.user_id,
                 "product_id":review.product_id,
@@ -410,7 +438,7 @@ const PostLink = () => {
         }
         else {
             onSendPress()
-            Amplitude.logEventWithPropertiesAsync('VISIT_THROUGH_SHARE',{"userId" :review.user_id , "review_sum_id" :id})
+            Amplitude.logEventWithPropertiesAsync('VISIT_THROUGH_SHARE',{"userId" :review.user_id , "review_sum_id" :decrypt(id)})
             setMessage("")
             ToastAndroid.show("Thanks for comment", ToastAndroid.SHORT);
             
@@ -421,11 +449,36 @@ const PostLink = () => {
         setRenderAgain(!renderAgain)
     }
 
+    const decrypt = (id) => {
+        const decry = {}
+        decry['B'] = 'u'
+        decry['c'] = 'p'
+        decry['Z'] = '0'
+        decry['Q'] = '1'
+        decry['y'] = '2'
+        decry['e'] = '3'
+        decry['f'] = '4'
+        decry['g'] = '5'
+        decry['L'] = '6'
+        decry['v'] = '7'
+        decry['W'] = '8'
+        decry['k'] = '9'
+        decry['M'] = '+'
+        let review_sum_id = ""
+        for (let i in id) {
+            review_sum_id = review_sum_id + decry[id[i]]
+        }
+   
+       return review_sum_id
+        
+    }
+
+
     return (
         !userLoading && !reviewLoading ?
         <ScrollView contentContainerStyle={postDetails.contentContainer}>
          
-                 <View style = {header1.headerView}>
+            {/* <View style = {header1.headerView}>
                 <ModernHeader 
                     title="Review"
                     height = {50}
@@ -440,7 +493,23 @@ const PostLink = () => {
                     }
                     rightDisable
                     />
+            </View> */}
+
+            <View style = {[header1.headerView, {height : 40 , backgroundColor: background , justifyContent : 'flex-start' , alignItems : 'center', marginLeft : 10}]}>
+
+            <View style = {{flexDirection : 'row'}}>
+                <TouchableOpacity style = {{}} onPress = {()=>navigation.navigate("Tab")}>
+                    <MaterialCommunityIcons name = "keyboard-backspace" size = {25} color = {"#222"} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style = {{flex:1 , flexDirection : 'row',justifyContent : 'center' , alignItems : 'center' , marginRight : 20}}>
+                    <AntDesign name = "instagram" size = {20} color = {theme} />
+                    <Text style = {{marginLeft : 5, fontWeight : 'bold', fontSize : 16}}>{review.username}</Text>
+                </TouchableOpacity>
             </View>
+
+            </View>
+            
             <View style = {postDetails.reviewImageContainer}>
                 <Cover 
                     imageList = {review.image_list}
@@ -464,6 +533,7 @@ const PostLink = () => {
                     review = {review}
                     claim = {review.claim}
                     context = {review}
+                    description = {review.description}
                 />
             </View>
             <View>

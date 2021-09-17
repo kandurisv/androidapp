@@ -198,11 +198,13 @@ export default function Login() {
         easing: Easing.linear,
         useNativeDriver : true
       },).start();
-      registerNotification()
+      
     } catch (err) {
+      console.log(err)
       ToastAndroid.show("Please wait or try again later !!",ToastAndroid.SHORT )
       setLoginClick(true)
     }
+
   }
 
   const onPressValidate = async () => {

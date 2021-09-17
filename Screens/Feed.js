@@ -41,15 +41,15 @@ const FeedItem = ({item}) => {
 
     return(
         <TouchableWithoutFeedback style = {feed.scrollableFeedContainer} onPress = {onItemClick} >
-            <View style ={[feed.scrollableFeedItemUserNameHeaderView,{borderRadius:5}]}>
+            <View style ={feed.scrollableFeedItemUserNameHeaderView}>
             {  item.profile_image && item.profile_image != "None" && item.profile_image != "" ?
                         <Image source = {{uri : item.profile_image}} style = {{width : 28, height : 28 , borderRadius : 28 , marginTop : 5 , marginLeft : 5  }}/> :
-              <Avatar.Image
-                style = {{marginTop : 5 , marginLeft : 5 , }}
-                source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.username + '&size=64&background=D7354A&color=fff&bold=true'
-                            }} 
-                size={28}
-              /> }
+                        <Avatar.Image
+                          style = {{marginTop : 5 , marginLeft : 5 , }}
+                          source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.username + '&size=64&background=D7354A&color=fff&bold=true'
+                                      }} 
+                          size={28}
+                        /> }
               <Text style ={feed.scrollableFeedItemUserName} >{item.username}</Text>  
               <Text style = {feed.scrollableFeedItemTime}>{moment(item.event_ts,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>  
             </View>
@@ -57,21 +57,24 @@ const FeedItem = ({item}) => {
               // pagingEnabled 
               horizontal 
               showsHorizontalScrollIndicator = {false} 
-              contentContainerStyle = {{}}
-              snapToInterval = {width}
+              contentContainerStyle = {{marginTop : -10}}
+              snapToInterval = {width-40}
             >
             {item.image_list.map((image , index) => (
               <View key = {index}>
-                <Image key = {index} style = {[feed.scrollableFeedItemHorizontalScrollImage,{borderRadius:5 , width : Dimensions.get('screen').width*0.965}]} source = {{uri: image ? image : "No Image"}}/>
+                <Image key = {index} style = {feed.scrollableFeedItemHorizontalScrollImage} source = {{uri: image ? image : "No Image"}}/>
                 <View style = {feed.scrollableFeedItemImagesCount}>
-                  <Text style = {{fontSize:14, color : theme}} >{index+1}/{item.image_list.length}</Text>
+                  <Text style = {{fontSize:10, color : 'white'}} >{index+1}/{item.image_list.length}</Text>
                 </View>
               </View>  
             ))} 
             </ScrollView>
-            <View style ={[feed.scrollableFeedItemProductView,,{borderRadius:5}]}>
+            <View style ={feed.scrollableFeedItemProductView}>
               <Text style ={feed.scrollableFeedItemProductName} >{item.product_name}</Text>
-              <Text style ={feed.scrollableFeedItemProductReview} > {review.length > 40 ? review.substring(0,40) + "..." : review} </Text>
+              { item.description ?
+                <Text style ={feed.scrollableFeedItemProductReview} > {item.description} </Text> : null
+              }
+              
             </View>
         </TouchableWithoutFeedback>
     );
@@ -107,26 +110,28 @@ const Feed = (props) => {
       }
     })
   .then(res => res.data)
-  .then(function (responseData) {
-      console.log(responseData)
+  .then(responseData => {
+    //  console.log("Response Data length",responseData.length)
+    //  console.log("items for feeed length ", itemsForFeed.length)
+      
       if(responseData.length > 0) {
         setPageNumber(pageNumber + 1)
-        setItemsForFeed([...itemsForFeed,...responseData])
+        setItemsForFeed(itemsForFeed => [...itemsForFeed, ...responseData])
       }
       else {
         setReachedEnd(true)
       }
-      console.log("*****************LOAD MORE***************")
-      console.log(pageNumber)
+    //  console.log("*****************LOAD MORE***************")
+    //  console.log("page number",pageNumber)
       setLoadingMore(false)})
   .catch(function (error) {
-    console.log(error);
+     console.log(error);
     setError(true);      
   });
   }
 
   const loadMoreItems = () => {
-    console.log(pageNumber)
+  //  console.log(pageNumber)
 
     if(!reachedEnd)
     {
@@ -138,6 +143,7 @@ const Feed = (props) => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    setReachedEnd(false)
     progress.setValue(0)
     axios.get(URL + "/post/feed", {
       params: {
@@ -149,7 +155,7 @@ const Feed = (props) => {
   .then(res => res.data)
   .then(function (responseData) {
      Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-       console.log("response",responseData)
+    //   console.log("response",responseData)
     // console.log(responseData.length)
     setItemsForFeed(responseData)
     setRefreshing(false);
@@ -186,7 +192,7 @@ const Feed = (props) => {
     .then(res => res.data)
     .then(function (responseData) {
         Amplitude.logEventWithPropertiesAsync('FEED_PAGE_VISIT',{"fromPage" : varValue , "onKey" : requestId })
-         console.log("Response", responseData)
+        // console.log("Response", responseData)
         // console.log(responseData.length)
         setItemsForFeed(responseData)
         setFirstLoad(true)
@@ -232,7 +238,7 @@ const Feed = (props) => {
                 leftIconColor = {borderColor}
                 leftIconOnPress={() => navigation.goBack()}
                 leftIconComponent = {
-                  <View>
+                  <View style = {{marginLeft : -10}}>
                     <Image style={{height : 30 , width : 30}}
                           source={require('../assets/LogoTransparentSolidColorLine.png')}
                       />
@@ -256,6 +262,7 @@ const Feed = (props) => {
         ListFooterComponent={loadingMore && <Loader />}
         onEndReachedThreshold={0.001}
         onEndReached={loadMoreItems}
+       
         // ListEmptyComponent = {<View style = {{alignItems : 'center' , justifyContent : 'center'}}>
         //   <Text style = {{fontSize : 20, fontStyle : 'italic'}}> Loading ... Please wait !</Text>
         //   </View>

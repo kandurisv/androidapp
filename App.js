@@ -5,7 +5,7 @@ import axios from 'axios'
 import {URL , AuthProvider , firebaseConfig, LoadingPage} from './Screens/exports'
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Linking from 'expo-linking';
-
+import * as Contacts from 'expo-contacts';
 import * as firebase from "firebase";
 import * as Sentry from 'sentry-expo';
 import * as Amplitude from 'expo-analytics-amplitude';
@@ -84,6 +84,7 @@ const App = () => {
     const [isLoggedIn,setLoggedIn] = React.useState(false)
 
     const [fontLoaded,setFontLoaded] = React.useState(false)
+    const [contacts,setContacts] = React.useState([])
 
     // const [loaded] = useFonts({
     //   'os-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
@@ -103,18 +104,29 @@ const App = () => {
   
     
     React.useEffect( () => {
-
         
         const getData = async () => {
+
+
+
           firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
-            //  console.log("fireabase",user)
-              
               setLoggedIn(true)
               setUserId(user.phoneNumber)
               Amplitude.setUserIdAsync(user.phoneNumber)
               Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
-            //  console.log('App User!' , user.phoneNumber);
+            
+              const body = { 
+                "user_id": user.phoneNumber.slice(1,13)
+              }
+              axios({
+                method: 'post',
+                url: URL + '/visit/home',
+                data: body
+              })
+              .then(res => {
+                // console.log(res.data);
+              }).catch((e) => console.log(e))
 
               axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                 .then(res => res.data)
@@ -123,7 +135,7 @@ const App = () => {
                   setUserDetails(responseData[0])
                 })
                 .catch(function(error) {
-                  console.log(error)
+                //  console.log(error)
                   setLoadingTimeWait(true)
                 });
             }  
@@ -138,6 +150,11 @@ const App = () => {
         }
        
         getData()
+
+
+
+
+     
          
     //    console.log("loading ", isLoading)
         

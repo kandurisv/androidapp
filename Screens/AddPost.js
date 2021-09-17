@@ -625,7 +625,7 @@ return(
 					<View style = {addPost.productSearchBarActiveView}>
             
 						<TextInput 
-              style = {addPost.productSearchBarActiveTextInput}
+              style = {[addPost.productSearchBarActiveTextInput,{textAlign : 'left', marginLeft : 5}]}
 							placeholder = "Search or Add Product "
 							onChangeText = {(text) => search(text)}
 							onFocus = {()=>setInputFocus(true)}

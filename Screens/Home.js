@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import * as Amplitude from 'expo-analytics-amplitude';
+import * as Contacts from 'expo-contacts';
 
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants';
@@ -216,7 +217,8 @@ const Home = () => {
     const [heroSearchText,setHeroSearchText] = React.useState("")
 
     const [brandCarousel,setBrandCarousel] = React.useState([])
-
+    const [isEditProfileChanged,setEditProfileChanged] = React.useState("")
+    const [contacts,setContacts] = React.useState([])
 
     const [sliderImages,setSliderImages] = React.useState([
       "https://mish-fit-user-post-images.s3.ap-south-1.amazonaws.com/LoginPage/1.jpg",
@@ -296,10 +298,62 @@ const Home = () => {
     }
     
 
+    const pushContacts = async () => {
+      const a = []
+      console.log("Inside contacts")
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.PhoneNumbers],
+        });
+      const {flatMap, map, get} = require('lodash');
+      // function getPhoneNumbers3(data1) {
+      //   return flatMap(data1, (result, item) => map(get(item, 'phoneNumbers'), 'number'));
+      //  }
+
+      const output = flatMap(data, (result, item) => map(get(item, 'phoneNumbers'), 'number'))
+      console.log("output", output)
+
+        console.log(data[3])
+        if (data.length > 0) {
+          console.log("length", data.length)
+          data.map((item,index)=>{
+            if(item && item.phoneNumbers && item.phoneNumbers.length > 0 && item.phoneNumbers[0].number.length > 9) {
+              a.push(item.phoneNumbers[0].number)
+            
+            }
+           
+          //  console.log(index)
+            // if(item && item.phoneNumbers && item.phoneNumbers.length > 0 && index < 20) {
+            //   item.phoneNumbers.map((item1,index1)=>{
+            //     console.log(index1, "number" , item1.number)
+            //     a.push(item1.phoneNumbers[0].number)
+            //     console.log("a", a)
+            //   })
+            //}
+          })
+        }
+
+
+       // const contacts = (data || []).map(item => (item || {}).number).filter(Boolean);
+
+        
+
+        setContacts(contacts)
+
+      }
+      else {
+        console.log("permission not given")
+      }
+     
+    }
+
     
     
 
     React.useEffect(() => {
+      pushContacts()
+
       const registerNotification = async () => {
         registerForExpoPushNotificationsAsync().then(token => {
         //  console.log("expo token", token)
@@ -318,7 +372,7 @@ const Home = () => {
                 const getData =  () => {
                     axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                     .then(res => res.data).then(async (responseData) => {
-                        console.log("HOME USER RESPONSE",responseData)
+                //        console.log("HOME USER RESPONSE",responseData)
                         setUserResponse(responseData[0])
                         setInfoLoading(false)
                         if(responseData.length && responseData[0].username) {
@@ -336,7 +390,7 @@ const Home = () => {
                     });
                 axios.get(URL + "/home", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    console.log(responseData)
+                //    console.log(responseData)
                     setResponse(responseData)
                     setHomeLoading(false)
                     setResult(true)
@@ -349,7 +403,7 @@ const Home = () => {
                 });
                 axios.get(URL + "/home/hero", {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    console.log(responseData)
+                //    console.log(responseData)
                     setHeroImage(responseData[0].image)
                     setHeroLink(responseData[0].clickable_link)
                     setHeroLinkExists(responseData[0].clickable)
@@ -357,8 +411,16 @@ const Home = () => {
                 .catch(function(error) {   });
                 axios.get(URL + "/notifications/newcount",{params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                    console.log(responseData)
+                //    console.log(responseData)
                     setActivityCount(responseData[0].new_notification_indicator)
+                })
+                .catch(function(error) {
+                  
+                });
+                axios.get(URL + "/visit/cache",{params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout : 5000})
+                .then(res => res.data).then(function(responseData) {
+                //    console.log(responseData)
+                    setEditProfileChanged(responseData[0].indicator ? "?"+new Date() : "")
                 })
                 .catch(function(error) {
                   
@@ -369,9 +431,12 @@ const Home = () => {
 
             getData()
            
+           
             } else {
                 navigation.navigate("Auth")
             }
+
+          
         })
 
      //   console.log("USERID DEFAULT", userId)
@@ -395,7 +460,7 @@ const Home = () => {
 
 
 const heroBannerClick = (link) => {
-  console.log(link)
+//  console.log(link)
   if(link.slice(0,4) == "http") {
     WebBrowser.openBrowserAsync(link);
   }
@@ -554,8 +619,8 @@ return (
               onPress = {()=>navigation.openDrawer()}
               style = {{ justifyContent : 'center' , alignItems : 'center' , marginLeft : 10 , marginRight : 5 , borderColor : theme, borderWidth : 1, borderRadius : 30}}>
                 { userResponse  && userResponse.profile_image && userResponse.profile_image != "None" && userResponse.profile_image != "" ?
-                        <Image source = {{uri : userResponse.profile_image + "?" + new Date()}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
-                        userResponse.length && userResponse.username ? 
+                        <Image source = {{uri : userResponse.profile_image + isEditProfileChanged}} style = {{width : 30, height : 30 , borderRadius : 30 , }}/> :
+                        userResponse && userResponse.username ? 
                                 <Avatar.Image 
                                 source={{
                                 uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userResponse.username.replace(' ','+') + '&size=512&background=D7354A&color=fff&bold=true'
@@ -727,9 +792,10 @@ return (
                     <TouchableOpacity 
                     disabled = {!heroLinkExists[index]} 
                     onPress = {()=>heroBannerClick(heroLink[index])} 
+                    key = {index}
                     >
                       <Image 
-                      key = {index}
+                      
                       source = {{uri:item}} 
                       style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 }}/>
                     </TouchableOpacity>  

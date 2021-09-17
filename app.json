@@ -4,7 +4,7 @@
     "owner": "kandurisv",
     "slug": "candidapp",
     "scheme": "candid",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "splash": {
@@ -22,7 +22,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode" : 3,
+      "versionCode" : 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
@@ -58,7 +58,10 @@
           "color": "#ffffff",
           "mode": "production"
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/perf",
+      "@react-native-firebase/crashlytics"
     ],
     "description": "Social reviews platform where communities help you decide best product to buy"
   }

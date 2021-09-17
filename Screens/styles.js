@@ -714,7 +714,7 @@ export const pins = StyleSheet.create({
 
     },
     mainViewSubContainerHeader : {
-        fontWeight : 'bold',
+        fontWeight : 'normal',
         fontFamily : 'Roboto',
         fontSize : 20,
         margin : 5,
@@ -785,10 +785,12 @@ export const feed = StyleSheet.create({
         height : height - 180
         },
     scrollableFeedContainer : {
-        marginBottom : 2,
-        marginLeft : 3,
-        marginRight : 3,
-        marginTop : 2,
+        marginBottom : 10,
+        marginLeft : 10,
+        marginRight : 10,
+        marginTop : 5,
+        borderRadius : 20,
+        backgroundColor : background
     },
     scrollableFeedItemContainer : {
         marginBottom: 5,
@@ -797,13 +799,13 @@ export const feed = StyleSheet.create({
     },
     scrollableFeedItemUserNameHeaderView : {
         position:'absolute',
-        width : width*0.965,
+        width : width-40,
         top:0,
       //  backgroundColor : 'rgba(52, 52, 52, 0.5)',
         backgroundColor : "#666",
         zIndex : 102,
         height : 38,
-        borderRadius : 5 ,
+        borderRadius : 10 ,
     },
 
     scrollableFeedItemUserName : {
@@ -813,7 +815,7 @@ export const feed = StyleSheet.create({
         marginTop: 6,
         
         marginLeft: 40,
-        fontSize:18,
+        fontSize:16,
         fontFamily : 'Roboto',
         zIndex: 100
     },
@@ -822,59 +824,65 @@ export const feed = StyleSheet.create({
         top:0,
         right : 0 ,
         color : 'white',
-        marginTop: 10,
+        marginTop: 12,
         marginRight: 10,
-        fontSize:14,
+        fontSize:10,
         fontFamily : 'Roboto',
         zIndex: 100
     },
     scrollableFeedItemImagesCount : {
-        backgroundColor : 'transparent' , 
+        backgroundColor : 'rgba(52, 52, 52, 0.3)' , 
         position:'absolute', 
         top: 20, 
         right : 10 ,
-        marginTop: 25, 
-        marginRight: 10, 
-        borderRadius : 10,
+        marginTop: 35, 
+        marginRight: 0, 
+        borderRadius : 2,
+        padding : 2,
+        paddingTop : 1,
+        paddingBottom : 1,
         zIndex: 100
     },
     scrollableFeedItemProductView : {
         position:'absolute',
-        width : width * 0.965 ,
+        width : width - 40 ,
         bottom:0,
+        paddingBottom : 5,
         backgroundColor : 'rgba(52, 52, 52, 0.5)',
         zIndex : 102,
+        borderRadius:10,
     },
     scrollableFeedItemProductName : {
         // position:'absolute',
         // bottom:0,
-        marginTop : 5,
+        marginTop : 10,
         marginLeft: 10,
         marginRight : 10,
+        marginBottom : 5,
         color : 'white',
-        fontSize:16,
+        fontSize:15,
         fontFamily : 'Roboto',
         fontWeight:'bold'
     },
     scrollableFeedItemProductReview  : {
         // position:'absolute',
         // bottom:0,
-         marginBottom : 10,
-         marginLeft : 10 ,
+         marginBottom : 5,
+         marginLeft : 8 ,
          marginRight : 10,
         color : 'white',
-        fontSize:15,
+        fontSize:12,
         fontFamily : 'Roboto',
     },
     scrollableFeedItemHorizontalScrollContainer : {
 
     },
     scrollableFeedItemHorizontalScrollImage : {
-        width,
-        height : width * 1.2,
-        aspectRatio:2.5/3,
-        resizeMode: 'cover',
-        borderRadius: 10,
+        width : width - 40,
+        height : width - 40 ,
+        marginTop : 30,
+        borderBottomLeftRadius : 10,
+        borderBottomRightRadius : 10,
     },
 })
 
@@ -892,12 +900,12 @@ export const postDetails = StyleSheet.create({
     },
     reviewImageContainerScrollableMasterContentContainer : {},
     reviewImageContainerScrollableMasterContainer : {
-        marginTop: 5,
+        marginTop: 1,
     },
     reviewImageContainerScrollableContainer : {
-        marginTop: 5,
+        marginTop: 1,
         width,
-        height : width * 1.35,
+        height : width * 1.25,
     },
     //User name View
     reviewImageContainerUserNameView : {
@@ -925,12 +933,8 @@ export const postDetails = StyleSheet.create({
     //Scrollable Image
     reviewImageContainerScrollableImage : {
         width,
-        height : width * 1.35,
-    },
-    reviewImageContainerScrollableImage : {
-        width,
-        height : width * 1.35,
-        aspectRatio:2/3,
+        height : width * 1.25,
+        aspectRatio:4/5,
         resizeMode: 'cover',
     },
     reviewImageContainerCalendarView : {
@@ -964,7 +968,8 @@ export const postDetails = StyleSheet.create({
         fontWeight:'normal',
         color : 'white',
         marginBottom: 30,
-        padding : 5
+        padding : 5,
+        paddingLeft : 10
     },
     //Heart View
     reviewImageContainerHeartContainer : { 
@@ -1186,12 +1191,15 @@ export const postDetails = StyleSheet.create({
     },
     reviewCommentContainerReadCommentEmptyContainer : {
         padding : 5 ,
-        marginTop : 10,
+        marginTop : 5,
+        
         backgroundColor : 'white',
         borderRadius : 5,
+        justifyContent : 'center'
     },
     reviewCommentContainerReadCommentEmptyContainerText : {
-        marginTop : 10
+        marginLeft : 15,
+        marginVertical : 5,
     },
 })
 

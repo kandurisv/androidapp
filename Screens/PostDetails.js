@@ -62,7 +62,7 @@ const Cover = (props) => {
         
 
     React.useEffect(()=>{
-        console.log("Bookmarked", props.bookmarked)
+     //   console.log("Bookmarked", props.bookmarked)
         setBookmarked(props.bookmarked)
         setLiked(props.likeIndicator)
         setLikeCount(props.upvotes+props.likeIndicator)
@@ -113,7 +113,7 @@ const Cover = (props) => {
             "comment": null
         }
         
-            console.log(body)
+        //    console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/activity',
@@ -124,11 +124,62 @@ const Cover = (props) => {
           }).catch((e) => console.log(e))
         }
     
-    
+    const encrypt = (id) => {
+        const encry = {}
+        encry['u'] = 'B'
+        encry['p'] = 'c'
+        encry['0'] = 'Z'
+        encry['1'] = 'Q'
+        encry['2'] = 'y'
+        encry['3'] = 'e'
+        encry['4'] = 'f'
+        encry['5'] = 'g'
+        encry['6'] = 'L'
+        encry['7'] = 'v'
+        encry['8'] = 'W'
+        encry['9'] = 'k'
+        encry['+'] = 'M'
+
+        let estr = ""
+        for (let i in id) {
+            estr = estr + encry[id[i]]
+        }
+   
+       return estr
+        
+    }
+
+    const decrypt = (id) => {
+        const decry = {}
+        decry['B'] = 'u'
+        decry['c'] = 'p'
+        decry['Z'] = '0'
+        decry['Q'] = '1'
+        decry['y'] = '2'
+        decry['e'] = '3'
+        decry['f'] = '4'
+        decry['g'] = '5'
+        decry['L'] = '6'
+        decry['v'] = '7'
+        decry['W'] = '8'
+        decry['k'] = '9'
+        decry['M'] = '+'
+        let review_sum_id = ""
+        for (let i in id) {
+            review_sum_id = review_sum_id + decry[id[i]]
+        }
+   
+       return review_sum_id
+        
+    }
+
+
+
     const onShareReview = async () => {
+        console.log(encrypt(props.details.review_sum_id))
         try {
             const result = await Share.share({
-              message: 'Read my review on Candid App at ' + schema + "post?id=" + props.details.review_sum_id,
+              message: 'Read my review on Candid App at ' + schema + "post?id=" + encrypt(props.details.review_sum_id),
               url : props.imageList[0]
             });
             if (result.action === Share.sharedAction) {
@@ -162,7 +213,7 @@ const Cover = (props) => {
             "bookmark": !bookmarked,
         }
         
-            console.log(body)
+        //    console.log(body)
             axios({
                 method: 'post',
                 url: URL + '/pins/post',
@@ -263,7 +314,7 @@ const Data = [{
     },
 ]
 
-const Tab = ({reviewArray, dayArray, review,claim,context}) => {
+const Tab = ({reviewArray, dayArray, review,claim,context,description}) => {
     const [status, setStatus] = useState('Review');
     const [dataList , setDataList] = useState ([listTab[0]]);
     const setStatusFilter = status => {
@@ -291,7 +342,11 @@ const Tab = ({reviewArray, dayArray, review,claim,context}) => {
         const ContextItem = () => {
             return(
                 <View>
-                    <Text>{context}</Text>
+                    { description ? 
+                        <Text>{description}</Text> : 
+                        <Text> No Context Information Available. ( Example Contexts : Dry Skin, Straight Hair etc. )</Text>
+                    }
+                    
                 </View>
             )
         }
@@ -372,10 +427,10 @@ const PostDetails = (props) => {
     }
 
     const getBookmark = () => {
-        console.log("user_id" , userId.slice(1,13) ," review_sum_id" , route.params.details.review_sum_id )
+     //   console.log("user_id" , userId.slice(1,13) ," review_sum_id" , route.params.details.review_sum_id )
         axios.get(URL + "/pins/indicator", {params:{user_id : userId.slice(1,13) , review_sum_id : route.params.details.review_sum_id }} , {timeout : 500})
         .then(res => res.data).then(function(responseData) {
-            console.log("bookmark indicator" , responseData)
+        //    console.log("bookmark indicator" , responseData)
             setBookmarked(responseData[0].bookmark)
             setLoading(false)
             setResult(true)
@@ -414,7 +469,7 @@ const PostDetails = (props) => {
            axios.get(URL + "/user/instagram", {params:{user_id : route.params.details.user_id }} , {timeout : 5000})
            .then(res => res.data)
            .then(async function(responseData) {
-               console.log("INSTA USER ", responseData)
+            //   console.log("INSTA USER ", responseData)
                if (responseData.length && responseData[0].instagram_username) {
                    setInstagramUsername(responseData[0].instagram_username);
                }
@@ -431,7 +486,7 @@ const PostDetails = (props) => {
         getData()
         getBookmark()
         getInstaUser()
-        console.log("user id ",route.params.details.user_id)
+     //   console.log("user id ",route.params.details.user_id)
        
     },[renderAgain,isFocused, likeIndicator , bookmarked])
 
@@ -442,7 +497,7 @@ const PostDetails = (props) => {
   
     
     const getFeedByUser = async () => {
-           console.log("Username click")
+        //   console.log("Username click")
             try {
                 let result = await WebBrowser.openBrowserAsync('https://www.instagram.com/'+instagramUsername+'/');
                 setResult(result);
@@ -560,6 +615,7 @@ const PostDetails = (props) => {
             review = {route.params.reviewDetails}
             claim = {route.params.details.claim}
             context = {route.params.contextDetails}
+            description = {route.params.details.description}
           />
         </View>
         <View>
