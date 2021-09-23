@@ -58,10 +58,7 @@
           "color": "#ffffff",
           "mode": "production"
         }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/perf",
-      "@react-native-firebase/crashlytics"
+      ]
     ],
     "description": "Social reviews platform where communities help you decide best product to buy"
   }

@@ -321,6 +321,7 @@ export default function Login() {
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
+        attemptInvisibleVerification={true}
       />
       <View style = {login.loginViewCoverContainer}>
         <Image

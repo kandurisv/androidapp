@@ -17,7 +17,7 @@ import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import * as Amplitude from 'expo-analytics-amplitude';
 import * as Contacts from 'expo-contacts';
-
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants';
 
@@ -369,6 +369,7 @@ const Home = () => {
         registerNotification()
         firebase.auth().onAuthStateChanged(user => {
             if (user != null) {
+                inAppMessaging().setMessagesDisplaySuppressed(false);
                 const getData =  () => {
                     axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
                     .then(res => res.data).then(async (responseData) => {
